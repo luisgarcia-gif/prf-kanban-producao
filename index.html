@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PRF - Gas Solutions | Gestão de Produção</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Biblioteca para Leitura de Ficheiros Excel em JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --prf-blue: #0097A7;
@@ -41,7 +43,6 @@
             flex-direction: column;
         }
 
-        /* HEADER */
         header {
             background-color: var(--bg-card);
             padding: 10px 20px;
@@ -92,11 +93,9 @@
         .btn-refresh { background-color: #374151 !important; }
         .btn-refresh:hover { background-color: #4b5563 !important; }
 
-        /* PÁGINAS */
         .page { display: none; padding: 20px; flex-grow: 1; }
         .page.active { display: flex; flex-direction: column; }
 
-        /* MENU INICIAL COM LOGO REAL */
         #page-home {
             align-items: center;
             justify-content: center;
@@ -152,7 +151,6 @@
         .menu-icon { font-size: 30px; }
         .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
-        /* FORMULÁRIOS E BOTÕES */
         .add-form {
             display: flex;
             gap: 10px;
@@ -184,7 +182,6 @@
             cursor: pointer !important;
         }
 
-        /* KANBAN BOARD */
         .board {
             display: flex;
             gap: 12px;
@@ -279,7 +276,6 @@
             border-radius: 5px;
         }
 
-        /* CARTÕES */
         .card {
             background-color: #ffffff !important;
             border-radius: 5px;
@@ -319,7 +315,6 @@
             color: #333333 !important;
         }
 
-        /* MODAL DE EDIÇÃO AVANÇADA */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -346,7 +341,6 @@
         .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 16px; }
         .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
-        /* KPIS GRID */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -363,6 +357,15 @@
 
         .kpi-title { font-size: 12px; color: var(--text-secondary) !important; text-transform: uppercase; }
         .kpi-value { font-size: 24px; font-weight: bold; color: var(--text-main) !important; margin-top: 8px; }
+
+        .consult-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--prf-blue);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -379,7 +382,7 @@
         </div>
     </header>
 
-    <!-- PÁGINA INICIAL COM O LOGÓTIPO OFICIAL REAL -->
+    <!-- PÁGINA INICIAL -->
     <div id="page-home" class="page active">
         <div class="home-logo-container">
             <img src="https://raw.githubusercontent.com/luisgarcia-gif/prf-kanban-producao/main/prf_principal_gassolutions.png" alt="PRF Gas Solutions" class="home-logo-img">
@@ -422,6 +425,12 @@
                 <option value="Normal">🔵 Normal</option>
             </select>
             <button class="btn-action" onclick="adicionarObra()">+ Nova Obra</button>
+            
+            <!-- Botão de Importar Ficheiro Excel -->
+            <label class="btn-action" style="cursor:pointer; background-color: #374151 !important; margin-left: auto;">
+                📂 Importar Excel
+                <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcel(event)" style="display:none;">
+            </label>
         </div>
 
         <div class="board">
@@ -475,13 +484,17 @@
         </div>
     </div>
 
-    <!-- PÁGINA 2: CONSULTAS -->
+    <!-- PÁGINA 2: CONSULTAS (RESULTADOS OCULTOS POR DEFAULT) -->
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form">
-            <input type="text" id="search-query" placeholder="Pesquisar por obra ou trabalhador..." style="width: 100%;">
+            <input type="text" id="search-query" placeholder="Escreva o nome da obra, trabalhador ou observação para pesquisar..." onkeyup="filtrarConsultas()" style="width: 100%;">
         </div>
-        <div id="consulta-results"></div>
+        <div id="consulta-results">
+            <p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">
+                Digite algo no campo acima para pesquisar entre todas as obras carregadas.
+            </p>
+        </div>
     </div>
 
     <!-- PÁGINA 3: KPIS & MÉTRICAS -->
@@ -556,6 +569,85 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'page-kpis') calcularKPIs();
+        }
+
+        // FUNÇÃO PARA IMPORTAR EXCEL EM MASSA
+        async function importarExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+                    if (rows.length === 0) {
+                        alert('O ficheiro Excel selecionado está vazio!');
+                        return;
+                    }
+
+                    const obrasParaInserir = rows.map(r => ({
+                        referencia: String(r.referencia || r.Referencia || r.REFERENCIA || 'SEM_REF').trim(),
+                        toneladas: parseFloat(r.toneladas || r.Toneladas || 0) || 0,
+                        prioridade: String(r.prioridade || r.Prioridade || 'Normal').trim(),
+                        fase: String(r.fase || r.Fase || 'Projeto').trim(),
+                        setor: String(r.setor || r.Setor || 'Geral').trim(),
+                        trabalhador: String(r.trabalhador || r.Trabalhador || 'Não Atribuído').trim(),
+                        comentarios: String(r.comentarios || r.Comentarios || '').trim()
+                    }));
+
+                    const { data: inserted, error } = await supabaseClient.from('cartoes_kanban').insert(obrasParaInserir).select();
+
+                    if (error) {
+                        alert('Erro ao importar para a base de dados: ' + error.message);
+                    } else {
+                        alert(`Sucesso! ${obrasParaInserir.length} obras importadas do Excel.`);
+                        carregarTudo();
+                    }
+                } catch (err) {
+                    alert('Erro ao processar ficheiro Excel: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // LÓGICA DE PESQUISA (OCULTA ATÉ SER PESQUISADA)
+        function filtrarConsultas() {
+            const query = document.getElementById('search-query').value.trim().toLowerCase();
+            const container = document.getElementById('consulta-results');
+
+            if (!query) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Digite algo no campo acima para pesquisar entre todas as obras carregadas.</p>';
+                return;
+            }
+
+            const resultados = todasAsObras.filter(o => 
+                (o.referencia && o.referencia.toLowerCase().includes(query)) ||
+                (o.trabalhador && o.trabalhador.toLowerCase().includes(query)) ||
+                (o.comentarios && o.comentarios.toLowerCase().includes(query)) ||
+                (o.fase && o.fase.toLowerCase().includes(query))
+            );
+
+            if (resultados.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">Nenhuma obra encontrada para esta pesquisa.</p>';
+                return;
+            }
+
+            container.innerHTML = resultados.map(o => `
+                <div class="consult-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="font-size: 15px;">📦 ${o.referencia}</strong>
+                        <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--prf-blue); color: white;">fase: ${o.fase}</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
+                        ⚖️ <b>${o.toneladas || 0}</b> Tons | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
+                    </div>
+                    ${o.comentarios ? `<div style="font-size: 11px; color: #00796B; margin-top: 6px; font-style: italic;">💬 ${o.comentarios}</div>` : ''}
+                </div>
+            `).join('');
         }
 
         document.querySelectorAll('.column-content').forEach(zone => {
