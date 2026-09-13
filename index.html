@@ -4,22 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban PRF - Drag & Drop</title>
-    <!-- Biblioteca Supabase oficial -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <!-- Carregar biblioteca via CDN alternativo UNPKG (evita bloqueios) -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #1e1e1e;
-            color: #333;
+            color: #fff;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
             box-sizing: border-box;
         }
-        h1 { color: #fff; margin-bottom: 20px; font-weight: 400; font-size: 24px; }
+        h1 { margin-bottom: 10px; font-weight: 400; font-size: 24px; }
         
+        #status-bar {
+            background-color: #333;
+            color: #ffca28;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffca28;
+        }
+
         .board {
             display: flex;
             gap: 15px;
@@ -31,12 +41,12 @@
         .column {
             background-color: #f4f5f7;
             border-radius: 8px;
-            min-width: 250px;
-            width: 250px;
+            min-width: 240px;
+            width: 240px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            max-height: 85vh;
+            min-height: 400px;
         }
         
         .column-header {
@@ -56,7 +66,7 @@
             padding: 10px;
             flex-grow: 1;
             overflow-y: auto;
-            min-height: 150px;
+            min-height: 350px;
         }
         
         .column-content.drag-over {
@@ -74,6 +84,7 @@
             cursor: grab;
             border-left: 5px solid #0097A7;
             user-select: none;
+            color: #333;
         }
         
         .card:active {
@@ -87,7 +98,8 @@
 </head>
 <body>
 
-    <h1>📊 Quadro Kanban Produção</h1>
+    <h1>📊 Quadro Kanban Produção (PRF)</h1>
+    <div id="status-bar">🔄 A carregar ligação à Base de Dados...</div>
     
     <div class="board" id="kanban-board">
         <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
@@ -100,13 +112,24 @@
     </div>
 
     <script>
-        const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
+        const statusBar = document.getElementById('status-bar');
         
-        // Inicialização robusta do cliente Supabase
-        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // 1. Inserir Cartão de Teste Manual (Garante que ves o Drag&Drop a funcionar imediatamente!)
+        const zonaProjeto = document.querySelector('.column-content[data-fase="Projeto"]');
+        const cartaoTeste = document.createElement('div');
+        cartaoTeste.className = 'card';
+        cartaoTeste.draggable = true;
+        cartaoTeste.id = 'cartao-teste-local';
+        cartaoTeste.innerHTML = `
+            <div class="card-ref">📦 TESTE LOCAL</div>
+            <div class="card-worker">👷 Arraste este cartão!</div>
+        `;
+        cartaoTeste.addEventListener('dragstart', e => {
+            e.dataTransfer.setData('text/plain', 'cartao-teste-local');
+        });
+        zonaProjeto.appendChild(cartaoTeste);
 
-        // Configurar Zonas de Drag & Drop
+        // 2. Configurar Drag & Drop em todas as colunas
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => {
                 e.preventDefault();
@@ -127,41 +150,63 @@
                 
                 if (cartao && novaFase) {
                     zone.appendChild(cartao);
-                    await supabaseClient.from('cartoes_kanban').update({ fase: novaFase }).eq('id', cardId);
+                    if (window.supabaseClient && cardId !== 'cartao-teste-local') {
+                        await window.supabaseClient.from('cartoes_kanban').update({ fase: novaFase }).eq('id', cardId);
+                    }
                 }
             });
         });
 
-        // Carregar dados da nuvem
-        async function carregarCartoes() {
-            const { data: cartoes, error } = await supabaseClient.from('cartoes_kanban').select('*');
-            if (error) {
-                console.error("Erro Supabase:", error);
-                return;
-            }
+        // 3. Tentar Ligar ao Supabase
+        const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
 
-            cartoes.forEach(cartao => {
-                const zone = document.querySelector(`.column-content[data-fase="${cartao.fase}"]`);
-                if (zone) {
-                    const el = document.createElement('div');
-                    el.className = 'card';
-                    el.draggable = true;
-                    el.id = cartao.id;
-                    el.innerHTML = `
-                        <div class="card-ref">📦 ${cartao.referencia}</div>
-                        <div class="card-worker">👷 ${cartao.trabalhador || 'Não Atribuído'}</div>
-                    `;
-                    
-                    el.addEventListener('dragstart', e => {
-                        e.dataTransfer.setData('text/plain', cartao.id);
-                    });
-                    
-                    zone.appendChild(el);
+        async function conectarESincronizar() {
+            try {
+                if (typeof supabase === 'undefined') {
+                    statusBar.style.color = '#ff5252';
+                    statusBar.innerHTML = '⚠️ A rede bloqueou a biblioteca do Supabase (CDN). O Drag & Drop local funciona abaixo.';
+                    return;
                 }
-            });
+                
+                window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+                const { data: cartoes, error } = await window.supabaseClient.from('cartoes_kanban').select('*');
+                
+                if (error) {
+                    statusBar.style.color = '#ff5252';
+                    statusBar.innerHTML = '⚠️ Erro de leitura no Supabase: ' + error.message;
+                    return;
+                }
+
+                statusBar.style.color = '#69f0ae';
+                statusBar.innerHTML = '✅ Base de dados ligada com sucesso! Dados sincronizados.';
+
+                cartoes.forEach(cartao => {
+                    const zone = document.querySelector(`.column-content[data-fase="${cartao.fase}"]`);
+                    if (zone) {
+                        const el = document.createElement('div');
+                        el.className = 'card';
+                        el.draggable = true;
+                        el.id = cartao.id;
+                        el.innerHTML = `
+                            <div class="card-ref">📦 ${cartao.referencia}</div>
+                            <div class="card-worker">👷 ${cartao.trabalhador || 'Não Atribuído'}</div>
+                        `;
+                        
+                        el.addEventListener('dragstart', e => {
+                            e.dataTransfer.setData('text/plain', cartao.id);
+                        });
+                        
+                        zone.appendChild(el);
+                    }
+                });
+            } catch (err) {
+                statusBar.style.color = '#ff5252';
+                statusBar.innerHTML = '⚠️ Erro ao inicializar: ' + err.message;
+            }
         }
 
-        window.onload = carregarCartoes;
+        window.onload = conectarESincronizar;
     </script>
 </body>
 </html>
