@@ -144,7 +144,7 @@
         .menu-icon { font-size: 30px; }
         .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
-        /* FORMULÁRIOS E PESQUISA GIGANTE */
+        /* FORMULÁRIOS E PESQUISA */
         .search-container {
             background: var(--bg-card);
             padding: 15px;
@@ -302,7 +302,7 @@
             border-radius: 5px;
         }
 
-        /* CARTÕES E HIERARQUIA */
+        /* CARTÕES */
         .card {
             background-color: #ffffff !important;
             border-radius: 5px;
@@ -353,7 +353,7 @@
             color: #333333 !important;
         }
 
-        /* MODAIS / AVISOS CUSTOMIZADOS */
+        /* MODAIS / AVISOS */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -461,8 +461,7 @@
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 12px; color: #4db8ff; margin-top: 0; margin-bottom: 8px;">
-                    * <b>100% dos componentes carregados estão visíveis. A app memoriza onde deixou tudo.</b><br>
-                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas nunca desaparecem do ecrã.
+                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas <b>nunca desaparecem do ecrã</b>.
                 </p>
                 <span id="db-counter" style="font-size: 13px; color: #69f0ae; font-weight: bold;">🟢 A carregar dados...</span>
             </div>
@@ -685,7 +684,7 @@
            ----------------------------------------------------- */
 
         function limparProjetos() {
-            mostrarConfirmacao("Deseja LIMPAR TODOS OS FICHEIROS que estão na fase inicial de 'Projeto'?\n\n(Obras já em andamento/produção não serão afetadas)", async function() {
+            mostrarConfirmacao("Deseja LIMPAR TODOS OS FICHEIROS que estão na fase inicial de 'Projeto'?\n\n(Obras já em andamento não serão afetadas)", async function() {
                 const { error } = await supabaseClient.from('cartoes_kanban').delete().eq('fase', 'Projeto');
                 if (!error) {
                     mostrarAlerta("Os ficheiros na coluna de Projeto foram limpos com sucesso.");
@@ -709,8 +708,7 @@
         }
 
         function apagarTudoBD() {
-            mostrarConfirmacao("🚨 ATENÇÃO: Tem a certeza que deseja APAGAR TUDO?\nEsta ação irá eliminar todos os cartões em todas as fases e não pode ser desfeita.", function() {
-                // Segunda confirmação de segurança!
+            mostrarConfirmacao("🚨 ATENÇÃO: Tem a certeza que deseja APAGAR TUDO?\nEsta ação irá eliminar todos os cartões e não pode ser desfeita.", function() {
                 setTimeout(() => {
                     mostrarConfirmacao("ÚLTIMO AVISO: Confirma que quer ELIMINAR A BASE DE DADOS COMPLETA?", async function() {
                         const { error } = await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
@@ -724,7 +722,6 @@
                 }, 300);
             });
         }
-
 
         // IMPORTADOR INTELIGENTE
         async function importarExcelInteligente(event) {
@@ -746,7 +743,8 @@
                         return;
                     }
 
-                    const chavesExistentesBD = new Set(todasAsObras.map(o => (o.obra_ref || '') + (o.referencia || '')));
+                    // Previne duplicações lendo as chaves já existentes na Base de Dados de forma estrita
+                    const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
 
                     const obrasParaInserir = [];
                     const referenciasProcessadasNesteExcel = new Set(); 
@@ -755,21 +753,32 @@
                         const row = rows[i];
                         if (!row || row.length === 0) continue;
 
-                        const linhaTexto = row.join(' | ');
-                        const matchObra = linhaTexto.match(/(HY\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
+                        let refEncontrada = null;
+                        let designacaoPeca = null;
+                        let trabalhadorAtribuido = 'Não Atribuído';
+                        
+                        // Extrai Célula a Célula em segurança (Anti-Crash)
+                        const linhaCompletaSegura = row.map(cell => String(cell || '')).join(' | ');
 
-                        if (matchObra) {
-                            const codObra = matchObra[1].toUpperCase(); 
-                            const designacaoPeca = matchObra[2].replace(/^-/, '').trim() || 'Conjunto Principal'; 
+                        for (let j = 0; j < row.length; j++) {
+                            const cellText = String(row[j] || '').trim();
+                            const match = cellText.match(/(HY\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
+                            if (match) {
+                                refEncontrada = match[1].toUpperCase();
+                                designacaoPeca = match[2].replace(/^-/, '').trim() || 'Conjunto Principal';
+                                break;
+                            }
+                        }
 
-                            const idUnico = codObra + designacaoPeca;
+                        if (refEncontrada) {
+                            const idUnico = String(refEncontrada + designacaoPeca).trim().toLowerCase().replace(/\s+/g, '');
 
+                            // REGRA: Sem alterar os antigos e não duplica obras
                             if (chavesExistentesBD.has(idUnico)) continue;
                             if (referenciasProcessadasNesteExcel.has(idUnico)) continue;
                             referenciasProcessadasNesteExcel.add(idUnico);
 
-                            let trabalhadorAtribuido = 'Não Atribuído';
-                            const linhaMin = linhaTexto.toLowerCase();
+                            const linhaMin = linhaCompletaSegura.toLowerCase();
                             const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor'];
                             
                             for (let trab of equipa) {
@@ -781,7 +790,7 @@
                             }
 
                             obrasParaInserir.push({
-                                obra_ref: codObra, 
+                                obra_ref: refEncontrada, 
                                 referencia: designacaoPeca, 
                                 toneladas: 0,
                                 prioridade: 'Normal',
@@ -794,7 +803,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não há peças novas para importar! O ficheiro está em branco ou todos os componentes já se encontram no quadro.");
+                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro.");
                         return;
                     }
 
@@ -811,7 +820,7 @@
                         inseridosTotal += lote.length;
                     }
 
-                    mostrarAlerta(`Sucesso! Foram extraídos e adicionados ${inseridosTotal} NOVOS componentes ao sistema.`);
+                    mostrarAlerta(`Sucesso! Foram adicionados ${inseridosTotal} NOVOS componentes à coluna de Projeto.`);
                     carregarTudo();
                     
                 } catch (err) {
@@ -821,19 +830,21 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // REDERIZAR KANBAN (TUDO VISÍVEL E EM ANDAMENTO INTACTO)
+        // RENDERIZAÇÃO BLINDADA ANTI-CRASH E 100% VISÍVEL
         function renderizarKanbanComFiltro() {
-            const query = document.getElementById('kanban-search-input').value.trim().toLowerCase();
+            const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
             todasAsObras.forEach(o => {
-                let mostrarCartao = true; // Mostra todos por defeito (100% VISÍVEL)
+                let mostrarCartao = true; 
 
-                // Filtra APENAS a coluna de "Projeto" se a barra de pesquisa tiver texto
-                if (query && o.fase === 'Projeto') {
-                    if (!(o.obra_ref && o.obra_ref.toLowerCase().includes(query)) &&
-                        !(o.referencia && o.referencia.toLowerCase().includes(query)) &&
-                        !(o.trabalhador && o.trabalhador.toLowerCase().includes(query))) {
+                // Apenas oculta cartões que estão no "Projeto" se houver uma pesquisa e a pesquisa falhar
+                if (query && String(o.fase) === 'Projeto') {
+                    const strObra = String(o.obra_ref || '').toLowerCase();
+                    const strRef = String(o.referencia || '').toLowerCase();
+                    const strTrab = String(o.trabalhador || '').toLowerCase();
+
+                    if (!strObra.includes(query) && !strRef.includes(query) && !strTrab.includes(query)) {
                         mostrarCartao = false;
                     }
                 }
@@ -845,7 +856,7 @@
         }
 
         function filtrarConsultas() {
-            const query = document.getElementById('search-query').value.trim().toLowerCase();
+            const query = String(document.getElementById('search-query').value || '').trim().toLowerCase();
             const container = document.getElementById('consulta-results');
 
             if (!query) {
@@ -853,11 +864,12 @@
                 return;
             }
 
-            const resultados = todasAsObras.filter(o => 
-                (o.obra_ref && o.obra_ref.toLowerCase().includes(query)) ||
-                (o.referencia && o.referencia.toLowerCase().includes(query)) ||
-                (o.trabalhador && o.trabalhador.toLowerCase().includes(query))
-            );
+            const resultados = todasAsObras.filter(o => {
+                const strObra = String(o.obra_ref || '').toLowerCase();
+                const strRef = String(o.referencia || '').toLowerCase();
+                const strTrab = String(o.trabalhador || '').toLowerCase();
+                return strObra.includes(query) || strRef.includes(query) || strTrab.includes(query);
+            });
 
             if (resultados.length === 0) {
                 container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">Nenhuma obra ou peça encontrada.</p>';
@@ -877,9 +889,10 @@
             `).join('');
         }
 
+        // DRAG AND DROP - Sem recarregamento de BD para manter instantâneo e não piscar o ecrã
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
             zone.addEventListener('drop', async e => {
                 e.preventDefault();
                 zone.classList.remove('drag-over');
@@ -890,9 +903,18 @@
                 const cartao = document.getElementById(cardId);
                 
                 if (cartao && novaFase) {
-                    zone.appendChild(cartao);
+                    zone.appendChild(cartao); // Movimenta de imediato visualmente
+
+                    // Atualiza a memória local da Aplicação
+                    const obraIndex = todasAsObras.findIndex(o => o.id === cardId);
+                    if (obraIndex !== -1) {
+                        todasAsObras[obraIndex].fase = novaFase;
+                        todasAsObras[obraIndex].setor = novoSetor;
+                        todasAsObras[obraIndex].trabalhador = novoOperador;
+                    }
+
+                    // Envia para o Supabase silenciosamente
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
-                    carregarTudo(); // Re-sincroniza a BD para garantir que tudo fica no sítio
                 }
             });
         });
@@ -906,19 +928,19 @@
 
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ obra_ref: 'MANUAL', referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
-                document.getElementById('kanban-search-input').value = ref;
                 carregarTudo();
                 document.getElementById('new-ref').value = '';
                 document.getElementById('new-ton').value = '';
             }
         }
 
+        // RENDER CARTÃO SEGURO (Evita Crashes de Símbolos Estranhos)
         function renderCartao(c) {
             try {
                 const prioClass = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
-                let targetZone = null;
                 const faseSafe = String(c.fase || 'Projeto').replace(/"/g, '');
                 const trabSafe = String(c.trabalhador || 'Não Atribuído').replace(/"/g, '');
+                let targetZone = null;
 
                 if (c.trabalhador && c.trabalhador !== 'Não Atribuído') {
                     targetZone = document.querySelector(`.column-content[data-fase="${faseSafe}"][data-operador="${trabSafe}"]`);
@@ -926,8 +948,6 @@
                 if (!targetZone) {
                     targetZone = document.querySelector(`.column-content[data-fase="${faseSafe}"]`);
                 }
-                
-                // SISTEMA ANTI-CRASH: Se a fase não for encontrada por algum erro estranho de texto, ele NÃO ESCONDE o cartão, mas atira-o para o Projeto.
                 if (!targetZone) {
                     targetZone = document.querySelector(`.column-content[data-fase="Projeto"]`);
                 }
@@ -938,19 +958,18 @@
                     el.draggable = true;
                     el.id = c.id;
                     
-                    const commentHTML = c.comentarios ? `<div class="card-comment">💬 ${c.comentarios}</div>` : '';
-                    const badgeObra = c.obra_ref ? `<div class="obra-badge">${c.obra_ref}</div>` : '';
+                    const commentHTML = c.comentarios ? `<div class="card-comment">💬 ${String(c.comentarios)}</div>` : '';
+                    const badgeObra = c.obra_ref ? `<div class="obra-badge">${String(c.obra_ref)}</div>` : '';
 
-                    // Proteção extra para garantir que as aspas no nome da obra não bloqueiam o botão Editar
-                    const obraSafe = String(c.obra_ref || '').replace(/'/g, "\\'");
-                    const refSafe = String(c.referencia || '').replace(/'/g, "\\'");
-                    const prioSafe = String(c.prioridade || 'Normal').replace(/'/g, "\\'");
-                    const comSafe = String(c.comentarios || '').replace(/'/g, "\\'");
+                    const obraSafe = String(c.obra_ref || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const refSafe = String(c.referencia || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const prioSafe = String(c.prioridade || 'Normal').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const comSafe = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
                     el.innerHTML = `
                         ${badgeObra}
-                        <div class="card-ref">${c.referencia}</div>
-                        <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'Não Atribuído'}</div>
+                        <div class="card-ref">${String(c.referencia || 'Sem Referência')}</div>
+                        <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${String(c.trabalhador || 'Não Atribuído')}</div>
                         ${commentHTML}
                         <div class="card-actions">
                             <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${obraSafe}', '${refSafe}', ${c.toneladas || 0}, '${prioSafe}', '${comSafe}')">✏️ Editar</button>
@@ -961,7 +980,7 @@
                     targetZone.appendChild(el);
                 }
             } catch (err) {
-                console.error("Cartão problemático ignorado para não bloquear a app:", c, err);
+                console.error("Cartão problemático ignorado na renderização para não bloquear o quadro:", c, err);
             }
         }
 
@@ -1004,7 +1023,9 @@
                 await supabaseClient.from('cartoes_kanban').delete().eq('id', id);
                 const el = document.getElementById(id);
                 if (el) el.remove();
-                carregarTudo();
+                
+                const index = todasAsObras.findIndex(o => o.id === id);
+                if (index > -1) todasAsObras.splice(index, 1);
             });
         }
 
@@ -1015,7 +1036,7 @@
             document.getElementById('kpi-tons-ano').innerText = totalTons.toFixed(1) + " Ton";
         }
 
-        // PAGINAÇÃO INFINITA (Quebra o limite de segurança de 1000 da Base de Dados)
+        // PAGINAÇÃO INFINITA (Lida com bases de dados de qualquer tamanho de forma rápida)
         async function carregarTudo() {
             document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
             let allData = [];
@@ -1030,16 +1051,16 @@
                     .range(from, from + step);
                 
                 if (error) {
-                    mostrarAlerta('Erro de ligação ao carregar dados.');
+                    mostrarAlerta('Erro de ligação ao carregar dados. Verifique a internet.');
                     break;
                 }
                 
                 if (data && data.length > 0) {
                     allData = allData.concat(data);
-                    from += data.length; // Avança exatamente o número de peças carregadas
+                    from += data.length; 
                     
                     if (data.length <= step) {
-                        keepFetching = false; // Se vieram menos de 1000, chegámos ao fim
+                        keepFetching = false; 
                     }
                 } else {
                     keepFetching = false;
