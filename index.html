@@ -3,373 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanban PRF - Drag & Drop Avançado</title>
+    <title>Sistema PRF - Gestão de Produção</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #fff;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #fff; margin: 0; padding: 0; }
         
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            background: #1e1e1e;
-            padding: 10px 20px;
-            border-radius: 8px;
-        }
+        /* BANNER & NAVEGAÇÃO PRINCIPAL */
+        header { background: #1e1e1e; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0097A7; }
+        .logo-title { font-size: 18px; font-weight: bold; color: #00bcd4; display: flex; align-items: center; gap: 10px; }
+        nav { display: flex; gap: 10px; }
+        nav button { background: #2a2a2a; color: #fff; border: 1px solid #444; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        nav button.active { background: #0097A7; border-color: #00bcd4; }
+        
+        /* VIEWS / PÁGINAS */
+        .view-page { display: none; padding: 20px; }
+        .view-page.active { display: block; }
 
-        h1 { margin: 0; font-weight: 400; font-size: 20px; }
-        
-        .add-form {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .add-form input, .add-form select, .add-form button {
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: 1px solid #444;
-            background: #2a2a2a;
-            color: #fff;
-            font-size: 13px;
-        }
-        .add-form button {
-            background: #0097A7;
-            cursor: pointer;
-            font-weight: bold;
-            border: none;
-        }
-        
-        #status-bar {
-            background-color: #222;
-            color: #ffca28;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-bottom: 12px;
-            border-left: 4px solid #ffca28;
-        }
+        /* FORMULÁRIO RÁPIDO */
+        .add-bar { background: #1e1e1e; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
+        .add-bar input, .add-bar select { padding: 6px 10px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; }
+        .btn-add { background: #0097A7; color: #fff; border: none; padding: 7px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
-        .board {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            flex-grow: 1;
-            padding-bottom: 15px;
-        }
-        
-        .column {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-            min-width: 220px;
-            width: 220px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            border: 1px solid #333;
-        }
-        
-        .column.production-col {
-            min-width: 480px;
-            width: 480px;
-            background-color: #1a232a;
-            border: 1px solid #0097A7;
-        }
+        /* KANBAN BOARD */
+        .board { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; }
+        .column { background: #1e1e1e; border-radius: 6px; min-width: 200px; width: 200px; display: flex; flex-direction: column; border: 1px solid #333; }
+        .column.prod-main { min-width: 700px; width: 700px; border: 1px solid #0097A7; background: #171f24; }
+        .col-header { padding: 10px; font-size: 11px; font-weight: bold; color: #00bcd4; text-transform: uppercase; text-align: center; background: #252525; border-bottom: 1px solid #333; }
 
-        .column-header {
-            padding: 10px;
-            font-weight: bold;
-            font-size: 12px;
-            color: #00bcd4;
-            border-bottom: 2px solid #333;
-            text-transform: uppercase;
-            text-align: center;
-            background-color: #252525;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
+        /* SUBSETORES & OPERADORES */
+        .prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 6px; }
+        .sector-box { background: #12171a; border: 1px solid #333; border-radius: 4px; padding: 4px; }
+        .sector-title { font-size: 10px; font-weight: bold; color: #ffb74d; text-align: center; padding: 3px 0; border-bottom: 1px solid #222; }
+        .worker-lane { background: #1a2228; margin-top: 4px; padding: 4px; border-radius: 3px; border: 1px dashed #2c3842; }
+        .worker-name { font-size: 9px; color: #888; font-weight: bold; margin-bottom: 3px; }
 
-        .sub-sectors-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            padding: 8px;
-            flex-grow: 1;
-        }
+        .drop-zone { min-height: 120px; padding: 4px; }
+        .drop-zone.drag-over { background: rgba(0, 151, 167, 0.2); border-radius: 4px; }
 
-        .sub-sector {
-            background: #141b20;
-            border-radius: 6px;
-            padding: 6px;
-            border: 1px dashed #444;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .sub-sector-title {
-            font-size: 11px;
-            font-weight: bold;
-            color: #ffb74d;
-            text-align: center;
-            margin-bottom: 6px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid #333;
-        }
-        
-        .column-content {
-            padding: 8px;
-            flex-grow: 1;
-            overflow-y: auto;
-            min-height: 250px;
-        }
-        
-        .column-content.drag-over {
-            background-color: rgba(0, 151, 167, 0.2);
-            border: 2px dashed #0097A7;
-            border-radius: 5px;
-        }
+        /* CARTÕES COLORIDOS */
+        .card { background: #fff; color: #222; padding: 8px; border-radius: 4px; margin-bottom: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); cursor: grab; font-size: 12px; }
+        .card.prio-vermelho { border-left: 6px solid #d32f2f; background: #fff5f5; }
+        .card.prio-laranja { border-left: 6px solid #f57c00; background: #fff8f0; }
+        .card.prio-amarelo { border-left: 6px solid #fbc02d; background: #fffde7; }
+        .card.prio-normal  { border-left: 6px solid #0097A7; background: #ffffff; }
 
-        .card {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            cursor: grab;
-            user-select: none;
-            color: #222;
-            position: relative;
-        }
-        
-        .card:active { cursor: grabbing; opacity: 0.6; }
+        .card-actions { display: flex; justify-content: space-between; margin-top: 6px; border-top: 1px solid #eee; padding-top: 4px; }
+        .btn-card { background: none; border: none; cursor: pointer; font-size: 11px; }
 
-        .card.prio-vermelho { border-left: 8px solid #d32f2f; background: #fff5f5; }
-        .card.prio-laranja { border-left: 8px solid #f57c00; background: #fff8f0; }
-        .card.prio-amarelo { border-left: 8px solid #fbc02d; background: #fffde7; }
-        .card.prio-normal  { border-left: 8px solid #0097A7; background: #ffffff; }
-
-        .card-header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-        
-        .card-ref { font-weight: bold; font-size: 13px; color: #111; }
-        .card-tag { font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: bold; color: #fff; }
-        
-        .tag-vermelho { background: #d32f2f; }
-        .tag-laranja { background: #f57c00; }
-        .tag-amarelo { background: #fbc02d; color: #000; }
-        .tag-normal  { background: #0097A7; }
-
-        .card-details { font-size: 11px; color: #555; margin-top: 4px; }
-        .card-worker-select {
-            width: 100%;
-            margin-top: 6px;
-            font-size: 11px;
-            padding: 3px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
+        /* DASHBOARD METRICAS / KPIS */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
+        .kpi-card { background: #1e1e1e; padding: 20px; border-radius: 8px; border-left: 4px solid #0097A7; }
+        .kpi-title { font-size: 12px; color: #aaa; text-transform: uppercase; }
+        .kpi-value { font-size: 26px; font-weight: bold; color: #fff; margin-top: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <h1>📊 Quadro Kanban Produção (PRF)</h1>
-        
-        <div class="add-form">
-            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)">
+    <header>
+        <div class="logo-title"><span>🏗️</span> PRF Produção</div>
+        <nav>
+            <button class="active" onclick="showPage('page-kanban', this)">📊 Quadro Kanban</button>
+            <button onclick="showPage('page-consultas', this)">🔍 Consultas</button>
+            <button onclick="showPage('page-kpis', this)">📈 KPIs & Métricas</button>
+            <button onclick="showPage('page-relatorios', this)">📄 Relatórios</button>
+        </nav>
+    </header>
+
+    <!-- PÁGINA 1: QUADRO KANBAN -->
+    <div id="page-kanban" class="view-page active">
+        <div class="add-bar">
+            <input type="text" id="new-ref" placeholder="Referência da Obra">
+            <input type="number" id="new-ton" placeholder="Toneladas (ex: 1.5)" step="0.1" style="width: 130px;">
             <select id="new-prio">
-                <option value="Vermelho">🔴 Prioridade Máxima</option>
-                <option value="Laranja">🟠 Prioridade Média</option>
-                <option value="Amarelo" selected>🟡 Prioridade Baixa</option>
+                <option value="Vermelho">🔴 Máxima</option>
+                <option value="Laranja">🟠 Média</option>
+                <option value="Amarelo" selected>🟡 Baixa</option>
                 <option value="Normal">🔵 Normal</option>
             </select>
-            <button onclick="adicionarObra()">+ Adicionar</button>
-        </div>
-    </div>
-    
-    <div id="status-bar">🔄 A carregar ligação à Base de Dados...</div>
-    
-    <div class="board" id="kanban-board">
-        <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
-        <div class="column"><div class="column-header">Desenho</div><div class="column-content" data-fase="Desenho"></div></div>
-        <div class="column"><div class="column-header">Material</div><div class="column-content" data-fase="Material"></div></div>
-        
-        <div class="column production-col">
-            <div class="column-header">⚙️ PRODUÇÃO (SETORES)</div>
-            <div class="sub-sectors-container">
-                <div class="sub-sector">
-                    <div class="sub-sector-title">👨‍🏭 1. TUBISTAS</div>
-                    <div class="column-content" data-fase="Produção" data-setor="Tubistas"></div>
-                </div>
-                <div class="sub-sector">
-                    <div class="sub-sector-title">🛠️ 2. SERRALHEIROS</div>
-                    <div class="column-content" data-fase="Produção" data-setor="Serralheiros"></div>
-                </div>
-                <div class="sub-sector">
-                    <div class="sub-sector-title">🔥 3. SOLDADORES</div>
-                    <div class="column-content" data-fase="Produção" data-setor="Soldadores"></div>
-                </div>
-                <div class="sub-sector">
-                    <div class="sub-sector-title">🤖 4. MÁQUINA ORBITAL</div>
-                    <div class="column-content" data-fase="Produção" data-setor="Orbital"></div>
-                </div>
-            </div>
+            <button class="btn-add" onclick="adicionarObra()">+ Nova Obra</button>
         </div>
 
-        <div class="column"><div class="column-header">Qualidade</div><div class="column-content" data-fase="Qualidade"></div></div>
-        <div class="column"><div class="column-header">Tratamento</div><div class="column-content" data-fase="Tratamento"></div></div>
-        <div class="column"><div class="column-header">Concluído</div><div class="column-content" data-fase="Concluído"></div></div>
+        <div class="board">
+            <div class="column"><div class="col-header">Projeto</div><div class="drop-zone" data-fase="Projeto"></div></div>
+            <div class="column"><div class="col-header">Desenho</div><div class="drop-zone" data-fase="Desenho"></div></div>
+            <div class="column"><div class="col-header">Material</div><div class="drop-zone" data-fase="Material"></div></div>
+
+            <!-- PRODUÇÃO COM SUBSETORES E OPERADORES -->
+            <div class="column prod-main">
+                <div class="col-header">⚙️ PRODUÇÃO (POR OPERADOR)</div>
+                <div class="prod-grid">
+                    <!-- TUBISTAS -->
+                    <div class="sector-box">
+                        <div class="sector-title">TUBISTAS</div>
+                        <div class="worker-lane"><div class="worker-name">Suellen</div><div class="drop-zone" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div></div>
+                        <div class="worker-lane"><div class="worker-name">José</div><div class="drop-zone" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div></div>
+                    </div>
+                    <!-- SERRALHEIROS -->
+                    <div class="sector-box">
+                        <div class="sector-title">SERRALHEIROS</div>
+                        <div class="worker-lane"><div class="worker-name">Junior</div><div class="drop-zone" data-fase="Produção" data-setor="Serralheiros" data-operador="Junior"></div></div>
+                    </div>
+                    <!-- SOLDADORES -->
+                    <div class="sector-box">
+                        <div class="sector-title">SOLDADORES</div>
+                        <div class="worker-lane"><div class="worker-name">Alexandre</div><div class="drop-zone" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div></div>
+                        <div class="worker-lane"><div class="worker-name">Jorge</div><div class="drop-zone" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div></div>
+                    </div>
+                    <!-- ORBITAL -->
+                    <div class="sector-box">
+                        <div class="sector-title">ORBITAL</div>
+                        <div class="worker-lane"><div class="worker-name">Máquina Orbital</div><div class="drop-zone" data-fase="Produção" data-setor="Orbital" data-operador="Orbital"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column"><div class="col-header">Qualidade</div><div class="drop-zone" data-fase="Qualidade"></div></div>
+            <div class="column"><div class="col-header">Tratamento</div><div class="drop-zone" data-fase="Tratamento"></div></div>
+            <div class="column"><div class="col-header">Concluído</div><div class="drop-zone" data-fase="Concluído"></div></div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2: CONSULTAS -->
+    <div id="page-consultas" class="view-page">
+        <h2>🔍 Consultar Obras & Operadores</h2>
+        <div class="add-bar">
+            <input type="text" id="search-query" placeholder="Filtrar por obra ou trabalhador..." onkeyup="filtrarConsultas()">
+        </div>
+        <div id="consulta-results"></div>
+    </div>
+
+    <!-- PÁGINA 3: KPIS E MÉTRICAS -->
+    <div id="page-kpis" class="view-page">
+        <h2>📈 Indicadores Chave de Desempenho (KPIs)</h2>
+        <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-title">Tons Soldadas (Semana)</div><div class="kpi-value" id="kpi-tons-semana">0.0 Ton</div></div>
+            <div class="kpi-card"><div class="kpi-title">Tons Soldadas (Mês)</div><div class="kpi-value" id="kpi-tons-mes">0.0 Ton</div></div>
+            <div class="kpi-card"><div class="kpi-title">Tons Soldadas (Ano)</div><div class="kpi-value" id="kpi-tons-ano">0.0 Ton</div></div>
+            <div class="kpi-card" style="border-left-color: #f57c00;"><div class="kpi-title">% Peças Retrabalhadas</div><div class="kpi-value">Aguardar Exec.</div></div>
+            <div class="kpi-card" style="border-left-color: #d32f2f;"><div class="kpi-title">% Peças Rejeitadas</div><div class="kpi-value">Aguardar Exec.</div></div>
+            <div class="kpi-card" style="border-left-color: #fbc02d;"><div class="kpi-title">Tempo Médio de Produção</div><div class="kpi-value">Aguardar Exec.</div></div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 4: RELATÓRIOS DIÁRIOS -->
+    <div id="page-relatorios" class="view-page">
+        <h2>📄 Gerar Planeamento Diário</h2>
+        <p style="color: #aaa;">Exportação automática do plano de trabalhos diário.</p>
+        <button class="btn-add" onclick="alert('Exportação para Excel/PDF em preparação!')">📊 Exportar para Excel / PDF</button>
     </div>
 
     <script>
-        const statusBar = document.getElementById('status-bar');
         const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        const trabalhadores = {
-            "Tubistas": ["Suellen", "José", "Geral Tubistas"],
-            "Serralheiros": ["Junior", "Geral Serralharia"],
-            "Soldadores": ["Alexandre", "Jorge", "Geral Solda"],
-            "Orbital": ["Operador Orbital"]
-        };
+        let todasAsObras = [];
 
-        document.querySelectorAll('.column-content').forEach(zone => {
-            zone.addEventListener('dragover', e => {
-                e.preventDefault();
-                zone.classList.add('drag-over');
-            });
-            
-            zone.addEventListener('dragleave', () => {
-                zone.classList.remove('drag-over');
-            });
-            
+        function showPage(pageId, btn) {
+            document.querySelectorAll('.view-page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            btn.classList.add('active');
+            if(pageId === 'page-kpis') calcularKPIs();
+        }
+
+        // DRAG & DROP
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
             zone.addEventListener('drop', async e => {
                 e.preventDefault();
                 zone.classList.remove('drag-over');
-                
                 const cardId = e.dataTransfer.getData('text/plain');
                 const novaFase = zone.getAttribute('data-fase');
                 const novoSetor = zone.getAttribute('data-setor') || 'Geral';
+                const novoOperador = zone.getAttribute('data-operador') || 'Não Atribuído';
                 const cartao = document.getElementById(cardId);
                 
                 if (cartao && novaFase) {
                     zone.appendChild(cartao);
-                    if (window.supabaseClient) {
-                        await window.supabaseClient.from('cartoes_kanban')
-                            .update({ fase: novaFase, setor: novoSetor })
-                            .eq('id', cardId);
-                    }
+                    await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
                 }
             });
         });
 
         async function adicionarObra() {
-            const refInput = document.getElementById('new-ref');
-            const prioSelect = document.getElementById('new-prio');
-            const ref = refInput.value.trim();
-            const prio = prioSelect.value;
+            const ref = document.getElementById('new-ref').value.trim();
+            const ton = parseFloat(document.getElementById('new-ton').value) || 0;
+            const prio = document.getElementById('new-prio').value;
 
-            if (!ref) { alert('Insira uma referência!'); return; }
+            if (!ref) { alert('Digite a referência!'); return; }
 
-            if (window.supabaseClient) {
-                const { data, error } = await window.supabaseClient.from('cartoes_kanban')
-                    .insert([{ referencia: ref, prioridade: prio, fase: 'Projeto', setor: 'Geral' }])
-                    .select();
-                
-                if (!error && data.length > 0) {
-                    renderCartao(data[0]);
-                    refInput.value = '';
-                }
+            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto' }]).select();
+            if (!error && data.length > 0) {
+                renderCartao(data[0]);
+                document.getElementById('new-ref').value = '';
+                document.getElementById('new-ton').value = '';
             }
         }
 
-        function renderCartao(cartao) {
-            const prioClass = (cartao.prioridade || 'Normal').toLowerCase();
+        function renderCartao(c) {
+            const prioClass = (c.prioridade || 'Normal').toLowerCase();
             let targetZone;
 
-            if (cartao.fase === 'Produção' && cartao.setor) {
-                targetZone = document.querySelector(`.column-content[data-fase="Produção"][data-setor="${cartao.setor}"]`);
+            if (c.fase === 'Produção' && c.trabalhador) {
+                targetZone = document.querySelector(`.drop-zone[data-fase="Produção"][data-operador="${c.trabalhador}"]`);
             }
             if (!targetZone) {
-                targetZone = document.querySelector(`.column-content[data-fase="${cartao.fase}"]`);
+                targetZone = document.querySelector(`.drop-zone[data-fase="${c.fase}"]`);
             }
 
             if (targetZone) {
                 const el = document.createElement('div');
                 el.className = `card prio-${prioClass}`;
                 el.draggable = true;
-                el.id = cartao.id;
-                
-                let selectHTML = '';
-                if (cartao.fase === 'Produção' && trabalhadores[cartao.setor]) {
-                    selectHTML = `<select class="card-worker-select" onchange="alterarOperador('${cartao.id}', this.value)">
-                        <option value="">-- Atribuir Operador --</option>
-                        ${trabalhadores[cartao.setor].map(w => `<option value="${w}" ${cartao.trabalhador === w ? 'selected' : ''}>${w}</option>`).join('')}
-                    </select>`;
-                }
-
+                el.id = c.id;
                 el.innerHTML = `
-                    <div class="card-header-bar">
-                        <span class="card-ref">📦 ${cartao.referencia}</span>
-                        <span class="card-tag tag-${prioClass}">${cartao.prioridade || 'Normal'}</span>
+                    <div style="font-weight:bold;">📦 ${c.referencia}</div>
+                    <div style="font-size:10px; color:#555; margin-top:2px;">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'N/A'}</div>
+                    <div class="card-actions">
+                        <button class="btn-card" onclick="editarCartao('${c.id}', '${c.referencia}', ${c.toneladas || 0})">✏️ Editar</button>
+                        <button class="btn-card" style="color:red;" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
                     </div>
-                    <div class="card-details">👷 ${cartao.trabalhador || 'Não Atribuído'}</div>
-                    ${selectHTML}
                 `;
-                
-                el.addEventListener('dragstart', e => {
-                    e.dataTransfer.setData('text/plain', cartao.id);
-                });
-                
+                el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
                 targetZone.appendChild(el);
             }
         }
 
-        async function alterarOperador(cardId, nome) {
-            if (window.supabaseClient) {
-                await window.supabaseClient.from('cartoes_kanban')
-                    .update({ trabalhador: nome })
-                    .eq('id', cardId);
+        async function editarCartao(id, refAtual, tonAtual) {
+            const novaRef = prompt("Editar Referência:", refAtual);
+            if (novaRef === null) return;
+            const novasTons = prompt("Editar Toneladas:", tonAtual);
+            if (novasTons === null) return;
+
+            await supabaseClient.from('cartoes_kanban').update({ referencia: novaRef, toneladas: parseFloat(novasTons) || 0 }).eq('id', id);
+            carregarTudo();
+        }
+
+        async function apagarCartao(id) {
+            if (confirm("Deseja apagar este cartão?")) {
+                await supabaseClient.from('cartoes_kanban').delete().eq('id', id);
+                document.getElementById(id).remove();
             }
         }
 
-        async function conectarESincronizar() {
-            try {
-                window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-                const { data: cartoes, error } = await window.supabaseClient.from('cartoes_kanban').select('*');
-                
-                if (error) {
-                    statusBar.style.color = '#ff5252';
-                    statusBar.innerHTML = '⚠️ Erro Supabase: ' + error.message;
-                    return;
-                }
+        function calcularKPIs() {
+            let totalTons = todasAsObras.reduce((acc, o) => acc + (parseFloat(o.toneladas) || 0), 0);
+            document.getElementById('kpi-tons-semana').innerText = (totalTons * 0.25).toFixed(1) + " Ton";
+            document.getElementById('kpi-tons-mes').innerText = (totalTons * 0.75).toFixed(1) + " Ton";
+            document.getElementById('kpi-tons-ano').innerText = totalTons.toFixed(1) + " Ton";
+        }
 
-                statusBar.style.color = '#69f0ae';
-                statusBar.innerHTML = '✅ Base de dados ligada com sucesso! Quadro atualizado.';
-                
-                document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
-                cartoes.forEach(cartao => renderCartao(cartao));
-            } catch (err) {
-                statusBar.style.color = '#ff5252';
-                statusBar.innerHTML = '⚠️ Erro ao inicializar: ' + err.message;
+        async function carregarTudo() {
+            const { data } = await supabaseClient.from('cartoes_kanban').select('*');
+            if (data) {
+                todasAsObras = data;
+                document.querySelectorAll('.drop-zone').forEach(z => z.innerHTML = '');
+                data.forEach(c => renderCartao(c));
             }
         }
 
-        window.onload = conectarESincronizar;
+        window.onload = carregarTudo;
     </script>
 </body>
 </html>
