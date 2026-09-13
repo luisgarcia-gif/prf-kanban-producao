@@ -19,17 +19,6 @@
             --border-color: #334155;
         }
 
-        @media (prefers-color-scheme: light) {
-            :root {
-                --bg-main: #f4f6f8;
-                --bg-card: #ffffff;
-                --bg-subcard: #eef2f5;
-                --text-main: #1e293b;
-                --text-secondary: #64748b;
-                --border-color: #cbd5e1;
-            }
-        }
-
         * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -155,7 +144,25 @@
         .menu-icon { font-size: 30px; }
         .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
-        /* FORMULÁRIOS E BARRA DE PESQUISA DO KANBAN */
+        /* FORMULÁRIOS E PESQUISA GIGANTE */
+        .search-container {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid var(--prf-blue);
+        }
+
+        .search-input-large {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: #111a21 !important;
+            color: #ffffff !important;
+        }
+
         .add-form {
             display: flex;
             gap: 10px;
@@ -175,13 +182,6 @@
             background: var(--bg-subcard) !important;
             color: var(--text-main) !important;
             font-size: 13px;
-        }
-
-        .search-kanban-input {
-            flex-grow: 1;
-            min-width: 280px;
-            border: 2px solid var(--prf-blue) !important;
-            background: #111a21 !important;
         }
 
         .btn-action {
@@ -432,14 +432,17 @@
         </div>
     </div>
 
-    <!-- PÁGINA 1: QUADRO KANBAN COM PESQUISA ATIVA -->
+    <!-- PÁGINA 1: QUADRO KANBAN COM PESQUISA GIGANTE -->
     <div id="page-kanban" class="page">
+        
+        <div class="search-container">
+            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar referência, obra ou operador para visualizar no quadro..." onkeyup="renderizarKanbanComFiltro()">
+            <p style="font-size: 11px; color: #888; margin-top: 8px; margin-bottom: 0;">* O quadro encontra-se <b>oculto por padrão</b> para não sobrecarregar a visualização. Pesquise para encontrar obras.</p>
+        </div>
+
         <div class="add-form">
-            <!-- BARRA DE PESQUISA DO KANBAN: SÓ EXIBE OBRAS PESQUISADAS -->
-            <input type="text" id="kanban-search-input" class="search-kanban-input" placeholder="🔎 Pesquisar obra ou operador para exibir no Kanban..." onkeyup="renderizarKanbanComFiltro()">
-            
-            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)" style="width: 150px;">
-            <input type="number" id="new-ton" placeholder="Tons" step="0.1" style="width: 80px;">
+            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)" style="width: 160px;">
+            <input type="number" id="new-ton" placeholder="Toneladas" step="0.1" style="width: 90px;">
             <select id="new-prio">
                 <option value="Vermelho">🔴 Máxima</option>
                 <option value="Laranja">🟠 Média</option>
@@ -448,7 +451,7 @@
             </select>
             <button class="btn-action" onclick="adicionarObra()">+ Nova Obra</button>
             
-            <label class="btn-action" style="cursor:pointer; background-color: #374151 !important;">
+            <label class="btn-action" style="cursor:pointer; background-color: #374151 !important; margin-left: auto;">
                 📂 Importar Excel
                 <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcel(event)" style="display:none;">
             </label>
@@ -636,7 +639,7 @@
             if (pageId === 'page-kpis') calcularKPIs();
         }
 
-        // IMPORTADOR EXCEL INTELIGENTE (Detecta vários nomes de colunas)
+        // IMPORTADOR EXCEL À PROVA DE FALHAS (IGNORA LINHAS EM BRANCO)
         async function importarExcel(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -654,12 +657,16 @@
                         return;
                     }
 
-                    const obrasParaInserir = rows.map(r => {
-                        // Deteção inteligente de colunas
+                    const obrasParaInserir = [];
+
+                    for (let r of rows) {
                         const ref = r.referencia || r.Referencia || r.REFERENCIA || 
                                     r.obra || r.Obra || r.OBRA || 
                                     r.codigo || r.Codigo || r.CÓDIGO || 
                                     r.ref || r.Ref || r.REF || r.PO;
+
+                        // SE A LINHA NÃO TIVER REFERÊNCIA, É IGNORADA E NÃO ENTRA NA BASE DE DADOS
+                        if (!ref || String(ref).trim() === '') continue;
 
                         const ton = r.toneladas || r.Toneladas || r.TONELADAS || r.tons || r.Tons;
                         const prio = r.prioridade || r.Prioridade || r.PRIORIDADE || r.urgencia || r.Urgencia;
@@ -668,23 +675,28 @@
                         const trab = r.trabalhador || r.Trabalhador || r.TRABALHADOR || r.operador || r.Operador;
                         const comm = r.comentarios || r.Comentarios || r.COMENTARIOS || r.obs || r.Observacoes;
 
-                        return {
-                            referencia: String(ref || 'SEM_REF').trim(),
+                        obrasParaInserir.push({
+                            referencia: String(ref).trim(),
                             toneladas: parseFloat(ton) || 0,
                             prioridade: String(prio || 'Normal').trim(),
                             fase: String(fase || 'Projeto').trim(),
                             setor: String(setor || 'Geral').trim(),
                             trabalhador: String(trab || 'Não Atribuído').trim(),
                             comentarios: String(comm || '').trim()
-                        };
-                    });
+                        });
+                    }
+
+                    if (obrasParaInserir.length === 0) {
+                        mostrarAlerta("Erro: Não foi encontrada nenhuma coluna com o nome 'Obra' ou 'Referencia' no ficheiro, ou o ficheiro está em branco.");
+                        return;
+                    }
 
                     const { data: inserted, error } = await supabaseClient.from('cartoes_kanban').insert(obrasParaInserir).select();
 
                     if (error) {
                         mostrarAlerta('Erro ao importar para a base de dados: ' + error.message);
                     } else {
-                        mostrarAlerta(`Sucesso! ${obrasParaInserir.length} obras importadas para a base de dados.`);
+                        mostrarAlerta(`Sucesso! ${obrasParaInserir.length} obras válidas importadas.`);
                         carregarTudo();
                     }
                 } catch (err) {
@@ -694,13 +706,13 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // REDERIZAR KANBAN APENAS CONFORME A PESQUISA (Não inunda a tela)
+        // MOSTRAR CARTÕES NO KANBAN APENAS SE HOUVER PESQUISA
         function renderizarKanbanComFiltro() {
             const query = document.getElementById('kanban-search-input').value.trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
             if (!query) {
-                // Se a pesquisa estiver vazia, não mostra nenhum cartão no Kanban para manter o ecrã limpo
+                // Fica tudo oculto se a caixa de pesquisa estiver vazia
                 return;
             }
 
@@ -776,7 +788,6 @@
 
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
-                // Coloca a obra criada no campo de pesquisa para ela aparecer imediatamente no Kanban
                 document.getElementById('kanban-search-input').value = ref;
                 carregarTudo();
                 document.getElementById('new-ref').value = '';
