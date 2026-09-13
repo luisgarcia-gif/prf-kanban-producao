@@ -290,7 +290,7 @@
             border-radius: 5px;
         }
 
-        /* CARTÕES */
+        /* CARTÕES E HIERARQUIA */
         .card {
             background-color: #ffffff !important;
             border-radius: 5px;
@@ -309,7 +309,19 @@
         .card.prio-amarelo { border-left: 6px solid #fbc02d; background: #fffde7 !important; }
         .card.prio-normal  { border-left: 6px solid #0097A7; background: #ffffff !important; }
 
-        .card-ref { font-weight: bold; font-size: 13px; color: #111111 !important; }
+        /* Estilos de identificação da Obra vs Peça */
+        .obra-badge {
+            display: inline-block;
+            background: var(--prf-blue);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+        
+        .card-ref { font-weight: bold; font-size: 11px; color: #111111 !important; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
         .card-info { font-size: 10px; color: #555555 !important; margin-top: 3px; }
         .card-comment { font-size: 10px; color: #00796B !important; font-style: italic; margin-top: 4px; background: #e0f2f1; padding: 3px 5px; border-radius: 3px; }
 
@@ -391,7 +403,7 @@
 
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
-            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img" onerror="this.style.display='none'">
+            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img">
             <span>PRF Gas Solutions</span>
         </div>
         
@@ -432,16 +444,15 @@
         </div>
     </div>
 
-    <!-- PÁGINA 1: QUADRO KANBAN COM PESQUISA GIGANTE -->
+    <!-- PÁGINA 1: QUADRO KANBAN COM PESQUISA -->
     <div id="page-kanban" class="page">
         
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                <p style="font-size: 11px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">* O quadro encontra-se <b>oculto por padrão</b>. Pesquise para encontrar obras.</p>
-                <!-- CONTADOR DE OBRAS NA BASE DE DADOS -->
+                <p style="font-size: 11px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">* O quadro encontra-se <b>oculto por padrão</b>. Pesquise pela obra (ex: HY25003) para listar todas as peças do conjunto.</p>
                 <span id="db-counter" style="font-size: 12px; color: #69f0ae; font-weight: bold;">🟢 A ligar à BD...</span>
             </div>
-            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar referência, obra ou operador para visualizar no quadro..." onkeyup="renderizarKanbanComFiltro()">
+            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça ou Trabalhador..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
         <div class="add-form">
@@ -453,11 +464,11 @@
                 <option value="Amarelo" selected>🟡 Baixa</option>
                 <option value="Normal">🔵 Normal</option>
             </select>
-            <button class="btn-action" onclick="adicionarObra()">+ Nova Obra</button>
+            <button class="btn-action" onclick="adicionarObra()">+ Adicionar Manual</button>
             
             <label class="btn-action" style="cursor:pointer; background-color: #374151 !important; margin-left: auto;">
-                📂 Importar Excel
-                <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcel(event)" style="display:none;">
+                📂 Importar do Excel
+                <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcelInteligente(event)" style="display:none;">
             </label>
         </div>
 
@@ -516,11 +527,11 @@
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form">
-            <input type="text" id="search-query" placeholder="Escreva o nome da obra, trabalhador ou observação para pesquisar..." onkeyup="filtrarConsultas()" style="width: 100%;">
+            <input type="text" id="search-query" placeholder="Escreva o código da obra (HY25003), trabalhador ou peça para pesquisar..." onkeyup="filtrarConsultas()" style="width: 100%;">
         </div>
         <div id="consulta-results">
             <p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">
-                Digite algo no campo acima para pesquisar entre todas as obras carregadas.
+                Digite algo no campo acima para listar os componentes.
             </p>
         </div>
     </div>
@@ -550,10 +561,13 @@
     <!-- MODAL DE EDIÇÃO AVANÇADA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
-            <h3>✏️ Editar Obra</h3>
+            <h3>✏️ Editar Componente</h3>
             <input type="hidden" id="edit-id">
             
-            <label>Referência da Obra:</label>
+            <label>Código da Obra Mãe (ex: HY25003):</label>
+            <input type="text" id="edit-obra">
+
+            <label>Designação do Componente / Peça:</label>
             <input type="text" id="edit-ref">
 
             <label>Toneladas:</label>
@@ -643,10 +657,12 @@
             if (pageId === 'page-kpis') calcularKPIs();
         }
 
-        // IMPORTADOR EXCEL
-        async function importarExcel(event) {
+        // NOVO IMPORTADOR INTELIGENTE DE CONJUNTOS DA PRF
+        async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
+
+            mostrarAlerta('A processar ficheiro e extrair as peças das Obras. Aguarde...');
 
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -654,7 +670,7 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const sheetName = workbook.SheetNames[0];
-                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
 
                     if (rows.length === 0) {
                         mostrarAlerta('O ficheiro Excel selecionado está vazio!');
@@ -662,54 +678,82 @@
                     }
 
                     const obrasParaInserir = [];
+                    const referenciasProcessadas = new Set(); 
 
-                    for (let r of rows) {
-                        const ref = r.referencia || r.Referencia || r.REFERENCIA || 
-                                    r.obra || r.Obra || r.OBRA || 
-                                    r.codigo || r.Codigo || r.CÓDIGO || 
-                                    r.ref || r.Ref || r.REF || r.PO;
+                    for (let i = 0; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (!row || row.length === 0) continue;
 
-                        if (!ref || String(ref).trim() === '') continue;
+                        const linhaTexto = row.join(' | ');
 
-                        const ton = r.toneladas || r.Toneladas || r.TONELADAS || r.tons || r.Tons;
-                        const prio = r.prioridade || r.Prioridade || r.PRIORIDADE || r.urgencia || r.Urgencia;
-                        const fase = r.fase || r.Fase || r.FASE || r.estado || r.Estado;
-                        const setor = r.setor || r.Setor || r.SETOR;
-                        const trab = r.trabalhador || r.Trabalhador || r.TRABALHADOR || r.operador || r.Operador;
-                        const comm = r.comentarios || r.Comentarios || r.COMENTARIOS || r.obs || r.Observacoes;
+                        // O código vai à procura do padrão oficial da PRF ex: HY25003...
+                        const matchObra = linhaTexto.match(/(HY\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
 
-                        obrasParaInserir.push({
-                            referencia: String(ref).trim(),
-                            toneladas: parseFloat(ton) || 0,
-                            prioridade: String(prio || 'Normal').trim(),
-                            fase: String(fase || 'Projeto').trim(),
-                            setor: String(setor || 'Geral').trim(),
-                            trabalhador: String(trab || 'Não Atribuído').trim(),
-                            comentarios: String(comm || '').trim()
-                        });
+                        if (matchObra) {
+                            const codObra = matchObra[1].toUpperCase(); // HY25003
+                            const designacaoPeca = matchObra[2].replace(/^-/, '').trim() || 'Conjunto Principal'; // O resto do nome do ficheiro
+
+                            // Evita importar a exata mesma peça duas vezes
+                            const idUnico = codObra + designacaoPeca;
+                            if (referenciasProcessadas.has(idUnico)) continue;
+                            referenciasProcessadas.add(idUnico);
+
+                            // Procura os operadores pelo nome na linha para lhes atribuir a peça
+                            let trabalhadorAtribuido = 'Não Atribuído';
+                            const linhaMin = linhaTexto.toLowerCase();
+                            const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor'];
+                            
+                            for (let trab of equipa) {
+                                if (linhaMin.includes(trab)) {
+                                    trabalhadorAtribuido = trab.charAt(0).toUpperCase() + trab.slice(1);
+                                    if (trabalhadorAtribuido === 'Jose') trabalhadorAtribuido = 'José';
+                                    break;
+                                }
+                            }
+
+                            obrasParaInserir.push({
+                                obra_ref: codObra, // Guarda a HY25003 em gaveta separada (Nova coluna BD)
+                                referencia: designacaoPeca, // Guarda W-01 - Chapa Telheiro na referência
+                                toneladas: 0,
+                                prioridade: 'Normal',
+                                fase: 'Projeto',
+                                setor: 'Geral',
+                                trabalhador: trabalhadorAtribuido,
+                                comentarios: 'Importação Excel'
+                            });
+                        }
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Erro: Não foi encontrada nenhuma coluna com o nome 'Obra' ou 'Referencia' no ficheiro, ou o ficheiro está em branco.");
+                        mostrarAlerta("Não foram encontrados códigos de obra válidos (padrão HYXXXXX) no ficheiro.");
                         return;
                     }
 
-                    const { data: inserted, error } = await supabaseClient.from('cartoes_kanban').insert(obrasParaInserir).select();
+                    // Envia para a base de dados
+                    const limite = 500;
+                    let inseridosTotal = 0;
 
-                    if (error) {
-                        mostrarAlerta('Erro ao importar para a base de dados: ' + error.message);
-                    } else {
-                        mostrarAlerta(`Sucesso! ${obrasParaInserir.length} obras válidas importadas.`);
-                        carregarTudo();
+                    for (let i = 0; i < obrasParaInserir.length; i += limite) {
+                        const lote = obrasParaInserir.slice(i, i + limite);
+                        const { error } = await supabaseClient.from('cartoes_kanban').insert(lote);
+                        if (error) {
+                            mostrarAlerta('Erro ao guardar: ' + error.message);
+                            return;
+                        }
+                        inseridosTotal += lote.length;
                     }
+
+                    mostrarAlerta(`Sucesso! Foram extraídos e criados ${inseridosTotal} componentes.`);
+                    carregarTudo();
+                    
                 } catch (err) {
-                    mostrarAlerta('Erro ao processar ficheiro Excel: ' + err.message);
+                    mostrarAlerta('Erro de leitura do Excel: ' + err.message);
                 }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        // REDERIZAR KANBAN E MOSTRAR ALERTA SE NÃO ENCONTRAR NADA
+        // RENDERIZAR KANBAN COM CARTÕES E HIERARQUIA VISUAL
         function renderizarKanbanComFiltro() {
             const query = document.getElementById('kanban-search-input').value.trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
@@ -717,15 +761,10 @@
             if (!query) return;
 
             const obrasFiltradas = todasAsObras.filter(o => 
+                (o.obra_ref && o.obra_ref.toLowerCase().includes(query)) ||
                 (o.referencia && o.referencia.toLowerCase().includes(query)) ||
-                (o.trabalhador && o.trabalhador.toLowerCase().includes(query)) ||
-                (o.comentarios && o.comentarios.toLowerCase().includes(query))
+                (o.trabalhador && o.trabalhador.toLowerCase().includes(query))
             );
-
-            if (obrasFiltradas.length === 0) {
-                mostrarAlerta(`Nenhum resultado encontrado para a pesquisa: "${query}"`);
-                return;
-            }
 
             obrasFiltradas.forEach(c => renderCartao(c));
         }
@@ -735,32 +774,30 @@
             const container = document.getElementById('consulta-results');
 
             if (!query) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Digite algo no campo acima para pesquisar entre todas as obras carregadas.</p>';
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Digite o código da obra (ex: HY25003) para listar as peças.</p>';
                 return;
             }
 
             const resultados = todasAsObras.filter(o => 
+                (o.obra_ref && o.obra_ref.toLowerCase().includes(query)) ||
                 (o.referencia && o.referencia.toLowerCase().includes(query)) ||
-                (o.trabalhador && o.trabalhador.toLowerCase().includes(query)) ||
-                (o.comentarios && o.comentarios.toLowerCase().includes(query)) ||
-                (o.fase && o.fase.toLowerCase().includes(query))
+                (o.trabalhador && o.trabalhador.toLowerCase().includes(query))
             );
 
             if (resultados.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">Nenhuma obra encontrada para esta pesquisa.</p>';
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">Nenhuma obra ou peça encontrada.</p>';
                 return;
             }
 
             container.innerHTML = resultados.map(o => `
                 <div class="consult-item">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="font-size: 15px;">📦 ${o.referencia}</strong>
+                        <strong style="font-size: 14px;"><span style="color:#00bcd4;">[${o.obra_ref || 'GERAL'}]</span> ${o.referencia}</strong>
                         <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--prf-blue); color: white;">fase: ${o.fase}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
                         ⚖️ <b>${o.toneladas || 0}</b> Tons | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
                     </div>
-                    ${o.comentarios ? `<div style="font-size: 11px; color: #00796B; margin-top: 6px; font-style: italic;">💬 ${o.comentarios}</div>` : ''}
                 </div>
             `).join('');
         }
@@ -789,9 +826,9 @@
             const ton = parseFloat(document.getElementById('new-ton').value) || 0;
             const prio = document.getElementById('new-prio').value;
 
-            if (!ref) { mostrarAlerta('Digite a referência!'); return; }
+            if (!ref) { mostrarAlerta('Digite a referência/descrição da peça!'); return; }
 
-            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
+            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ obra_ref: 'MANUAL', referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
                 document.getElementById('kanban-search-input').value = ref;
                 carregarTudo();
@@ -800,26 +837,18 @@
             }
         }
 
-        // SISTEMA ANTI-INVISIBILIDADE (FORÇA RENDERIZAÇÃO)
         function renderCartao(c) {
             const prioClass = (c.prioridade || 'Normal').toLowerCase();
-            let targetZone = null;
+            let targetZone;
 
-            // Tenta colocar na fase certa com o operador certo
             if (c.trabalhador && c.trabalhador !== 'Não Atribuído') {
                 targetZone = document.querySelector(`.column-content[data-fase="${c.fase}"][data-operador="${c.trabalhador}"]`);
             }
-            
-            // Se falhar (operador errado ou inexistente), tenta colocar na coluna genérica da fase
             if (!targetZone) {
                 targetZone = document.querySelector(`.column-content[data-fase="${c.fase}"]`);
             }
-
-            // FALLBACK DE SEGURANÇA: Se a fase não existir (ex: erro no excel "Producao" em vez de "Produção"), 
-            // obriga o cartão a aparecer na primeira coluna ("Projeto") para não ficar invisível!
             if (!targetZone) {
                 targetZone = document.querySelector(`.column-content[data-fase="Projeto"]`);
-                c.fase = "Projeto (Recuperado)"; // Informa o erro subtilmente
             }
 
             if (targetZone) {
@@ -829,13 +858,15 @@
                 el.id = c.id;
                 
                 const commentHTML = c.comentarios ? `<div class="card-comment">💬 ${c.comentarios}</div>` : '';
+                const badgeObra = c.obra_ref ? `<div class="obra-badge">${c.obra_ref}</div>` : '';
 
                 el.innerHTML = `
-                    <div class="card-ref">📦 ${c.referencia}</div>
+                    ${badgeObra}
+                    <div class="card-ref">${c.referencia}</div>
                     <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'Não Atribuído'}</div>
                     ${commentHTML}
                     <div class="card-actions">
-                        <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${c.referencia}', ${c.toneladas || 0}, '${c.prioridade || 'Normal'}', '${c.comentarios || ''}')">✏️ Editar</button>
+                        <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${c.obra_ref || ''}', '${c.referencia.replace(/'/g, "\\'")}', ${c.toneladas || 0}, '${c.prioridade || 'Normal'}', '${c.comentarios || ''}')">✏️ Editar</button>
                         <button class="btn-card" style="color:#d32f2f !important;" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
                     </div>
                 `;
@@ -844,8 +875,9 @@
             }
         }
 
-        function abrirModalEdicao(id, ref, ton, prio, comentarios) {
+        function abrirModalEdicao(id, obra, ref, ton, prio, comentarios) {
             document.getElementById('edit-id').value = id;
+            document.getElementById('edit-obra').value = obra;
             document.getElementById('edit-ref').value = ref;
             document.getElementById('edit-ton').value = ton;
             document.getElementById('edit-prio').value = prio;
@@ -859,12 +891,14 @@
 
         async function salvarEdicao() {
             const id = document.getElementById('edit-id').value;
+            const obra = document.getElementById('edit-obra').value.trim();
             const ref = document.getElementById('edit-ref').value.trim();
             const ton = parseFloat(document.getElementById('edit-ton').value) || 0;
             const prio = document.getElementById('edit-prio').value;
             const comments = document.getElementById('edit-comments').value.trim();
 
             await supabaseClient.from('cartoes_kanban').update({
+                obra_ref: obra,
                 referencia: ref,
                 toneladas: ton,
                 prioridade: prio,
@@ -876,7 +910,7 @@
         }
 
         function apagarCartao(id) {
-            mostrarConfirmacao("Tem a certeza que deseja apagar este cartão permanentemente?", async function() {
+            mostrarConfirmacao("Deseja apagar este componente permanentemente?", async function() {
                 await supabaseClient.from('cartoes_kanban').delete().eq('id', id);
                 const el = document.getElementById(id);
                 if (el) el.remove();
@@ -894,7 +928,7 @@
             const { data } = await supabaseClient.from('cartoes_kanban').select('*');
             if (data) {
                 todasAsObras = data;
-                document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} obras na BD`;
+                document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
                 renderizarKanbanComFiltro();
             }
         }
