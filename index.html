@@ -473,13 +473,13 @@
         <div class="bulk-actions-bar">
             <span style="font-size: 12px; color: #aaa; font-weight: bold;">⚙️ Operações:</span>
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
-            <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos</button>
+            <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos (Arquivar)</button>
             
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
         <div class="add-form">
-            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)" style="width: 160px;">
+            <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-ton" placeholder="Toneladas" step="0.1" style="width: 90px;">
             <select id="new-prio">
                 <option value="Vermelho">🔴 Máxima</option>
@@ -550,11 +550,11 @@
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form">
-            <input type="text" id="search-query" placeholder="Escreva o código da obra (HY25003), trabalhador ou peça para pesquisar..." onkeyup="filtrarConsultas()" style="width: 100%;">
+            <input type="text" id="search-query" placeholder="Escreva o código da obra (HY25003), ou 'Arquivado' para ver as obras finalizadas..." onkeyup="filtrarConsultas()" style="width: 100%;">
         </div>
         <div id="consulta-results">
             <p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">
-                Digite algo no campo acima para listar os componentes.
+                Digite algo no campo acima para listar o histórico e o trabalho em curso.
             </p>
         </div>
     </div>
@@ -671,8 +671,7 @@
                     names.forEach(name => caches.delete(name));
                 });
             }
-            // Recarrega a página removendo parâmetros antigos de forma segura
-            window.location.href = window.location.pathname;
+            window.location.href = window.location.pathname; // Remove parâmetros sujos do URL
         }
 
         function navesPara(pageId) {
@@ -698,13 +697,14 @@
         }
 
         function limparConcluidos() {
-            mostrarConfirmacao("Deseja REMOVER do quadro todas as obras que já estão na fase 'Concluído'?", async function() {
-                const { error } = await supabaseClient.from('cartoes_kanban').delete().eq('fase', 'Concluído');
+            mostrarConfirmacao("Deseja ARQUIVAR e limpar do quadro todas as obras que estão na fase 'Concluído'?\n\n(Elas ficarão guardadas no menu Consultas)", async function() {
+                // Em vez de APAGAR, atualiza a fase para 'Arquivado'. Isto mantém os dados históricos!
+                const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).eq('fase', 'Concluído');
                 if (!error) {
-                    mostrarAlerta("Obras concluídas arquivadas com sucesso.");
+                    mostrarAlerta("Obras arquivadas com sucesso. Pode consultá-las a qualquer momento no menu 'Consultas'.");
                     carregarTudo();
                 } else {
-                    mostrarAlerta("Erro ao limpar concluídos: " + error.message);
+                    mostrarAlerta("Erro ao arquivar concluídos: " + error.message);
                 }
             });
         }
@@ -725,7 +725,7 @@
             });
         }
 
-        // IMPORTADOR INTELIGENTE
+        // IMPORTADOR INTELIGENTE (Procura Obras Novas sem duplicar nem estragar o em andamento)
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -745,7 +745,7 @@
                         return;
                     }
 
-                    // Verifica chaves existentes na base de dados para evitar re-importação ou destruição do que já está na fábrica
+                    // Lê a BD e guarda as referências atuais para garantir que não subscreve o trabalho atual
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
 
                     const obrasParaInserir = [];
@@ -804,7 +804,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro (ou em andamento).");
+                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro (ou em andamento noutras colunas).");
                         return;
                     }
 
@@ -831,15 +831,18 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // RENDERIZAÇÃO BLINDADA ANTI-CRASH E 100% VISÍVEL
+        // RENDERIZAÇÃO BLINDADA E 100% VISÍVEL POR DEFEITO
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
             todasAsObras.forEach(o => {
+                // REGRA DO ARQUIVO: Se a fase for 'Arquivado' (via botão limpar concluídos), não desenha no Kanban.
+                if (String(o.fase) === 'Arquivado') return;
+
                 let mostrarCartao = true; 
 
-                // Apenas oculta cartões que estão no "Projeto" se houver uma pesquisa e a pesquisa não corresponder
+                // Oculta APENAS na coluna "Projeto" se a pesquisa estiver ativa e não houver correspondência
                 if (query && String(o.fase) === 'Projeto') {
                     const strObra = String(o.obra_ref || '').toLowerCase();
                     const strRef = String(o.referencia || '').toLowerCase();
@@ -869,7 +872,8 @@
                 const strObra = String(o.obra_ref || '').toLowerCase();
                 const strRef = String(o.referencia || '').toLowerCase();
                 const strTrab = String(o.trabalhador || '').toLowerCase();
-                return strObra.includes(query) || strRef.includes(query) || strTrab.includes(query);
+                const strFase = String(o.fase || '').toLowerCase();
+                return strObra.includes(query) || strRef.includes(query) || strTrab.includes(query) || strFase.includes(query);
             });
 
             if (resultados.length === 0) {
@@ -881,7 +885,7 @@
                 <div class="consult-item">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <strong style="font-size: 14px;"><span style="color:#00bcd4;">[${o.obra_ref || 'GERAL'}]</span> ${o.referencia}</strong>
-                        <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--prf-blue); color: white;">fase: ${o.fase}</span>
+                        <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${o.fase}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
                         ⚖️ <b>${o.toneladas || 0}</b> Tons | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
@@ -890,7 +894,7 @@
             `).join('');
         }
 
-        // DRAG AND DROP
+        // DRAG AND DROP COM GUARDA SILENCIOSA PARA NÃO PISCAR
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
@@ -906,7 +910,6 @@
                 if (cartao && novaFase) {
                     zone.appendChild(cartao); 
 
-                    // Atualiza a memória local da Aplicação
                     const obraIndex = todasAsObras.findIndex(o => o.id === cardId);
                     if (obraIndex !== -1) {
                         todasAsObras[obraIndex].fase = novaFase;
@@ -914,7 +917,7 @@
                         todasAsObras[obraIndex].trabalhador = novoOperador;
                     }
 
-                    // Envia para o Supabase silenciosamente (não recarrega a página)
+                    // Regista na base de dados (silencioso, sem recarregar a app)
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
                 }
             });
