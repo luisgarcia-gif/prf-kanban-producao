@@ -3,15 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRF - Gestão de Produção</title>
+    <title>PRF - Gas Solutions | Gestão de Produção</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ESTILOS GERAIS COM CONTRASTE FORÇADO PARA MODO ESCURO/CLARO */
+        :root {
+            --prf-blue: #0097A7;
+            --prf-blue-dark: #00796B;
+            --prf-blue-light: #00bcd4;
+            --bg-main: #121212;
+            --bg-card: #1e1e1e;
+            --bg-subcard: #182228;
+            --text-main: #ffffff;
+            --text-secondary: #b0bec5;
+            --border-color: #334155;
+        }
+
+        /* Adaptação ao tema claro do sistema, se o utilizador preferir */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-main: #f4f6f8;
+                --bg-card: #ffffff;
+                --bg-subcard: #eef2f5;
+                --text-main: #1e293b;
+                --text-secondary: #64748b;
+                --border-color: #cbd5e1;
+            }
+        }
+
         * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212 !important;
-            color: #ffffff !important;
+            background-color: var(--bg-main) !important;
+            color: var(--text-main) !important;
             margin: 0;
             padding: 0;
             min-height: 100vh;
@@ -21,26 +44,39 @@
 
         /* BANNER SUPERIOR */
         header {
-            background-color: #1e1e1e;
-            padding: 12px 20px;
+            background-color: var(--bg-card);
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #0097A7;
+            border-bottom: 3px solid var(--prf-blue);
         }
 
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 20px;
+            gap: 12px;
+            font-size: 18px;
             font-weight: bold;
-            color: #00bcd4 !important;
+            color: var(--prf-blue-light) !important;
             cursor: pointer;
         }
 
+        .brand-svg {
+            width: 32px;
+            height: 32px;
+            background: var(--prf-blue);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 14px;
+        }
+
         .btn-home {
-            background-color: #0097A7 !important;
+            background-color: var(--prf-blue) !important;
             color: #ffffff !important;
             border: none;
             padding: 8px 16px;
@@ -49,34 +85,72 @@
             font-size: 13px;
             font-weight: bold;
         }
-        .btn-home:hover { background-color: #00838f !important; }
+        .btn-home:hover { background-color: var(--prf-blue-dark) !important; }
 
-        /* PÁGINAS / VIEWS */
+        /* PÁGINAS */
         .page { display: none; padding: 20px; flex-grow: 1; }
         .page.active { display: flex; flex-direction: column; }
 
-        /* PÁGINA INICIAL / DASHBOARD MENU */
+        /* PÁGINA INICIAL COM LOGÓTIPO PRF */
         #page-home {
             align-items: center;
             justify-content: center;
             text-align: center;
-            gap: 30px;
+            gap: 25px;
         }
 
-        .home-title { font-size: 28px; color: #00bcd4 !important; margin-bottom: 5px; font-weight: bold; }
-        .home-subtitle { font-size: 14px; color: #cccccc !important; margin-bottom: 20px; }
+        .prf-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        /* LOGO PRF VETORIAL INSERIDO */
+        .prf-logo-box {
+            width: 140px;
+            height: 140px;
+            background-color: var(--prf-blue);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 151, 167, 0.3);
+            position: relative;
+        }
+
+        .prf-logo-text {
+            color: #ffffff;
+            font-size: 46px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-top: 10px;
+        }
+
+        .prf-subtext {
+            color: var(--prf-blue);
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 12px;
+            letter-spacing: 1px;
+        }
+
+        .home-title { font-size: 24px; color: var(--text-main) !important; margin-top: 15px; font-weight: bold; }
+        .home-subtitle { font-size: 14px; color: var(--text-secondary) !important; }
 
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(2, 220px);
-            gap: 20px;
+            grid-template-columns: repeat(2, 210px);
+            gap: 15px;
         }
 
         .menu-card {
-            background: #1e1e1e;
-            border: 1px solid #333;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 25px 15px;
+            padding: 22px 15px;
             cursor: pointer;
             transition: transform 0.2s, border-color 0.2s;
             display: flex;
@@ -87,35 +161,35 @@
 
         .menu-card:hover {
             transform: translateY(-4px);
-            border-color: #0097A7;
-            background: #19252c;
+            border-color: var(--prf-blue);
         }
 
-        .menu-icon { font-size: 32px; }
-        .menu-label { font-size: 15px; font-weight: bold; color: #ffffff !important; }
+        .menu-icon { font-size: 30px; }
+        .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
-        /* FORMULÁRIOS E BOTÕES (TEXTO E FUNDO FORÇADOS) */
+        /* FORMULÁRIO E BOTÕES */
         .add-form {
             display: flex;
             gap: 10px;
             align-items: center;
             margin-bottom: 15px;
-            background: #1e1e1e;
+            background: var(--bg-card);
             padding: 12px 15px;
             border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
 
-        .add-form input, .add-form select {
+        .add-form input, .add-form select, .modal input, .modal select, .modal textarea {
             padding: 8px 12px;
             border-radius: 4px;
-            border: 1px solid #444;
-            background: #2a2a2a !important;
-            color: #ffffff !important;
+            border: 1px solid var(--border-color);
+            background: var(--bg-subcard) !important;
+            color: var(--text-main) !important;
             font-size: 13px;
         }
 
         .btn-action {
-            background-color: #0097A7 !important;
+            background-color: var(--prf-blue) !important;
             color: #ffffff !important;
             border: none !important;
             padding: 9px 18px !important;
@@ -123,11 +197,8 @@
             font-size: 13px !important;
             font-weight: bold !important;
             cursor: pointer !important;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
-        .btn-action:hover { background-color: #00838f !important; }
+        .btn-action:hover { background-color: var(--prf-blue-dark) !important; }
 
         /* QUADRO KANBAN */
         .board {
@@ -140,32 +211,31 @@
         }
 
         .column {
-            background-color: #1e1e1e;
+            background-color: var(--bg-card);
             border-radius: 8px;
-            min-width: 220px;
-            width: 220px;
+            min-width: 210px;
+            width: 210px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            border: 1px solid #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
         }
 
         .column.production-col {
-            min-width: 780px;
-            width: 780px;
-            background-color: #1a232a;
-            border: 1px solid #0097A7;
+            min-width: 760px;
+            width: 760px;
+            border: 1px solid var(--prf-blue);
         }
 
         .column-header {
             padding: 10px;
             font-weight: bold;
             font-size: 12px;
-            color: #00bcd4 !important;
-            border-bottom: 2px solid #333;
+            color: var(--prf-blue-light) !important;
+            border-bottom: 2px solid var(--border-color);
             text-transform: uppercase;
             text-align: center;
-            background-color: #252525;
+            background-color: var(--bg-subcard);
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
         }
@@ -179,10 +249,10 @@
         }
 
         .sub-sector {
-            background: #141b20;
+            background: var(--bg-subcard);
             border-radius: 6px;
             padding: 6px;
-            border: 1px dashed #444;
+            border: 1px dashed var(--border-color);
             display: flex;
             flex-direction: column;
         }
@@ -194,20 +264,20 @@
             text-align: center;
             margin-bottom: 6px;
             padding-bottom: 4px;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .worker-lane {
-            background: #182228;
+            background: var(--bg-card);
             margin-top: 4px;
             padding: 4px;
             border-radius: 4px;
-            border: 1px solid #2a3742;
+            border: 1px solid var(--border-color);
         }
 
         .worker-title {
             font-size: 10px;
-            color: #aaaaaa !important;
+            color: var(--text-secondary) !important;
             font-weight: bold;
             margin-bottom: 3px;
         }
@@ -221,7 +291,7 @@
 
         .column-content.drag-over {
             background-color: rgba(0, 151, 167, 0.2);
-            border: 2px dashed #0097A7;
+            border: 2px dashed var(--prf-blue);
             border-radius: 5px;
         }
 
@@ -237,8 +307,6 @@
             color: #222222 !important;
         }
 
-        .card:active { cursor: grabbing; opacity: 0.6; }
-
         .card.prio-vermelho { border-left: 6px solid #d32f2f; background: #fff5f5 !important; }
         .card.prio-laranja { border-left: 6px solid #f57c00; background: #fff8f0 !important; }
         .card.prio-amarelo { border-left: 6px solid #fbc02d; background: #fffde7 !important; }
@@ -246,6 +314,7 @@
 
         .card-ref { font-weight: bold; font-size: 13px; color: #111111 !important; }
         .card-info { font-size: 10px; color: #555555 !important; margin-top: 3px; }
+        .card-comment { font-size: 10px; color: #00796B !important; font-style: italic; margin-top: 4px; background: #e0f2f1; padding: 3px 5px; border-radius: 3px; }
 
         .card-actions {
             display: flex;
@@ -264,40 +333,82 @@
             color: #333333 !important;
         }
 
+        /* MODAL DE EDIÇÃO AVANÇADA */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--prf-blue);
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 16px; }
+        .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
+
         /* KPIS GRID */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
 
         .kpi-card {
-            background: #1e1e1e;
+            background: var(--bg-card);
             padding: 20px;
             border-radius: 8px;
-            border-left: 4px solid #0097A7;
+            border-left: 4px solid var(--prf-blue);
         }
 
-        .kpi-title { font-size: 12px; color: #aaaaaa !important; text-transform: uppercase; }
-        .kpi-value { font-size: 24px; font-weight: bold; color: #ffffff !important; margin-top: 8px; }
+        .kpi-title { font-size: 12px; color: var(--text-secondary) !important; text-transform: uppercase; }
+        .kpi-value { font-size: 24px; font-weight: bold; color: var(--text-main) !important; margin-top: 8px; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
-            <span>🏗️</span> PRF Produção
+            <div class="brand-svg">PRF</div>
+            <span>PRF Gas Solutions</span>
         </div>
         <button class="btn-home" onclick="navesPara('page-home')">🏠 Menu Inicial</button>
     </header>
 
-    <!-- PÁGINA INICIAL / MENU PRINCIPAL -->
+    <!-- PÁGINA INICIAL COM O LOGÓTIPO OFICIAL DA PRF -->
     <div id="page-home" class="page active">
-        <div>
-            <div class="home-title">Sistema de Gestão PRF</div>
-            <div class="home-subtitle">Selecione o módulo de trabalho</div>
+        <div class="prf-logo-container">
+            <div class="prf-logo-box">
+                <!-- Espiral estilizada do logo PRF -->
+                <svg width="65" height="45" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 15 Q 50 -5 90 15 Q 50 35 10 15" stroke="#cccccc" stroke-width="6" fill="none"/>
+                    <path d="M15 25 Q 50 5 85 25 Q 50 45 15 25" stroke="#b0bec5" stroke-width="6" fill="none"/>
+                    <path d="M20 35 Q 50 15 80 35 Q 50 55 20 35" stroke="#90a4ae" stroke-width="6" fill="none"/>
+                </svg>
+                <div class="prf-logo-text">PRF</div>
+            </div>
+            <div class="prf-subtext">Gas Solutions</div>
         </div>
+
+        <div>
+            <div class="home-title">Sistema de Gestão de Produção</div>
+            <div class="home-subtitle">Selecione o módulo pretendido</div>
+        </div>
+
         <div class="menu-grid">
             <div class="menu-card" onclick="navesPara('page-kanban')">
                 <span class="menu-icon">📊</span>
@@ -336,30 +447,25 @@
             <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
             <div class="column"><div class="column-header">Desenho</div><div class="column-content" data-fase="Desenho"></div></div>
             
-            <!-- MATERIAL COM CAMILA -->
             <div class="column">
                 <div class="column-header">Material</div>
                 <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Camila</div><div class="column-content" data-fase="Material" data-operador="Camila"></div></div>
             </div>
 
-            <!-- PRODUÇÃO SUBDIVIDIDA POR OPERADORES -->
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
-                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="worker-lane"><div class="worker-title">Suélen</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suélen"></div></div>
                         <div class="worker-lane"><div class="worker-title">José</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div></div>
                     </div>
-                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="worker-lane"><div class="worker-title">Jenifer</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div></div>
                         <div class="worker-lane"><div class="worker-title">Gouglas</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Gouglas"></div></div>
                         <div class="worker-lane"><div class="worker-title">Neto</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div></div>
                     </div>
-                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="worker-lane"><div class="worker-title">Alexandre</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div></div>
@@ -367,7 +473,6 @@
                         <div class="worker-lane"><div class="worker-title">Diogo</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div></div>
                         <div class="worker-lane"><div class="worker-title">Yaroslav</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div></div>
                     </div>
-                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="worker-lane"><div class="worker-title">Oleh</div><div class="column-content" data-fase="Produção" data-setor="Orbital" data-operador="Oleh"></div></div>
@@ -375,13 +480,11 @@
                 </div>
             </div>
 
-            <!-- QUALIDADE COM ISMAEL -->
             <div class="column">
                 <div class="column-header">Qualidade</div>
                 <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Ismael</div><div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div></div>
             </div>
 
-            <!-- TRATAMENTO COM IGOR -->
             <div class="column">
                 <div class="column-header">Tratamento</div>
                 <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Igor</div><div class="column-content" data-fase="Tratamento" data-operador="Igor"></div></div>
@@ -395,7 +498,7 @@
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form">
-            <input type="text" id="search-query" placeholder="Pesquisar por obra ou trabalhador..." onkeyup="filtrarConsultas()" style="width: 100%;">
+            <input type="text" id="search-query" placeholder="Pesquisar por obra ou trabalhador..." style="width: 100%;">
         </div>
         <div id="consulta-results"></div>
     </div>
@@ -416,9 +519,39 @@
     <!-- PÁGINA 4: RELATÓRIOS DIÁRIOS -->
     <div id="page-relatorios" class="page">
         <h2>📄 Gerar Planeamento Diário</h2>
-        <p style="color: #cccccc !important;">Exportação do plano de trabalhos diário.</p>
+        <p style="color: var(--text-secondary) !important;">Exportação do plano de trabalhos diário.</p>
         <div>
             <button class="btn-action" onclick="alert('Funcionalidade de exportação em desenvolvimento!')">📊 Exportar para Excel / PDF</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDIÇÃO COMPLETO -->
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal">
+            <h3>✏️ Editar Obra</h3>
+            <input type="hidden" id="edit-id">
+            
+            <label>Referência da Obra:</label>
+            <input type="text" id="edit-ref">
+
+            <label>Toneladas:</label>
+            <input type="number" id="edit-ton" step="0.1">
+
+            <label>Urgência / Prioridade:</label>
+            <select id="edit-prio">
+                <option value="Vermelho">🔴 Prioridade Máxima</option>
+                <option value="Laranja">🟠 Prioridade Média</option>
+                <option value="Amarelo">🟡 Prioridade Baixa</option>
+                <option value="Normal">🔵 Normal</option>
+            </select>
+
+            <label>Comentários / Observações:</label>
+            <textarea id="edit-comments" rows="3" placeholder="Escreva observações sobre o progresso..."></textarea>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+                <button class="btn-card" style="padding: 6px 12px !important;" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-action" onclick="salvarEdicao()">Guardar Alterações</button>
+            </div>
         </div>
     </div>
 
@@ -486,11 +619,15 @@
                 el.className = `card prio-${prioClass}`;
                 el.draggable = true;
                 el.id = c.id;
+                
+                const commentHTML = c.comentarios ? `<div class="card-comment">💬 ${c.comentarios}</div>` : '';
+
                 el.innerHTML = `
                     <div class="card-ref">📦 ${c.referencia}</div>
                     <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'Não Atribuído'}</div>
+                    ${commentHTML}
                     <div class="card-actions">
-                        <button class="btn-card" onclick="editarCartao('${c.id}', '${c.referencia}', ${c.toneladas || 0})">✏️ Editar</button>
+                        <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${c.referencia}', ${c.toneladas || 0}, '${c.prioridade || 'Normal'}', '${c.comentarios || ''}')">✏️ Editar</button>
                         <button class="btn-card" style="color:#d32f2f !important;" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
                     </div>
                 `;
@@ -499,13 +636,34 @@
             }
         }
 
-        async function editarCartao(id, refAtual, tonAtual) {
-            const novaRef = prompt("Editar Referência:", refAtual);
-            if (novaRef === null) return;
-            const novasTons = prompt("Editar Toneladas:", tonAtual);
-            if (novasTons === null) return;
+        function abrirModalEdicao(id, ref, ton, prio, comentarios) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-ref').value = ref;
+            document.getElementById('edit-ton').value = ton;
+            document.getElementById('edit-prio').value = prio;
+            document.getElementById('edit-comments').value = comentarios;
+            document.getElementById('edit-modal').classList.add('active');
+        }
 
-            await supabaseClient.from('cartoes_kanban').update({ referencia: novaRef, toneladas: parseFloat(novasTons) || 0 }).eq('id', id);
+        function fecharModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        async function salvarEdicao() {
+            const id = document.getElementById('edit-id').value;
+            const ref = document.getElementById('edit-ref').value.trim();
+            const ton = parseFloat(document.getElementById('edit-ton').value) || 0;
+            const prio = document.getElementById('edit-prio').value;
+            const comments = document.getElementById('edit-comments').value.trim();
+
+            await supabaseClient.from('cartoes_kanban').update({
+                referencia: ref,
+                toneladas: ton,
+                prioridade: prio,
+                comentarios: comments
+            }).eq('id', id);
+
+            fecharModal();
             carregarTudo();
         }
 
