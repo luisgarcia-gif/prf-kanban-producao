@@ -62,9 +62,11 @@
         }
 
         .header-logo-img {
-            height: 36px;
+            height: 38px;
             width: auto;
             border-radius: 4px;
+            background: #ffffff;
+            padding: 2px;
         }
 
         .header-buttons {
@@ -102,15 +104,24 @@
             gap: 15px;
         }
 
-        .home-logo-img {
-            width: 190px;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 151, 167, 0.25);
+        .home-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 10px;
         }
 
-        .home-title { font-size: 24px; color: var(--text-main) !important; margin-top: 5px; font-weight: bold; }
+        .home-logo-img {
+            width: 220px;
+            max-width: 80vw;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 151, 167, 0.3);
+            background: #ffffff;
+            padding: 8px;
+        }
+
+        .home-title { font-size: 24px; color: var(--text-main) !important; margin-top: 10px; font-weight: bold; }
         .home-subtitle { font-size: 14px; color: var(--text-secondary) !important; }
 
         .menu-grid {
@@ -358,7 +369,7 @@
 
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
-            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img" onerror="this.style.display='none'">
+            <img src="https://raw.githubusercontent.com/luisgarcia-gif/prf-kanban-producao/main/prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img">
             <span>PRF Gas Solutions</span>
         </div>
         
@@ -368,10 +379,10 @@
         </div>
     </header>
 
-    <!-- PÁGINA INICIAL COM O LOGÓTIPO OFICIAL PRF -->
+    <!-- PÁGINA INICIAL COM O LOGÓTIPO OFICIAL REAL -->
     <div id="page-home" class="page active">
-        <div>
-            <img src="prf_principal_gassolutions.png" alt="PRF Gas Solutions" class="home-logo-img">
+        <div class="home-logo-container">
+            <img src="https://raw.githubusercontent.com/luisgarcia-gif/prf-kanban-producao/main/prf_principal_gassolutions.png" alt="PRF Gas Solutions" class="home-logo-img">
         </div>
 
         <div>
