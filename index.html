@@ -3,74 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanban PRF - Drag & Drop</title>
-    <!-- Carregar biblioteca via CDN alternativo UNPKG (evita bloqueios) -->
+    <title>Kanban PRF - Drag & Drop Avançado</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e1e;
+            background-color: #121212;
             color: #fff;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             box-sizing: border-box;
         }
-        h1 { margin-bottom: 10px; font-weight: 400; font-size: 24px; }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #1e1e1e;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        h1 { margin: 0; font-weight: 400; font-size: 20px; }
+        
+        .add-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .add-form input, .add-form select, .add-form button {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 13px;
+        }
+        .add-form button {
+            background: #0097A7;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
         
         #status-bar {
-            background-color: #333;
+            background-color: #222;
             color: #ffca28;
-            padding: 8px 12px;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 13px;
-            margin-bottom: 15px;
+            font-size: 12px;
+            margin-bottom: 12px;
             border-left: 4px solid #ffca28;
         }
 
         .board {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             overflow-x: auto;
             flex-grow: 1;
-            padding-bottom: 20px;
+            padding-bottom: 15px;
         }
         
         .column {
-            background-color: #f4f5f7;
+            background-color: #1e1e1e;
             border-radius: 8px;
-            min-width: 240px;
-            width: 240px;
+            min-width: 220px;
+            width: 220px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            min-height: 400px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            border: 1px solid #333;
         }
         
+        .column.production-col {
+            min-width: 480px;
+            width: 480px;
+            background-color: #1a232a;
+            border: 1px solid #0097A7;
+        }
+
         .column-header {
-            padding: 12px 15px;
+            padding: 10px;
             font-weight: bold;
-            font-size: 13px;
-            color: #5e6c84;
-            border-bottom: 2px solid #e1e4e8;
+            font-size: 12px;
+            color: #00bcd4;
+            border-bottom: 2px solid #333;
             text-transform: uppercase;
             text-align: center;
-            background-color: #ebecf0;
+            background-color: #252525;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
         }
+
+        .sub-sectors-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 8px;
+            flex-grow: 1;
+        }
+
+        .sub-sector {
+            background: #141b20;
+            border-radius: 6px;
+            padding: 6px;
+            border: 1px dashed #444;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sub-sector-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffb74d;
+            text-align: center;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #333;
+        }
         
         .column-content {
-            padding: 10px;
+            padding: 8px;
             flex-grow: 1;
             overflow-y: auto;
-            min-height: 350px;
+            min-height: 250px;
         }
         
         .column-content.drag-over {
-            background-color: #e2e4e9;
+            background-color: rgba(0, 151, 167, 0.2);
             border: 2px dashed #0097A7;
             border-radius: 5px;
         }
@@ -78,34 +142,94 @@
         .card {
             background-color: #fff;
             border-radius: 5px;
-            padding: 12px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            padding: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             cursor: grab;
-            border-left: 5px solid #0097A7;
             user-select: none;
-            color: #333;
+            color: #222;
+            position: relative;
         }
         
-        .card:active {
-            cursor: grabbing;
-            opacity: 0.6;
+        .card:active { cursor: grabbing; opacity: 0.6; }
+
+        .card.prio-vermelho { border-left: 8px solid #d32f2f; background: #fff5f5; }
+        .card.prio-laranja { border-left: 8px solid #f57c00; background: #fff8f0; }
+        .card.prio-amarelo { border-left: 8px solid #fbc02d; background: #fffde7; }
+        .card.prio-normal  { border-left: 8px solid #0097A7; background: #ffffff; }
+
+        .card-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
         }
         
-        .card-ref { font-weight: bold; font-size: 14px; color: #172b4d; margin-bottom: 4px; }
-        .card-worker { font-size: 12px; color: #5e6c84; }
+        .card-ref { font-weight: bold; font-size: 13px; color: #111; }
+        .card-tag { font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: bold; color: #fff; }
+        
+        .tag-vermelho { background: #d32f2f; }
+        .tag-laranja { background: #f57c00; }
+        .tag-amarelo { background: #fbc02d; color: #000; }
+        .tag-normal  { background: #0097A7; }
+
+        .card-details { font-size: 11px; color: #555; margin-top: 4px; }
+        .card-worker-select {
+            width: 100%;
+            margin-top: 6px;
+            font-size: 11px;
+            padding: 3px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
 
-    <h1>📊 Quadro Kanban Produção (PRF)</h1>
+    <div class="header-container">
+        <h1>📊 Quadro Kanban Produção (PRF)</h1>
+        
+        <div class="add-form">
+            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)">
+            <select id="new-prio">
+                <option value="Vermelho">🔴 Prioridade Máxima</option>
+                <option value="Laranja">🟠 Prioridade Média</option>
+                <option value="Amarelo" selected>🟡 Prioridade Baixa</option>
+                <option value="Normal">🔵 Normal</option>
+            </select>
+            <button onclick="adicionarObra()">+ Adicionar</button>
+        </div>
+    </div>
+    
     <div id="status-bar">🔄 A carregar ligação à Base de Dados...</div>
     
     <div class="board" id="kanban-board">
         <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
         <div class="column"><div class="column-header">Desenho</div><div class="column-content" data-fase="Desenho"></div></div>
         <div class="column"><div class="column-header">Material</div><div class="column-content" data-fase="Material"></div></div>
-        <div class="column"><div class="column-header">Produção</div><div class="column-content" data-fase="Produção"></div></div>
+        
+        <div class="column production-col">
+            <div class="column-header">⚙️ PRODUÇÃO (SETORES)</div>
+            <div class="sub-sectors-container">
+                <div class="sub-sector">
+                    <div class="sub-sector-title">👨‍🏭 1. TUBISTAS</div>
+                    <div class="column-content" data-fase="Produção" data-setor="Tubistas"></div>
+                </div>
+                <div class="sub-sector">
+                    <div class="sub-sector-title">🛠️ 2. SERRALHEIROS</div>
+                    <div class="column-content" data-fase="Produção" data-setor="Serralheiros"></div>
+                </div>
+                <div class="sub-sector">
+                    <div class="sub-sector-title">🔥 3. SOLDADORES</div>
+                    <div class="column-content" data-fase="Produção" data-setor="Soldadores"></div>
+                </div>
+                <div class="sub-sector">
+                    <div class="sub-sector-title">🤖 4. MÁQUINA ORBITAL</div>
+                    <div class="column-content" data-fase="Produção" data-setor="Orbital"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="column"><div class="column-header">Qualidade</div><div class="column-content" data-fase="Qualidade"></div></div>
         <div class="column"><div class="column-header">Tratamento</div><div class="column-content" data-fase="Tratamento"></div></div>
         <div class="column"><div class="column-header">Concluído</div><div class="column-content" data-fase="Concluído"></div></div>
@@ -113,23 +237,16 @@
 
     <script>
         const statusBar = document.getElementById('status-bar');
-        
-        // 1. Inserir Cartão de Teste Manual (Garante que ves o Drag&Drop a funcionar imediatamente!)
-        const zonaProjeto = document.querySelector('.column-content[data-fase="Projeto"]');
-        const cartaoTeste = document.createElement('div');
-        cartaoTeste.className = 'card';
-        cartaoTeste.draggable = true;
-        cartaoTeste.id = 'cartao-teste-local';
-        cartaoTeste.innerHTML = `
-            <div class="card-ref">📦 TESTE LOCAL</div>
-            <div class="card-worker">👷 Arraste este cartão!</div>
-        `;
-        cartaoTeste.addEventListener('dragstart', e => {
-            e.dataTransfer.setData('text/plain', 'cartao-teste-local');
-        });
-        zonaProjeto.appendChild(cartaoTeste);
+        const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
 
-        // 2. Configurar Drag & Drop em todas as colunas
+        const trabalhadores = {
+            "Tubistas": ["Suellen", "José", "Geral Tubistas"],
+            "Serralheiros": ["Junior", "Geral Serralharia"],
+            "Soldadores": ["Alexandre", "Jorge", "Geral Solda"],
+            "Orbital": ["Operador Orbital"]
+        };
+
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => {
                 e.preventDefault();
@@ -146,60 +263,106 @@
                 
                 const cardId = e.dataTransfer.getData('text/plain');
                 const novaFase = zone.getAttribute('data-fase');
+                const novoSetor = zone.getAttribute('data-setor') || 'Geral';
                 const cartao = document.getElementById(cardId);
                 
                 if (cartao && novaFase) {
                     zone.appendChild(cartao);
-                    if (window.supabaseClient && cardId !== 'cartao-teste-local') {
-                        await window.supabaseClient.from('cartoes_kanban').update({ fase: novaFase }).eq('id', cardId);
+                    if (window.supabaseClient) {
+                        await window.supabaseClient.from('cartoes_kanban')
+                            .update({ fase: novaFase, setor: novoSetor })
+                            .eq('id', cardId);
                     }
                 }
             });
         });
 
-        // 3. Tentar Ligar ao Supabase
-        const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
+        async function adicionarObra() {
+            const refInput = document.getElementById('new-ref');
+            const prioSelect = document.getElementById('new-prio');
+            const ref = refInput.value.trim();
+            const prio = prioSelect.value;
+
+            if (!ref) { alert('Insira uma referência!'); return; }
+
+            if (window.supabaseClient) {
+                const { data, error } = await window.supabaseClient.from('cartoes_kanban')
+                    .insert([{ referencia: ref, prioridade: prio, fase: 'Projeto', setor: 'Geral' }])
+                    .select();
+                
+                if (!error && data.length > 0) {
+                    renderCartao(data[0]);
+                    refInput.value = '';
+                }
+            }
+        }
+
+        function renderCartao(cartao) {
+            const prioClass = (cartao.prioridade || 'Normal').toLowerCase();
+            let targetZone;
+
+            if (cartao.fase === 'Produção' && cartao.setor) {
+                targetZone = document.querySelector(`.column-content[data-fase="Produção"][data-setor="${cartao.setor}"]`);
+            }
+            if (!targetZone) {
+                targetZone = document.querySelector(`.column-content[data-fase="${cartao.fase}"]`);
+            }
+
+            if (targetZone) {
+                const el = document.createElement('div');
+                el.className = `card prio-${prioClass}`;
+                el.draggable = true;
+                el.id = cartao.id;
+                
+                let selectHTML = '';
+                if (cartao.fase === 'Produção' && trabalhadores[cartao.setor]) {
+                    selectHTML = `<select class="card-worker-select" onchange="alterarOperador('${cartao.id}', this.value)">
+                        <option value="">-- Atribuir Operador --</option>
+                        ${trabalhadores[cartao.setor].map(w => `<option value="${w}" ${cartao.trabalhador === w ? 'selected' : ''}>${w}</option>`).join('')}
+                    </select>`;
+                }
+
+                el.innerHTML = `
+                    <div class="card-header-bar">
+                        <span class="card-ref">📦 ${cartao.referencia}</span>
+                        <span class="card-tag tag-${prioClass}">${cartao.prioridade || 'Normal'}</span>
+                    </div>
+                    <div class="card-details">👷 ${cartao.trabalhador || 'Não Atribuído'}</div>
+                    ${selectHTML}
+                `;
+                
+                el.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('text/plain', cartao.id);
+                });
+                
+                targetZone.appendChild(el);
+            }
+        }
+
+        async function alterarOperador(cardId, nome) {
+            if (window.supabaseClient) {
+                await window.supabaseClient.from('cartoes_kanban')
+                    .update({ trabalhador: nome })
+                    .eq('id', cardId);
+            }
+        }
 
         async function conectarESincronizar() {
             try {
-                if (typeof supabase === 'undefined') {
-                    statusBar.style.color = '#ff5252';
-                    statusBar.innerHTML = '⚠️ A rede bloqueou a biblioteca do Supabase (CDN). O Drag & Drop local funciona abaixo.';
-                    return;
-                }
-                
                 window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
                 const { data: cartoes, error } = await window.supabaseClient.from('cartoes_kanban').select('*');
                 
                 if (error) {
                     statusBar.style.color = '#ff5252';
-                    statusBar.innerHTML = '⚠️ Erro de leitura no Supabase: ' + error.message;
+                    statusBar.innerHTML = '⚠️ Erro Supabase: ' + error.message;
                     return;
                 }
 
                 statusBar.style.color = '#69f0ae';
-                statusBar.innerHTML = '✅ Base de dados ligada com sucesso! Dados sincronizados.';
-
-                cartoes.forEach(cartao => {
-                    const zone = document.querySelector(`.column-content[data-fase="${cartao.fase}"]`);
-                    if (zone) {
-                        const el = document.createElement('div');
-                        el.className = 'card';
-                        el.draggable = true;
-                        el.id = cartao.id;
-                        el.innerHTML = `
-                            <div class="card-ref">📦 ${cartao.referencia}</div>
-                            <div class="card-worker">👷 ${cartao.trabalhador || 'Não Atribuído'}</div>
-                        `;
-                        
-                        el.addEventListener('dragstart', e => {
-                            e.dataTransfer.setData('text/plain', cartao.id);
-                        });
-                        
-                        zone.appendChild(el);
-                    }
-                });
+                statusBar.innerHTML = '✅ Base de dados ligada com sucesso! Quadro atualizado.';
+                
+                document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
+                cartoes.forEach(cartao => renderCartao(cartao));
             } catch (err) {
                 statusBar.style.color = '#ff5252';
                 statusBar.innerHTML = '⚠️ Erro ao inicializar: ' + err.message;
