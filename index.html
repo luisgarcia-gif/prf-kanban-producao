@@ -163,6 +163,18 @@
             color: #ffffff !important;
         }
 
+        .bulk-actions-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            padding: 10px;
+            background: #171f24;
+            border-radius: 6px;
+            border: 1px dashed #334155;
+            align-items: center;
+        }
+
         .add-form {
             display: flex;
             gap: 10px;
@@ -449,10 +461,23 @@
         
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                <p style="font-size: 11px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">* O quadro encontra-se <b>oculto por padrão</b>. Pesquise pela obra (ex: HY25003) para listar todas as peças do conjunto.</p>
+                <p style="font-size: 11px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
+                    * <b>Pesquise</b> para filtrar os ficheiros carregados. <br>
+                    * Os cartões que estiverem em andamento noutras colunas <b>nunca desaparecem</b> da pesquisa.
+                </p>
                 <span id="db-counter" style="font-size: 12px; color: #69f0ae; font-weight: bold;">🟢 A ligar à BD...</span>
             </div>
-            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça ou Trabalhador..." onkeyup="renderizarKanbanComFiltro()">
+            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra (ex: HY25003) para listar componentes em Projeto..." onkeyup="renderizarKanbanComFiltro()">
+        </div>
+
+        <!-- BARRA DE GESTÃO E LIMPEZA EM LOTE -->
+        <div class="bulk-actions-bar">
+            <span style="font-size: 12px; color: #aaa; font-weight: bold;">⚙️ Operações:</span>
+            <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
+            <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos</button>
+            
+            <!-- Botão de Apagar Tudo com margem para a direita -->
+            <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
         <div class="add-form">
@@ -606,7 +631,7 @@
             <p id="custom-confirm-msg" style="font-size: 14px; margin-bottom: 20px; color: var(--text-main);"></p>
             <div style="display: flex; gap: 10px; justify-content: center;">
                 <button class="btn-card" style="padding: 8px 15px !important; background: #555 !important; color: white !important; border-radius: 4px !important;" onclick="fecharConfirmacao()">Cancelar</button>
-                <button class="btn-action" style="background-color: #d32f2f !important;" id="btn-confirm-yes">Sim, Apagar</button>
+                <button class="btn-action" style="background-color: #d32f2f !important;" id="btn-confirm-yes">Confirmar</button>
             </div>
         </div>
     </div>
@@ -657,7 +682,54 @@
             if (pageId === 'page-kpis') calcularKPIs();
         }
 
-        // NOVO IMPORTADOR INTELIGENTE DE CONJUNTOS DA PRF
+        /* -----------------------------------------------------
+           BOTÕES DE LIMPEZA E GESTÃO EM LOTE
+           ----------------------------------------------------- */
+
+        function limparProjetos() {
+            mostrarConfirmacao("Deseja LIMPAR TODOS OS FICHEIROS que estão na fase inicial de 'Projeto'?\n\n(Obras já em andamento/produção não serão afetadas)", async function() {
+                const { error } = await supabaseClient.from('cartoes_kanban').delete().eq('fase', 'Projeto');
+                if (!error) {
+                    mostrarAlerta("Os ficheiros na coluna de Projeto foram limpos com sucesso.");
+                    carregarTudo();
+                } else {
+                    mostrarAlerta("Erro ao limpar projetos: " + error.message);
+                }
+            });
+        }
+
+        function limparConcluidos() {
+            mostrarConfirmacao("Deseja REMOVER do quadro todas as obras que já estão na fase 'Concluído'?", async function() {
+                const { error } = await supabaseClient.from('cartoes_kanban').delete().eq('fase', 'Concluído');
+                if (!error) {
+                    mostrarAlerta("Obras concluídas arquivadas com sucesso.");
+                    carregarTudo();
+                } else {
+                    mostrarAlerta("Erro ao limpar concluídos: " + error.message);
+                }
+            });
+        }
+
+        function apagarTudoBD() {
+            mostrarConfirmacao("🚨 ATENÇÃO: Tem a certeza que deseja APAGAR TUDO?\nEsta ação irá eliminar todos os cartões em todas as fases e não pode ser desfeita.", function() {
+                // Segunda confirmação de segurança!
+                setTimeout(() => {
+                    mostrarConfirmacao("ÚLTIMO AVISO: Confirma que quer ELIMINAR A BASE DE DADOS COMPLETA?", async function() {
+                        // Faz bypass usando neq id inválido para apagar a tabela completa
+                        const { error } = await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
+                        if (!error) {
+                            mostrarAlerta("A base de dados foi completamente apagada.");
+                            carregarTudo();
+                        } else {
+                            mostrarAlerta("Erro fatal: " + error.message);
+                        }
+                    });
+                }, 300);
+            });
+        }
+
+
+        // IMPORTADOR INTELIGENTE (Não substitui as peças que já estão em produção)
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -677,28 +749,32 @@
                         return;
                     }
 
+                    // Cria um Set com as chaves das obras que JÁ EXISTEM na BD (em qualquer fase)
+                    const chavesExistentesBD = new Set(todasAsObras.map(o => (o.obra_ref || '') + (o.referencia || '')));
+
                     const obrasParaInserir = [];
-                    const referenciasProcessadas = new Set(); 
+                    const referenciasProcessadasNesteExcel = new Set(); 
 
                     for (let i = 0; i < rows.length; i++) {
                         const row = rows[i];
                         if (!row || row.length === 0) continue;
 
                         const linhaTexto = row.join(' | ');
-
-                        // O código vai à procura do padrão oficial da PRF ex: HY25003...
                         const matchObra = linhaTexto.match(/(HY\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
 
                         if (matchObra) {
-                            const codObra = matchObra[1].toUpperCase(); // HY25003
-                            const designacaoPeca = matchObra[2].replace(/^-/, '').trim() || 'Conjunto Principal'; // O resto do nome do ficheiro
+                            const codObra = matchObra[1].toUpperCase(); 
+                            const designacaoPeca = matchObra[2].replace(/^-/, '').trim() || 'Conjunto Principal'; 
 
-                            // Evita importar a exata mesma peça duas vezes
                             const idUnico = codObra + designacaoPeca;
-                            if (referenciasProcessadas.has(idUnico)) continue;
-                            referenciasProcessadas.add(idUnico);
 
-                            // Procura os operadores pelo nome na linha para lhes atribuir a peça
+                            // REGRA 4: Se o componente já existir na BD (mesmo noutra fase) -> IGNORA A IMPORTAÇÃO DESTE CARTÃO
+                            if (chavesExistentesBD.has(idUnico)) continue;
+                            
+                            // Se estiver duplicado duas vezes no mesmo ficheiro excel
+                            if (referenciasProcessadasNesteExcel.has(idUnico)) continue;
+                            referenciasProcessadasNesteExcel.add(idUnico);
+
                             let trabalhadorAtribuido = 'Não Atribuído';
                             const linhaMin = linhaTexto.toLowerCase();
                             const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor'];
@@ -712,8 +788,8 @@
                             }
 
                             obrasParaInserir.push({
-                                obra_ref: codObra, // Guarda a HY25003 em gaveta separada (Nova coluna BD)
-                                referencia: designacaoPeca, // Guarda W-01 - Chapa Telheiro na referência
+                                obra_ref: codObra, 
+                                referencia: designacaoPeca, 
                                 toneladas: 0,
                                 prioridade: 'Normal',
                                 fase: 'Projeto',
@@ -725,11 +801,10 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não foram encontrados códigos de obra válidos (padrão HYXXXXX) no ficheiro.");
+                        mostrarAlerta("Não há peças novas para importar! O ficheiro está em branco, sem códigos (HY) ou todos os componentes já se encontram no quadro.");
                         return;
                     }
 
-                    // Envia para a base de dados
                     const limite = 500;
                     let inseridosTotal = 0;
 
@@ -743,7 +818,7 @@
                         inseridosTotal += lote.length;
                     }
 
-                    mostrarAlerta(`Sucesso! Foram extraídos e criados ${inseridosTotal} componentes.`);
+                    mostrarAlerta(`Sucesso! Foram extraídos e adicionados ${inseridosTotal} NOVOS componentes ao sistema.`);
                     carregarTudo();
                     
                 } catch (err) {
@@ -753,20 +828,36 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // RENDERIZAR KANBAN COM CARTÕES E HIERARQUIA VISUAL
+        // REDERIZAR KANBAN COM VISIBILIDADE INTELIGENTE DAS COLUNAS EM ANDAMENTO
         function renderizarKanbanComFiltro() {
             const query = document.getElementById('kanban-search-input').value.trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
-            if (!query) return;
+            todasAsObras.forEach(o => {
+                let mostrarCartao = false;
 
-            const obrasFiltradas = todasAsObras.filter(o => 
-                (o.obra_ref && o.obra_ref.toLowerCase().includes(query)) ||
-                (o.referencia && o.referencia.toLowerCase().includes(query)) ||
-                (o.trabalhador && o.trabalhador.toLowerCase().includes(query))
-            );
+                // Regra de Ouro 1: Se o cartão JÁ SAIU do "Projeto", é visível SEMPRE. 
+                if (o.fase !== 'Projeto') {
+                    mostrarCartao = true;
+                } 
+                // Regra de Ouro 2: Na coluna de "Projeto", obedece à pesquisa. Mostra TUDO por default.
+                else {
+                    if (!query) {
+                        mostrarCartao = true; // Se a barra estiver vazia, mostramos tudo
+                    } else {
+                        // Filtra mediante a pesquisa
+                        if ((o.obra_ref && o.obra_ref.toLowerCase().includes(query)) ||
+                            (o.referencia && o.referencia.toLowerCase().includes(query)) ||
+                            (o.trabalhador && o.trabalhador.toLowerCase().includes(query))) {
+                            mostrarCartao = true;
+                        }
+                    }
+                }
 
-            obrasFiltradas.forEach(c => renderCartao(c));
+                if (mostrarCartao) {
+                    renderCartao(o);
+                }
+            });
         }
 
         function filtrarConsultas() {
@@ -817,6 +908,7 @@
                 if (cartao && novaFase) {
                     zone.appendChild(cartao);
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
+                    carregarTudo(); // Re-sincroniza a BD para garantir visualizações consistentes
                 }
             });
         });
@@ -914,6 +1006,7 @@
                 await supabaseClient.from('cartoes_kanban').delete().eq('id', id);
                 const el = document.getElementById(id);
                 if (el) el.remove();
+                carregarTudo();
             });
         }
 
