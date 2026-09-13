@@ -321,7 +321,6 @@
         .card.prio-amarelo { border-left: 6px solid #fbc02d; background: #fffde7 !important; }
         .card.prio-normal  { border-left: 6px solid #0097A7; background: #ffffff !important; }
 
-        /* Estilos de identificação da Obra vs Peça */
         .obra-badge {
             display: inline-block;
             background: var(--prf-blue);
@@ -415,7 +414,7 @@
 
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
-            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img">
+            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img" onerror="this.style.display='none'">
             <span>PRF Gas Solutions</span>
         </div>
         
@@ -462,12 +461,12 @@
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 11px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
-                    * <b>Pesquise</b> para filtrar os ficheiros carregados. <br>
-                    * Os cartões que estiverem em andamento noutras colunas <b>nunca desaparecem</b> da pesquisa.
+                    * <b>Todos os componentes carregados estão 100% visíveis.</b><br>
+                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas nunca desaparecem.
                 </p>
                 <span id="db-counter" style="font-size: 12px; color: #69f0ae; font-weight: bold;">🟢 A ligar à BD...</span>
             </div>
-            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra (ex: HY25003) para listar componentes em Projeto..." onkeyup="renderizarKanbanComFiltro()">
+            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça ou Trabalhador..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
         <!-- BARRA DE GESTÃO E LIMPEZA EM LOTE -->
@@ -476,7 +475,6 @@
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
             <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos</button>
             
-            <!-- Botão de Apagar Tudo com margem para a direita -->
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
@@ -715,7 +713,7 @@
                 // Segunda confirmação de segurança!
                 setTimeout(() => {
                     mostrarConfirmacao("ÚLTIMO AVISO: Confirma que quer ELIMINAR A BASE DE DADOS COMPLETA?", async function() {
-                        // Faz bypass usando neq id inválido para apagar a tabela completa
+                        // Faz bypass usando neq id inválido para apagar a tabela completa sem limite
                         const { error } = await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
                         if (!error) {
                             mostrarAlerta("A base de dados foi completamente apagada.");
@@ -749,7 +747,6 @@
                         return;
                     }
 
-                    // Cria um Set com as chaves das obras que JÁ EXISTEM na BD (em qualquer fase)
                     const chavesExistentesBD = new Set(todasAsObras.map(o => (o.obra_ref || '') + (o.referencia || '')));
 
                     const obrasParaInserir = [];
@@ -768,10 +765,7 @@
 
                             const idUnico = codObra + designacaoPeca;
 
-                            // REGRA 4: Se o componente já existir na BD (mesmo noutra fase) -> IGNORA A IMPORTAÇÃO DESTE CARTÃO
                             if (chavesExistentesBD.has(idUnico)) continue;
-                            
-                            // Se estiver duplicado duas vezes no mesmo ficheiro excel
                             if (referenciasProcessadasNesteExcel.has(idUnico)) continue;
                             referenciasProcessadasNesteExcel.add(idUnico);
 
@@ -801,7 +795,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não há peças novas para importar! O ficheiro está em branco, sem códigos (HY) ou todos os componentes já se encontram no quadro.");
+                        mostrarAlerta("Não há peças novas para importar! O ficheiro está em branco ou todas as obras já se encontram no quadro.");
                         return;
                     }
 
@@ -818,7 +812,7 @@
                         inseridosTotal += lote.length;
                     }
 
-                    mostrarAlerta(`Sucesso! Foram extraídos e adicionados ${inseridosTotal} NOVOS componentes ao sistema.`);
+                    mostrarAlerta(`Sucesso! Foram adicionados ${inseridosTotal} NOVOS componentes ao sistema.`);
                     carregarTudo();
                     
                 } catch (err) {
@@ -828,7 +822,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // REDERIZAR KANBAN COM VISIBILIDADE INTELIGENTE DAS COLUNAS EM ANDAMENTO
+        // REDERIZAR KANBAN (TUDO VISÍVEL E EM ANDAMENTO INTACTO)
         function renderizarKanbanComFiltro() {
             const query = document.getElementById('kanban-search-input').value.trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
@@ -836,16 +830,16 @@
             todasAsObras.forEach(o => {
                 let mostrarCartao = false;
 
-                // Regra de Ouro 1: Se o cartão JÁ SAIU do "Projeto", é visível SEMPRE. 
+                // REGRA 1: Obras noutras colunas (em andamento) nunca desaparecem da vista
                 if (o.fase !== 'Projeto') {
                     mostrarCartao = true;
                 } 
-                // Regra de Ouro 2: Na coluna de "Projeto", obedece à pesquisa. Mostra TUDO por default.
+                // REGRA 2: Na coluna de "Projeto", mostra TUDO por default.
                 else {
                     if (!query) {
-                        mostrarCartao = true; // Se a barra estiver vazia, mostramos tudo
+                        mostrarCartao = true; 
                     } else {
-                        // Filtra mediante a pesquisa
+                        // Se houver pesquisa, a coluna Projeto esconde o que não corresponde
                         if ((o.obra_ref && o.obra_ref.toLowerCase().includes(query)) ||
                             (o.referencia && o.referencia.toLowerCase().includes(query)) ||
                             (o.trabalhador && o.trabalhador.toLowerCase().includes(query))) {
@@ -908,7 +902,7 @@
                 if (cartao && novaFase) {
                     zone.appendChild(cartao);
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
-                    carregarTudo(); // Re-sincroniza a BD para garantir visualizações consistentes
+                    carregarTudo(); // Re-sincroniza
                 }
             });
         });
@@ -1017,13 +1011,40 @@
             document.getElementById('kpi-tons-ano').innerText = totalTons.toFixed(1) + " Ton";
         }
 
+        // SISTEMA DE PAGINAÇÃO AUTOMÁTICA PARA QUEBRAR O LIMITE DE 1000 OBRAS
         async function carregarTudo() {
-            const { data } = await supabaseClient.from('cartoes_kanban').select('*');
-            if (data) {
-                todasAsObras = data;
-                document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
-                renderizarKanbanComFiltro();
+            document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
+            let allData = [];
+            let from = 0;
+            let step = 999;
+            let keepFetching = true;
+
+            while (keepFetching) {
+                const { data, error } = await supabaseClient
+                    .from('cartoes_kanban')
+                    .select('*')
+                    .range(from, from + step);
+                
+                if (error) {
+                    mostrarAlerta('Erro ao carregar dados da base de dados.');
+                    break;
+                }
+                
+                if (data && data.length > 0) {
+                    allData = allData.concat(data);
+                    from += step + 1;
+                    // Se recebemos menos resultados do que o limite da pesquisa, não há mais para carregar
+                    if (data.length <= step) {
+                        keepFetching = false;
+                    }
+                } else {
+                    keepFetching = false;
+                }
             }
+            
+            todasAsObras = allData;
+            document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
+            renderizarKanbanComFiltro();
         }
 
         window.onload = carregarTudo;
