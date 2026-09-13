@@ -98,7 +98,7 @@
         .page { display: none; padding: 20px; flex-grow: 1; }
         .page.active { display: flex; flex-direction: column; }
 
-        /* MENU INICIAL COM LOGO REAL */
+        /* MENU INICIAL */
         #page-home {
             align-items: center;
             justify-content: center;
@@ -155,7 +155,7 @@
         .menu-icon { font-size: 30px; }
         .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
-        /* FORMULÁRIOS E BOTÕES */
+        /* FORMULÁRIOS E BARRA DE PESQUISA DO KANBAN */
         .add-form {
             display: flex;
             gap: 10px;
@@ -165,6 +165,7 @@
             padding: 12px 15px;
             border-radius: 6px;
             border: 1px solid var(--border-color);
+            flex-wrap: wrap;
         }
 
         .add-form input, .add-form select, .modal input, .modal select, .modal textarea {
@@ -174,6 +175,13 @@
             background: var(--bg-subcard) !important;
             color: var(--text-main) !important;
             font-size: 13px;
+        }
+
+        .search-kanban-input {
+            flex-grow: 1;
+            min-width: 280px;
+            border: 2px solid var(--prf-blue) !important;
+            background: #111a21 !important;
         }
 
         .btn-action {
@@ -322,13 +330,13 @@
             color: #333333 !important;
         }
 
-        /* MODAIS / AVISOS CUSTOMIZADOS (OCULTA O DOMÍNIO/NOME) */
+        /* MODAIS / AVISOS CUSTOMIZADOS */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            z-index: 9999; /* Z-index elevado para ficar acima de tudo */
+            z-index: 9999;
             justify-content: center;
             align-items: center;
         }
@@ -383,7 +391,6 @@
 
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
-            <!-- A imagem é carregada diretamente da raiz do teu repositório -->
             <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img">
             <span>PRF Gas Solutions</span>
         </div>
@@ -397,7 +404,6 @@
     <!-- PÁGINA INICIAL -->
     <div id="page-home" class="page active">
         <div class="home-logo-container">
-            <!-- A imagem é carregada diretamente da raiz do teu repositório -->
             <img src="prf_principal_gassolutions.png" alt="PRF Gas Solutions" class="home-logo-img">
         </div>
 
@@ -426,20 +432,23 @@
         </div>
     </div>
 
-    <!-- PÁGINA 1: QUADRO KANBAN -->
+    <!-- PÁGINA 1: QUADRO KANBAN COM PESQUISA ATIVA -->
     <div id="page-kanban" class="page">
         <div class="add-form">
-            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)">
-            <input type="number" id="new-ton" placeholder="Toneladas (ex: 1.5)" step="0.1" style="width: 120px;">
+            <!-- BARRA DE PESQUISA DO KANBAN: SÓ EXIBE OBRAS PESQUISADAS -->
+            <input type="text" id="kanban-search-input" class="search-kanban-input" placeholder="🔎 Pesquisar obra ou operador para exibir no Kanban..." onkeyup="renderizarKanbanComFiltro()">
+            
+            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)" style="width: 150px;">
+            <input type="number" id="new-ton" placeholder="Tons" step="0.1" style="width: 80px;">
             <select id="new-prio">
-                <option value="Vermelho">🔴 Prioridade Máxima</option>
-                <option value="Laranja">🟠 Prioridade Média</option>
-                <option value="Amarelo" selected>🟡 Prioridade Baixa</option>
+                <option value="Vermelho">🔴 Máxima</option>
+                <option value="Laranja">🟠 Média</option>
+                <option value="Amarelo" selected>🟡 Baixa</option>
                 <option value="Normal">🔵 Normal</option>
             </select>
             <button class="btn-action" onclick="adicionarObra()">+ Nova Obra</button>
             
-            <label class="btn-action" style="cursor:pointer; background-color: #374151 !important; margin-left: auto;">
+            <label class="btn-action" style="cursor:pointer; background-color: #374151 !important;">
                 📂 Importar Excel
                 <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcel(event)" style="display:none;">
             </label>
@@ -561,7 +570,7 @@
         </div>
     </div>
 
-    <!-- CAIXAS DE ALERTA E CONFIRMAÇÃO (Substituem os alertas irritantes do browser) -->
+    <!-- CAIXAS DE ALERTA E CONFIRMAÇÃO -->
     <div id="custom-alert" class="modal-overlay">
         <div class="modal" style="width: 320px; text-align: center; align-items: center;">
             <h3 style="margin-bottom: 10px;">Sistema PRF</h3>
@@ -588,7 +597,6 @@
 
         let todasAsObras = [];
 
-        // FUNÇÕES PARA ALERTAS CUSTOMIZADOS (Ocultam o teu URL)
         function mostrarAlerta(mensagem) {
             document.getElementById('custom-alert-msg').innerText = mensagem;
             document.getElementById('custom-alert').classList.add('active');
@@ -613,7 +621,6 @@
             document.getElementById('custom-confirm').classList.remove('active');
         }
 
-        // LIMPEZA DA CACHE
         function limparCacheERefresh() {
             if ('caches' in window) {
                 caches.keys().then(names => {
@@ -629,6 +636,7 @@
             if (pageId === 'page-kpis') calcularKPIs();
         }
 
+        // IMPORTADOR EXCEL INTELIGENTE (Detecta vários nomes de colunas)
         async function importarExcel(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -646,22 +654,37 @@
                         return;
                     }
 
-                    const obrasParaInserir = rows.map(r => ({
-                        referencia: String(r.referencia || r.Referencia || r.REFERENCIA || 'SEM_REF').trim(),
-                        toneladas: parseFloat(r.toneladas || r.Toneladas || 0) || 0,
-                        prioridade: String(r.prioridade || r.Prioridade || 'Normal').trim(),
-                        fase: String(r.fase || r.Fase || 'Projeto').trim(),
-                        setor: String(r.setor || r.Setor || 'Geral').trim(),
-                        trabalhador: String(r.trabalhador || r.Trabalhador || 'Não Atribuído').trim(),
-                        comentarios: String(r.comentarios || r.Comentarios || '').trim()
-                    }));
+                    const obrasParaInserir = rows.map(r => {
+                        // Deteção inteligente de colunas
+                        const ref = r.referencia || r.Referencia || r.REFERENCIA || 
+                                    r.obra || r.Obra || r.OBRA || 
+                                    r.codigo || r.Codigo || r.CÓDIGO || 
+                                    r.ref || r.Ref || r.REF || r.PO;
+
+                        const ton = r.toneladas || r.Toneladas || r.TONELADAS || r.tons || r.Tons;
+                        const prio = r.prioridade || r.Prioridade || r.PRIORIDADE || r.urgencia || r.Urgencia;
+                        const fase = r.fase || r.Fase || r.FASE || r.estado || r.Estado;
+                        const setor = r.setor || r.Setor || r.SETOR;
+                        const trab = r.trabalhador || r.Trabalhador || r.TRABALHADOR || r.operador || r.Operador;
+                        const comm = r.comentarios || r.Comentarios || r.COMENTARIOS || r.obs || r.Observacoes;
+
+                        return {
+                            referencia: String(ref || 'SEM_REF').trim(),
+                            toneladas: parseFloat(ton) || 0,
+                            prioridade: String(prio || 'Normal').trim(),
+                            fase: String(fase || 'Projeto').trim(),
+                            setor: String(setor || 'Geral').trim(),
+                            trabalhador: String(trab || 'Não Atribuído').trim(),
+                            comentarios: String(comm || '').trim()
+                        };
+                    });
 
                     const { data: inserted, error } = await supabaseClient.from('cartoes_kanban').insert(obrasParaInserir).select();
 
                     if (error) {
                         mostrarAlerta('Erro ao importar para a base de dados: ' + error.message);
                     } else {
-                        mostrarAlerta(`Sucesso! ${obrasParaInserir.length} obras importadas do Excel.`);
+                        mostrarAlerta(`Sucesso! ${obrasParaInserir.length} obras importadas para a base de dados.`);
                         carregarTudo();
                     }
                 } catch (err) {
@@ -669,6 +692,25 @@
                 }
             };
             reader.readAsArrayBuffer(file);
+        }
+
+        // REDERIZAR KANBAN APENAS CONFORME A PESQUISA (Não inunda a tela)
+        function renderizarKanbanComFiltro() {
+            const query = document.getElementById('kanban-search-input').value.trim().toLowerCase();
+            document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
+
+            if (!query) {
+                // Se a pesquisa estiver vazia, não mostra nenhum cartão no Kanban para manter o ecrã limpo
+                return;
+            }
+
+            const obrasFiltradas = todasAsObras.filter(o => 
+                (o.referencia && o.referencia.toLowerCase().includes(query)) ||
+                (o.trabalhador && o.trabalhador.toLowerCase().includes(query)) ||
+                (o.comentarios && o.comentarios.toLowerCase().includes(query))
+            );
+
+            obrasFiltradas.forEach(c => renderCartao(c));
         }
 
         function filtrarConsultas() {
@@ -734,7 +776,9 @@
 
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
-                renderCartao(data[0]);
+                // Coloca a obra criada no campo de pesquisa para ela aparecer imediatamente no Kanban
+                document.getElementById('kanban-search-input').value = ref;
+                carregarTudo();
                 document.getElementById('new-ref').value = '';
                 document.getElementById('new-ton').value = '';
             }
@@ -823,8 +867,7 @@
             const { data } = await supabaseClient.from('cartoes_kanban').select('*');
             if (data) {
                 todasAsObras = data;
-                document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
-                data.forEach(c => renderCartao(c));
+                renderizarKanbanComFiltro();
             }
         }
 
