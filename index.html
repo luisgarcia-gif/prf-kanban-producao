@@ -3,137 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema PRF - Gestão de Produção</title>
+    <title>PRF - Gestão de Produção</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #fff; margin: 0; padding: 0; }
-        
-        /* BANNER & NAVEGAÇÃO PRINCIPAL */
-        header { background: #1e1e1e; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0097A7; }
-        .logo-title { font-size: 18px; font-weight: bold; color: #00bcd4; display: flex; align-items: center; gap: 10px; }
-        nav { display: flex; gap: 10px; }
-        nav button { background: #2a2a2a; color: #fff; border: 1px solid #444; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        nav button.active { background: #0097A7; border-color: #00bcd4; }
-        
-        /* VIEWS / PÁGINAS */
-        .view-page { display: none; padding: 20px; }
-        .view-page.active { display: block; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-        /* FORMULÁRIO RÁPIDO */
-        .add-bar { background: #1e1e1e; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
-        .add-bar input, .add-bar select { padding: 6px 10px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; }
-        .btn-add { background: #0097A7; color: #fff; border: none; padding: 7px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        /* BANNER SUPERIOR */
+        header {
+            background-color: #1e1e1e;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0097A7;
+        }
 
-        /* KANBAN BOARD */
-        .board { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; }
-        .column { background: #1e1e1e; border-radius: 6px; min-width: 200px; width: 200px; display: flex; flex-direction: column; border: 1px solid #333; }
-        .column.prod-main { min-width: 700px; width: 700px; border: 1px solid #0097A7; background: #171f24; }
-        .col-header { padding: 10px; font-size: 11px; font-weight: bold; color: #00bcd4; text-transform: uppercase; text-align: center; background: #252525; border-bottom: 1px solid #333; }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #00bcd4;
+            cursor: pointer;
+        }
 
-        /* SUBSETORES & OPERADORES */
-        .prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 6px; }
-        .sector-box { background: #12171a; border: 1px solid #333; border-radius: 4px; padding: 4px; }
-        .sector-title { font-size: 10px; font-weight: bold; color: #ffb74d; text-align: center; padding: 3px 0; border-bottom: 1px solid #222; }
-        .worker-lane { background: #1a2228; margin-top: 4px; padding: 4px; border-radius: 3px; border: 1px dashed #2c3842; }
-        .worker-name { font-size: 9px; color: #888; font-weight: bold; margin-bottom: 3px; }
+        .btn-home {
+            background-color: #0097A7;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
 
-        .drop-zone { min-height: 120px; padding: 4px; }
-        .drop-zone.drag-over { background: rgba(0, 151, 167, 0.2); border-radius: 4px; }
+        /* PÁGINAS / VIEWS */
+        .page { display: none; padding: 20px; flex-grow: 1; }
+        .page.active { display: flex; flex-direction: column; }
 
-        /* CARTÕES COLORIDOS */
-        .card { background: #fff; color: #222; padding: 8px; border-radius: 4px; margin-bottom: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); cursor: grab; font-size: 12px; }
+        /* PÁGINA INICIAL / DASHBOARD MENU */
+        #page-home {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 30px;
+        }
+
+        .home-title {
+            font-size: 28px;
+            color: #00bcd4;
+            margin-bottom: 5px;
+        }
+
+        .home-subtitle {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 220px);
+            gap: 20px;
+        }
+
+        .menu-card {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px 15px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-4px);
+            border-color: #0097A7;
+            background: #19252c;
+        }
+
+        .menu-icon { font-size: 32px; }
+        .menu-label { font-size: 15px; font-weight: bold; color: #fff; }
+
+        /* QUADRO KANBAN (INTERFACE RESTAURADA) */
+        .add-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #1e1e1e;
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+
+        .add-form input, .add-form select, .add-form button {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .add-form button {
+            background: #0097A7;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+
+        .board {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            flex-grow: 1;
+            padding-bottom: 15px;
+        }
+
+        .column {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            min-width: 220px;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+        }
+
+        .column.production-col {
+            min-width: 480px;
+            width: 480px;
+            background-color: #1a232a;
+            border: 1px solid #0097A7;
+        }
+
+        .column-header {
+            padding: 10px;
+            font-weight: bold;
+            font-size: 12px;
+            color: #00bcd4;
+            border-bottom: 2px solid #333;
+            text-transform: uppercase;
+            text-align: center;
+            background-color: #252525;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .sub-sectors-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 8px;
+            flex-grow: 1;
+        }
+
+        .sub-sector {
+            background: #141b20;
+            border-radius: 6px;
+            padding: 6px;
+            border: 1px dashed #444;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sub-sector-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffb74d;
+            text-align: center;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #333;
+        }
+
+        .worker-lane {
+            background: #182228;
+            margin-top: 4px;
+            padding: 4px;
+            border-radius: 4px;
+            border: 1px solid #2a3742;
+        }
+
+        .worker-title {
+            font-size: 10px;
+            color: #888;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .column-content {
+            padding: 6px;
+            flex-grow: 1;
+            overflow-y: auto;
+            min-height: 100px;
+        }
+
+        .column-content.drag-over {
+            background-color: rgba(0, 151, 167, 0.2);
+            border: 2px dashed #0097A7;
+            border-radius: 5px;
+        }
+
+        /* CARTÕES */
+        .card {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 9px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            cursor: grab;
+            user-select: none;
+            color: #222;
+        }
+
+        .card:active { cursor: grabbing; opacity: 0.6; }
+
         .card.prio-vermelho { border-left: 6px solid #d32f2f; background: #fff5f5; }
         .card.prio-laranja { border-left: 6px solid #f57c00; background: #fff8f0; }
         .card.prio-amarelo { border-left: 6px solid #fbc02d; background: #fffde7; }
         .card.prio-normal  { border-left: 6px solid #0097A7; background: #ffffff; }
 
-        .card-actions { display: flex; justify-content: space-between; margin-top: 6px; border-top: 1px solid #eee; padding-top: 4px; }
-        .btn-card { background: none; border: none; cursor: pointer; font-size: 11px; }
+        .card-ref { font-weight: bold; font-size: 13px; color: #111; }
+        .card-info { font-size: 10px; color: #555; margin-top: 3px; }
 
-        /* DASHBOARD METRICAS / KPIS */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
-        .kpi-card { background: #1e1e1e; padding: 20px; border-radius: 8px; border-left: 4px solid #0097A7; }
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            padding-top: 4px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-card {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 0;
+        }
+
+        /* KPIS GRID */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .kpi-card {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0097A7;
+        }
+
         .kpi-title { font-size: 12px; color: #aaa; text-transform: uppercase; }
-        .kpi-value { font-size: 26px; font-weight: bold; color: #fff; margin-top: 8px; }
+        .kpi-value { font-size: 24px; font-weight: bold; color: #fff; margin-top: 8px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-title"><span>🏗️</span> PRF Produção</div>
-        <nav>
-            <button class="active" onclick="showPage('page-kanban', this)">📊 Quadro Kanban</button>
-            <button onclick="showPage('page-consultas', this)">🔍 Consultas</button>
-            <button onclick="showPage('page-kpis', this)">📈 KPIs & Métricas</button>
-            <button onclick="showPage('page-relatorios', this)">📄 Relatórios</button>
-        </nav>
+        <div class="brand-logo" onclick="navesPara('page-home')">
+            <span>🏗️</span> PRF Produção
+        </div>
+        <button class="btn-home" onclick="navesPara('page-home')">🏠 Menu Inicial</button>
     </header>
 
+    <!-- PÁGINA INICIAL / MENU PRINCIPAL -->
+    <div id="page-home" class="page active">
+        <div>
+            <div class="home-title">Sistema de Gestão PRF</div>
+            <div class="home-subtitle">Selecione o módulo de trabalho</div>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="navesPara('page-kanban')">
+                <span class="menu-icon">📊</span>
+                <span class="menu-label">Quadro Kanban</span>
+            </div>
+            <div class="menu-card" onclick="navesPara('page-consultas')">
+                <span class="menu-icon">🔍</span>
+                <span class="menu-label">Consultas</span>
+            </div>
+            <div class="menu-card" onclick="navesPara('page-kpis')">
+                <span class="menu-icon">📈</span>
+                <span class="menu-label">KPIs & Métricas</span>
+            </div>
+            <div class="menu-card" onclick="navesPara('page-relatorios')">
+                <span class="menu-icon">📄</span>
+                <span class="menu-label">Relatórios</span>
+            </div>
+        </div>
+    </div>
+
     <!-- PÁGINA 1: QUADRO KANBAN -->
-    <div id="page-kanban" class="view-page active">
-        <div class="add-bar">
-            <input type="text" id="new-ref" placeholder="Referência da Obra">
-            <input type="number" id="new-ton" placeholder="Toneladas (ex: 1.5)" step="0.1" style="width: 130px;">
+    <div id="page-kanban" class="page">
+        <div class="add-form">
+            <input type="text" id="new-ref" placeholder="Ref. Obra (ex: HY25003)">
+            <input type="number" id="new-ton" placeholder="Toneladas (ex: 1.5)" step="0.1" style="width: 120px;">
             <select id="new-prio">
-                <option value="Vermelho">🔴 Máxima</option>
-                <option value="Laranja">🟠 Média</option>
-                <option value="Amarelo" selected>🟡 Baixa</option>
+                <option value="Vermelho">🔴 Prioridade Máxima</option>
+                <option value="Laranja">🟠 Prioridade Média</option>
+                <option value="Amarelo" selected>🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
             </select>
-            <button class="btn-add" onclick="adicionarObra()">+ Nova Obra</button>
+            <button onclick="adicionarObra()">+ Nova Obra</button>
         </div>
 
         <div class="board">
-            <div class="column"><div class="col-header">Projeto</div><div class="drop-zone" data-fase="Projeto"></div></div>
-            <div class="column"><div class="col-header">Desenho</div><div class="drop-zone" data-fase="Desenho"></div></div>
-            <div class="column"><div class="col-header">Material</div><div class="drop-zone" data-fase="Material"></div></div>
+            <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
+            <div class="column"><div class="column-header">Desenho</div><div class="column-content" data-fase="Desenho"></div></div>
+            <div class="column"><div class="column-header">Material</div><div class="column-content" data-fase="Material"></div></div>
 
-            <!-- PRODUÇÃO COM SUBSETORES E OPERADORES -->
-            <div class="column prod-main">
-                <div class="col-header">⚙️ PRODUÇÃO (POR OPERADOR)</div>
-                <div class="prod-grid">
-                    <!-- TUBISTAS -->
-                    <div class="sector-box">
-                        <div class="sector-title">TUBISTAS</div>
-                        <div class="worker-lane"><div class="worker-name">Suellen</div><div class="drop-zone" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div></div>
-                        <div class="worker-lane"><div class="worker-name">José</div><div class="drop-zone" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div></div>
+            <!-- PRODUÇÃO SUBDIVIDIDA POR OPERADORES -->
+            <div class="column production-col">
+                <div class="column-header">⚙️ PRODUÇÃO (SETORES)</div>
+                <div class="sub-sectors-container">
+                    <div class="sub-sector">
+                        <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
+                        <div class="worker-lane"><div class="worker-title">Suellen</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div></div>
+                        <div class="worker-lane"><div class="worker-title">José</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div></div>
                     </div>
-                    <!-- SERRALHEIROS -->
-                    <div class="sector-box">
-                        <div class="sector-title">SERRALHEIROS</div>
-                        <div class="worker-lane"><div class="worker-name">Junior</div><div class="drop-zone" data-fase="Produção" data-setor="Serralheiros" data-operador="Junior"></div></div>
+                    <div class="sub-sector">
+                        <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
+                        <div class="worker-lane"><div class="worker-title">Junior</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Junior"></div></div>
                     </div>
-                    <!-- SOLDADORES -->
-                    <div class="sector-box">
-                        <div class="sector-title">SOLDADORES</div>
-                        <div class="worker-lane"><div class="worker-name">Alexandre</div><div class="drop-zone" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div></div>
-                        <div class="worker-lane"><div class="worker-name">Jorge</div><div class="drop-zone" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div></div>
+                    <div class="sub-sector">
+                        <div class="sub-sector-title">🔥 SOLDADORES</div>
+                        <div class="worker-lane"><div class="worker-title">Alexandre</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div></div>
+                        <div class="worker-lane"><div class="worker-title">Jorge</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div></div>
                     </div>
-                    <!-- ORBITAL -->
-                    <div class="sector-box">
-                        <div class="sector-title">ORBITAL</div>
-                        <div class="worker-lane"><div class="worker-name">Máquina Orbital</div><div class="drop-zone" data-fase="Produção" data-setor="Orbital" data-operador="Orbital"></div></div>
+                    <div class="sub-sector">
+                        <div class="sub-sector-title">🤖 ORBITAL</div>
+                        <div class="worker-lane"><div class="worker-title">Máquina Orbital</div><div class="column-content" data-fase="Produção" data-setor="Orbital" data-operador="Orbital"></div></div>
                     </div>
                 </div>
             </div>
 
-            <div class="column"><div class="col-header">Qualidade</div><div class="drop-zone" data-fase="Qualidade"></div></div>
-            <div class="column"><div class="col-header">Tratamento</div><div class="drop-zone" data-fase="Tratamento"></div></div>
-            <div class="column"><div class="col-header">Concluído</div><div class="drop-zone" data-fase="Concluído"></div></div>
+            <div class="column"><div class="column-header">Qualidade</div><div class="column-content" data-fase="Qualidade"></div></div>
+            <div class="column"><div class="column-header">Tratamento</div><div class="column-content" data-fase="Tratamento"></div></div>
+            <div class="column"><div class="column-header">Concluído</div><div class="column-content" data-fase="Concluído"></div></div>
         </div>
     </div>
 
     <!-- PÁGINA 2: CONSULTAS -->
-    <div id="page-consultas" class="view-page">
+    <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
-        <div class="add-bar">
-            <input type="text" id="search-query" placeholder="Filtrar por obra ou trabalhador..." onkeyup="filtrarConsultas()">
+        <div class="add-form">
+            <input type="text" id="search-query" placeholder="Pesquisar por obra ou trabalhador..." onkeyup="filtrarConsultas()" style="width: 100%;">
         </div>
         <div id="consulta-results"></div>
     </div>
 
-    <!-- PÁGINA 3: KPIS E MÉTRICAS -->
-    <div id="page-kpis" class="view-page">
+    <!-- PÁGINA 3: KPIS & MÉTRICAS -->
+    <div id="page-kpis" class="page">
         <h2>📈 Indicadores Chave de Desempenho (KPIs)</h2>
         <div class="kpi-grid">
             <div class="kpi-card"><div class="kpi-title">Tons Soldadas (Semana)</div><div class="kpi-value" id="kpi-tons-semana">0.0 Ton</div></div>
@@ -146,10 +386,10 @@
     </div>
 
     <!-- PÁGINA 4: RELATÓRIOS DIÁRIOS -->
-    <div id="page-relatorios" class="view-page">
+    <div id="page-relatorios" class="page">
         <h2>📄 Gerar Planeamento Diário</h2>
-        <p style="color: #aaa;">Exportação automática do plano de trabalhos diário.</p>
-        <button class="btn-add" onclick="alert('Exportação para Excel/PDF em preparação!')">📊 Exportar para Excel / PDF</button>
+        <p style="color: #aaa;">Exportação do plano de trabalhos diário.</p>
+        <button class="add-form" style="display:inline-block; cursor:pointer;" onclick="alert('Funcionalidade de exportação em desenvolvimento!')">📊 Exportar para Excel / PDF</button>
     </div>
 
     <script>
@@ -159,16 +399,14 @@
 
         let todasAsObras = [];
 
-        function showPage(pageId, btn) {
-            document.querySelectorAll('.view-page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        function navesPara(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            btn.classList.add('active');
-            if(pageId === 'page-kpis') calcularKPIs();
+            if (pageId === 'page-kpis') calcularKPIs();
         }
 
         // DRAG & DROP
-        document.querySelectorAll('.drop-zone').forEach(zone => {
+        document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
             zone.addEventListener('drop', async e => {
@@ -194,7 +432,7 @@
 
             if (!ref) { alert('Digite a referência!'); return; }
 
-            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto' }]).select();
+            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
                 renderCartao(data[0]);
                 document.getElementById('new-ref').value = '';
@@ -206,11 +444,11 @@
             const prioClass = (c.prioridade || 'Normal').toLowerCase();
             let targetZone;
 
-            if (c.fase === 'Produção' && c.trabalhador) {
-                targetZone = document.querySelector(`.drop-zone[data-fase="Produção"][data-operador="${c.trabalhador}"]`);
+            if (c.fase === 'Produção' && c.trabalhador && c.trabalhador !== 'Não Atribuído') {
+                targetZone = document.querySelector(`.column-content[data-fase="Produção"][data-operador="${c.trabalhador}"]`);
             }
             if (!targetZone) {
-                targetZone = document.querySelector(`.drop-zone[data-fase="${c.fase}"]`);
+                targetZone = document.querySelector(`.column-content[data-fase="${c.fase}"]`);
             }
 
             if (targetZone) {
@@ -219,8 +457,8 @@
                 el.draggable = true;
                 el.id = c.id;
                 el.innerHTML = `
-                    <div style="font-weight:bold;">📦 ${c.referencia}</div>
-                    <div style="font-size:10px; color:#555; margin-top:2px;">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'N/A'}</div>
+                    <div class="card-ref">📦 ${c.referencia}</div>
+                    <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'Não Atribuído'}</div>
                     <div class="card-actions">
                         <button class="btn-card" onclick="editarCartao('${c.id}', '${c.referencia}', ${c.toneladas || 0})">✏️ Editar</button>
                         <button class="btn-card" style="color:red;" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
@@ -259,7 +497,7 @@
             const { data } = await supabaseClient.from('cartoes_kanban').select('*');
             if (data) {
                 todasAsObras = data;
-                document.querySelectorAll('.drop-zone').forEach(z => z.innerHTML = '');
+                document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
                 data.forEach(c => renderCartao(c));
             }
         }
