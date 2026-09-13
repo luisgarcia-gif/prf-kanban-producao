@@ -460,11 +460,11 @@
         
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                <p style="font-size: 11px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
-                    * <b>Todos os componentes carregados estão 100% visíveis.</b><br>
-                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas nunca desaparecem.
+                <p style="font-size: 12px; color: #4db8ff; margin-top: 0; margin-bottom: 8px;">
+                    * <b>100% dos componentes carregados estão visíveis. A app memoriza onde deixou tudo.</b><br>
+                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas nunca desaparecem do ecrã.
                 </p>
-                <span id="db-counter" style="font-size: 12px; color: #69f0ae; font-weight: bold;">🟢 A ligar à BD...</span>
+                <span id="db-counter" style="font-size: 13px; color: #69f0ae; font-weight: bold;">🟢 A carregar dados...</span>
             </div>
             <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça ou Trabalhador..." onkeyup="renderizarKanbanComFiltro()">
         </div>
@@ -713,7 +713,6 @@
                 // Segunda confirmação de segurança!
                 setTimeout(() => {
                     mostrarConfirmacao("ÚLTIMO AVISO: Confirma que quer ELIMINAR A BASE DE DADOS COMPLETA?", async function() {
-                        // Faz bypass usando neq id inválido para apagar a tabela completa sem limite
                         const { error } = await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
                         if (!error) {
                             mostrarAlerta("A base de dados foi completamente apagada.");
@@ -727,7 +726,7 @@
         }
 
 
-        // IMPORTADOR INTELIGENTE (Não substitui as peças que já estão em produção)
+        // IMPORTADOR INTELIGENTE
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -795,7 +794,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não há peças novas para importar! O ficheiro está em branco ou todas as obras já se encontram no quadro.");
+                        mostrarAlerta("Não há peças novas para importar! O ficheiro está em branco ou todos os componentes já se encontram no quadro.");
                         return;
                     }
 
@@ -812,7 +811,7 @@
                         inseridosTotal += lote.length;
                     }
 
-                    mostrarAlerta(`Sucesso! Foram adicionados ${inseridosTotal} NOVOS componentes ao sistema.`);
+                    mostrarAlerta(`Sucesso! Foram extraídos e adicionados ${inseridosTotal} NOVOS componentes ao sistema.`);
                     carregarTudo();
                     
                 } catch (err) {
@@ -828,23 +827,14 @@
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
             todasAsObras.forEach(o => {
-                let mostrarCartao = false;
+                let mostrarCartao = true; // Mostra todos por defeito (100% VISÍVEL)
 
-                // REGRA 1: Obras noutras colunas (em andamento) nunca desaparecem da vista
-                if (o.fase !== 'Projeto') {
-                    mostrarCartao = true;
-                } 
-                // REGRA 2: Na coluna de "Projeto", mostra TUDO por default.
-                else {
-                    if (!query) {
-                        mostrarCartao = true; 
-                    } else {
-                        // Se houver pesquisa, a coluna Projeto esconde o que não corresponde
-                        if ((o.obra_ref && o.obra_ref.toLowerCase().includes(query)) ||
-                            (o.referencia && o.referencia.toLowerCase().includes(query)) ||
-                            (o.trabalhador && o.trabalhador.toLowerCase().includes(query))) {
-                            mostrarCartao = true;
-                        }
+                // Filtra APENAS a coluna de "Projeto" se a barra de pesquisa tiver texto
+                if (query && o.fase === 'Projeto') {
+                    if (!(o.obra_ref && o.obra_ref.toLowerCase().includes(query)) &&
+                        !(o.referencia && o.referencia.toLowerCase().includes(query)) &&
+                        !(o.trabalhador && o.trabalhador.toLowerCase().includes(query))) {
+                        mostrarCartao = false;
                     }
                 }
 
@@ -889,7 +879,7 @@
 
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'); });
             zone.addEventListener('drop', async e => {
                 e.preventDefault();
                 zone.classList.remove('drag-over');
@@ -902,7 +892,7 @@
                 if (cartao && novaFase) {
                     zone.appendChild(cartao);
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
-                    carregarTudo(); // Re-sincroniza
+                    carregarTudo(); // Re-sincroniza a BD para garantir que tudo fica no sítio
                 }
             });
         });
@@ -924,40 +914,54 @@
         }
 
         function renderCartao(c) {
-            const prioClass = (c.prioridade || 'Normal').toLowerCase();
-            let targetZone;
+            try {
+                const prioClass = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
+                let targetZone = null;
+                const faseSafe = String(c.fase || 'Projeto').replace(/"/g, '');
+                const trabSafe = String(c.trabalhador || 'Não Atribuído').replace(/"/g, '');
 
-            if (c.trabalhador && c.trabalhador !== 'Não Atribuído') {
-                targetZone = document.querySelector(`.column-content[data-fase="${c.fase}"][data-operador="${c.trabalhador}"]`);
-            }
-            if (!targetZone) {
-                targetZone = document.querySelector(`.column-content[data-fase="${c.fase}"]`);
-            }
-            if (!targetZone) {
-                targetZone = document.querySelector(`.column-content[data-fase="Projeto"]`);
-            }
-
-            if (targetZone) {
-                const el = document.createElement('div');
-                el.className = `card prio-${prioClass}`;
-                el.draggable = true;
-                el.id = c.id;
+                if (c.trabalhador && c.trabalhador !== 'Não Atribuído') {
+                    targetZone = document.querySelector(`.column-content[data-fase="${faseSafe}"][data-operador="${trabSafe}"]`);
+                }
+                if (!targetZone) {
+                    targetZone = document.querySelector(`.column-content[data-fase="${faseSafe}"]`);
+                }
                 
-                const commentHTML = c.comentarios ? `<div class="card-comment">💬 ${c.comentarios}</div>` : '';
-                const badgeObra = c.obra_ref ? `<div class="obra-badge">${c.obra_ref}</div>` : '';
+                // SISTEMA ANTI-CRASH: Se a fase não for encontrada por algum erro estranho de texto, ele NÃO ESCONDE o cartão, mas atira-o para o Projeto.
+                if (!targetZone) {
+                    targetZone = document.querySelector(`.column-content[data-fase="Projeto"]`);
+                }
 
-                el.innerHTML = `
-                    ${badgeObra}
-                    <div class="card-ref">${c.referencia}</div>
-                    <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'Não Atribuído'}</div>
-                    ${commentHTML}
-                    <div class="card-actions">
-                        <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${c.obra_ref || ''}', '${c.referencia.replace(/'/g, "\\'")}', ${c.toneladas || 0}, '${c.prioridade || 'Normal'}', '${c.comentarios || ''}')">✏️ Editar</button>
-                        <button class="btn-card" style="color:#d32f2f !important;" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
-                    </div>
-                `;
-                el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
-                targetZone.appendChild(el);
+                if (targetZone) {
+                    const el = document.createElement('div');
+                    el.className = `card prio-${prioClass}`;
+                    el.draggable = true;
+                    el.id = c.id;
+                    
+                    const commentHTML = c.comentarios ? `<div class="card-comment">💬 ${c.comentarios}</div>` : '';
+                    const badgeObra = c.obra_ref ? `<div class="obra-badge">${c.obra_ref}</div>` : '';
+
+                    // Proteção extra para garantir que as aspas no nome da obra não bloqueiam o botão Editar
+                    const obraSafe = String(c.obra_ref || '').replace(/'/g, "\\'");
+                    const refSafe = String(c.referencia || '').replace(/'/g, "\\'");
+                    const prioSafe = String(c.prioridade || 'Normal').replace(/'/g, "\\'");
+                    const comSafe = String(c.comentarios || '').replace(/'/g, "\\'");
+
+                    el.innerHTML = `
+                        ${badgeObra}
+                        <div class="card-ref">${c.referencia}</div>
+                        <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${c.trabalhador || 'Não Atribuído'}</div>
+                        ${commentHTML}
+                        <div class="card-actions">
+                            <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${obraSafe}', '${refSafe}', ${c.toneladas || 0}, '${prioSafe}', '${comSafe}')">✏️ Editar</button>
+                            <button class="btn-card" style="color:#d32f2f !important;" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
+                        </div>
+                    `;
+                    el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
+                    targetZone.appendChild(el);
+                }
+            } catch (err) {
+                console.error("Cartão problemático ignorado para não bloquear a app:", c, err);
             }
         }
 
@@ -1011,7 +1015,7 @@
             document.getElementById('kpi-tons-ano').innerText = totalTons.toFixed(1) + " Ton";
         }
 
-        // SISTEMA DE PAGINAÇÃO AUTOMÁTICA PARA QUEBRAR O LIMITE DE 1000 OBRAS
+        // PAGINAÇÃO INFINITA (Quebra o limite de segurança de 1000 da Base de Dados)
         async function carregarTudo() {
             document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
             let allData = [];
@@ -1026,16 +1030,16 @@
                     .range(from, from + step);
                 
                 if (error) {
-                    mostrarAlerta('Erro ao carregar dados da base de dados.');
+                    mostrarAlerta('Erro de ligação ao carregar dados.');
                     break;
                 }
                 
                 if (data && data.length > 0) {
                     allData = allData.concat(data);
-                    from += step + 1;
-                    // Se recebemos menos resultados do que o limite da pesquisa, não há mais para carregar
+                    from += data.length; // Avança exatamente o número de peças carregadas
+                    
                     if (data.length <= step) {
-                        keepFetching = false;
+                        keepFetching = false; // Se vieram menos de 1000, chegámos ao fim
                     }
                 } else {
                     keepFetching = false;
