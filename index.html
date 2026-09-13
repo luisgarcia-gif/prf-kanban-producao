@@ -18,7 +18,6 @@
             --border-color: #334155;
         }
 
-        /* Adaptação ao tema claro do sistema, se o utilizador preferir */
         @media (prefers-color-scheme: light) {
             :root {
                 --bg-main: #f4f6f8;
@@ -42,7 +41,7 @@
             flex-direction: column;
         }
 
-        /* BANNER SUPERIOR */
+        /* HEADER */
         header {
             background-color: var(--bg-card);
             padding: 10px 20px;
@@ -91,7 +90,7 @@
         .page { display: none; padding: 20px; flex-grow: 1; }
         .page.active { display: flex; flex-direction: column; }
 
-        /* PÁGINA INICIAL COM LOGÓTIPO PRF */
+        /* MENU INICIAL COM LOGO PRF */
         #page-home {
             align-items: center;
             justify-content: center;
@@ -106,7 +105,6 @@
             margin-bottom: 10px;
         }
 
-        /* LOGO PRF VETORIAL INSERIDO */
         .prf-logo-box {
             width: 140px;
             height: 140px;
@@ -117,7 +115,6 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 8px 20px rgba(0, 151, 167, 0.3);
-            position: relative;
         }
 
         .prf-logo-text {
@@ -167,7 +164,7 @@
         .menu-icon { font-size: 30px; }
         .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
-        /* FORMULÁRIO E BOTÕES */
+        /* FORMULÁRIOS E BOTÕES */
         .add-form {
             display: flex;
             gap: 10px;
@@ -200,7 +197,7 @@
         }
         .btn-action:hover { background-color: var(--prf-blue-dark) !important; }
 
-        /* QUADRO KANBAN */
+        /* KANBAN BOARD */
         .board {
             display: flex;
             gap: 12px;
@@ -307,6 +304,8 @@
             color: #222222 !important;
         }
 
+        .card:active { cursor: grabbing; opacity: 0.6; }
+
         .card.prio-vermelho { border-left: 6px solid #d32f2f; background: #fff5f5 !important; }
         .card.prio-laranja { border-left: 6px solid #f57c00; background: #fff8f0 !important; }
         .card.prio-amarelo { border-left: 6px solid #fbc02d; background: #fffde7 !important; }
@@ -389,11 +388,10 @@
         <button class="btn-home" onclick="navesPara('page-home')">🏠 Menu Inicial</button>
     </header>
 
-    <!-- PÁGINA INICIAL COM O LOGÓTIPO OFICIAL DA PRF -->
+    <!-- PÁGINA INICIAL / MENU PRINCIPAL -->
     <div id="page-home" class="page active">
         <div class="prf-logo-container">
             <div class="prf-logo-box">
-                <!-- Espiral estilizada do logo PRF -->
                 <svg width="65" height="45" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 15 Q 50 -5 90 15 Q 50 35 10 15" stroke="#cccccc" stroke-width="6" fill="none"/>
                     <path d="M15 25 Q 50 5 85 25 Q 50 45 15 25" stroke="#b0bec5" stroke-width="6" fill="none"/>
@@ -525,7 +523,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO COMPLETO -->
+    <!-- MODAL DE EDIÇÃO AVANÇADA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
             <h3>✏️ Editar Obra</h3>
@@ -568,7 +566,6 @@
             if (pageId === 'page-kpis') calcularKPIs();
         }
 
-        // DRAG & DROP
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
