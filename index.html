@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PRF - Gas Solutions | Gestão de Produção</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <!-- Biblioteca para Leitura de Ficheiros Excel em JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -43,6 +42,7 @@
             flex-direction: column;
         }
 
+        /* HEADER */
         header {
             background-color: var(--bg-card);
             padding: 10px 20px;
@@ -93,9 +93,11 @@
         .btn-refresh { background-color: #374151 !important; }
         .btn-refresh:hover { background-color: #4b5563 !important; }
 
+        /* PÁGINAS */
         .page { display: none; padding: 20px; flex-grow: 1; }
         .page.active { display: flex; flex-direction: column; }
 
+        /* MENU INICIAL */
         #page-home {
             align-items: center;
             justify-content: center;
@@ -151,6 +153,7 @@
         .menu-icon { font-size: 30px; }
         .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
+        /* FORMULÁRIOS E BOTÕES */
         .add-form {
             display: flex;
             gap: 10px;
@@ -182,6 +185,7 @@
             cursor: pointer !important;
         }
 
+        /* KANBAN BOARD */
         .board {
             display: flex;
             gap: 12px;
@@ -276,6 +280,7 @@
             border-radius: 5px;
         }
 
+        /* CARTÕES */
         .card {
             background-color: #ffffff !important;
             border-radius: 5px;
@@ -315,6 +320,7 @@
             color: #333333 !important;
         }
 
+        /* MODAIS / AVISOS CUSTOMIZADOS (OCULTA O DOMÍNIO) */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -336,11 +342,13 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            color: var(--text-main);
         }
 
         .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 16px; }
         .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
+        /* KPIS GRID */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -426,7 +434,6 @@
             </select>
             <button class="btn-action" onclick="adicionarObra()">+ Nova Obra</button>
             
-            <!-- Botão de Importar Ficheiro Excel -->
             <label class="btn-action" style="cursor:pointer; background-color: #374151 !important; margin-left: auto;">
                 📂 Importar Excel
                 <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcel(event)" style="display:none;">
@@ -447,13 +454,13 @@
                 <div class="sub-sectors-container">
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
-                        <div class="worker-lane"><div class="worker-title">Suélen</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suélen"></div></div>
+                        <div class="worker-lane"><div class="worker-title">Suellen</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div></div>
                         <div class="worker-lane"><div class="worker-title">José</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div></div>
                     </div>
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="worker-lane"><div class="worker-title">Jenifer</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div></div>
-                        <div class="worker-lane"><div class="worker-title">Gouglas</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Gouglas"></div></div>
+                        <div class="worker-lane"><div class="worker-title">Douglas</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Douglas"></div></div>
                         <div class="worker-lane"><div class="worker-title">Neto</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div></div>
                     </div>
                     <div class="sub-sector">
@@ -484,7 +491,7 @@
         </div>
     </div>
 
-    <!-- PÁGINA 2: CONSULTAS (RESULTADOS OCULTOS POR DEFAULT) -->
+    <!-- PÁGINA 2: CONSULTAS -->
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form">
@@ -515,7 +522,7 @@
         <h2>📄 Gerar Planeamento Diário</h2>
         <p style="color: var(--text-secondary) !important;">Exportação do plano de trabalhos diário.</p>
         <div>
-            <button class="btn-action" onclick="alert('Funcionalidade de exportação em desenvolvimento!')">📊 Exportar para Excel / PDF</button>
+            <button class="btn-action" onclick="mostrarAlerta('Funcionalidade de exportação em desenvolvimento!')">📊 Exportar para Excel / PDF</button>
         </div>
     </div>
 
@@ -543,8 +550,28 @@
             <textarea id="edit-comments" rows="3" placeholder="Escreva observações sobre o progresso..."></textarea>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
-                <button class="btn-card" style="padding: 6px 12px !important;" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-card" style="padding: 6px 12px !important; color: white !important; background: #555 !important; border-radius: 4px !important;" onclick="fecharModal()">Cancelar</button>
                 <button class="btn-action" onclick="salvarEdicao()">Guardar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CAIXAS DE ALERTA E CONFIRMAÇÃO (Substituem os alertas do browser) -->
+    <div id="custom-alert" class="modal-overlay" style="z-index: 2000;">
+        <div class="modal" style="width: 320px; text-align: center; align-items: center;">
+            <h3 style="margin-bottom: 10px;">Sistema PRF</h3>
+            <p id="custom-alert-msg" style="font-size: 14px; margin-bottom: 20px; color: var(--text-main);"></p>
+            <button class="btn-action" style="width: 100%; justify-content: center;" onclick="fecharAlerta()">OK</button>
+        </div>
+    </div>
+
+    <div id="custom-confirm" class="modal-overlay" style="z-index: 2000;">
+        <div class="modal" style="width: 320px; text-align: center;">
+            <h3 style="margin-bottom: 10px;">Atenção</h3>
+            <p id="custom-confirm-msg" style="font-size: 14px; margin-bottom: 20px; color: var(--text-main);"></p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-card" style="padding: 8px 15px !important; background: #555 !important; color: white !important; border-radius: 4px !important;" onclick="fecharConfirmacao()">Cancelar</button>
+                <button class="btn-action" style="background-color: #d32f2f !important;" id="btn-confirm-yes">Sim, Apagar</button>
             </div>
         </div>
     </div>
@@ -556,6 +583,33 @@
 
         let todasAsObras = [];
 
+        // FUNÇÕES PARA ALERTAS CUSTOMIZADOS (Sem o URL do Github)
+        function mostrarAlerta(mensagem) {
+            document.getElementById('custom-alert-msg').innerText = mensagem;
+            document.getElementById('custom-alert').classList.add('active');
+        }
+
+        function fecharAlerta() {
+            document.getElementById('custom-alert').classList.remove('active');
+        }
+
+        function mostrarConfirmacao(mensagem, callbackSim) {
+            document.getElementById('custom-confirm-msg').innerText = mensagem;
+            document.getElementById('custom-confirm').classList.add('active');
+            
+            const btnSim = document.getElementById('btn-confirm-yes');
+            btnSim.onclick = function() {
+                fecharConfirmacao();
+                callbackSim();
+            };
+        }
+
+        function fecharConfirmacao() {
+            document.getElementById('custom-confirm').classList.remove('active');
+        }
+
+
+        // LIMPEZA DA CACHE
         function limparCacheERefresh() {
             if ('caches' in window) {
                 caches.keys().then(names => {
@@ -571,7 +625,6 @@
             if (pageId === 'page-kpis') calcularKPIs();
         }
 
-        // FUNÇÃO PARA IMPORTAR EXCEL EM MASSA
         async function importarExcel(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -585,7 +638,7 @@
                     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
                     if (rows.length === 0) {
-                        alert('O ficheiro Excel selecionado está vazio!');
+                        mostrarAlerta('O ficheiro Excel selecionado está vazio!');
                         return;
                     }
 
@@ -602,19 +655,18 @@
                     const { data: inserted, error } = await supabaseClient.from('cartoes_kanban').insert(obrasParaInserir).select();
 
                     if (error) {
-                        alert('Erro ao importar para a base de dados: ' + error.message);
+                        mostrarAlerta('Erro ao importar para a base de dados: ' + error.message);
                     } else {
-                        alert(`Sucesso! ${obrasParaInserir.length} obras importadas do Excel.`);
+                        mostrarAlerta(`Sucesso! ${obrasParaInserir.length} obras importadas do Excel.`);
                         carregarTudo();
                     }
                 } catch (err) {
-                    alert('Erro ao processar ficheiro Excel: ' + err.message);
+                    mostrarAlerta('Erro ao processar ficheiro Excel: ' + err.message);
                 }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        // LÓGICA DE PESQUISA (OCULTA ATÉ SER PESQUISADA)
         function filtrarConsultas() {
             const query = document.getElementById('search-query').value.trim().toLowerCase();
             const container = document.getElementById('consulta-results');
@@ -674,7 +726,7 @@
             const ton = parseFloat(document.getElementById('new-ton').value) || 0;
             const prio = document.getElementById('new-prio').value;
 
-            if (!ref) { alert('Digite a referência!'); return; }
+            if (!ref) { mostrarAlerta('Digite a referência!'); return; }
 
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
@@ -748,12 +800,12 @@
             carregarTudo();
         }
 
-        async function apagarCartao(id) {
-            if (confirm("Deseja apagar este cartão?")) {
+        function apagarCartao(id) {
+            mostrarConfirmacao("Tem a certeza que deseja apagar este cartão permanentemente?", async function() {
                 await supabaseClient.from('cartoes_kanban').delete().eq('id', id);
                 const el = document.getElementById(id);
                 if (el) el.remove();
-            }
+            });
         }
 
         function calcularKPIs() {
