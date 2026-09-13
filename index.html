@@ -144,7 +144,7 @@
         .menu-icon { font-size: 30px; }
         .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
 
-        /* FORMULÁRIOS E PESQUISA */
+        /* FORMULÁRIOS E PESQUISA GIGANTE */
         .search-container {
             background: var(--bg-card);
             padding: 15px;
@@ -302,7 +302,7 @@
             border-radius: 5px;
         }
 
-        /* CARTÕES */
+        /* CARTÕES E HIERARQUIA */
         .card {
             background-color: #ffffff !important;
             border-radius: 5px;
@@ -353,7 +353,7 @@
             color: #333333 !important;
         }
 
-        /* MODAIS / AVISOS */
+        /* MODAIS / AVISOS CUSTOMIZADOS */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -461,7 +461,8 @@
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 12px; color: #4db8ff; margin-top: 0; margin-bottom: 8px;">
-                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas <b>nunca desaparecem do ecrã</b>.
+                    * <b>Todos os componentes carregados estão visíveis. A app memoriza onde deixou tudo.</b><br>
+                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas nunca desaparecem do ecrã.
                 </p>
                 <span id="db-counter" style="font-size: 13px; color: #69f0ae; font-weight: bold;">🟢 A carregar dados...</span>
             </div>
@@ -670,7 +671,8 @@
                     names.forEach(name => caches.delete(name));
                 });
             }
-            window.location.href = window.location.pathname + '?v=' + new Date().getTime();
+            // Recarrega a página removendo parâmetros antigos de forma segura
+            window.location.href = window.location.pathname;
         }
 
         function navesPara(pageId) {
@@ -708,7 +710,7 @@
         }
 
         function apagarTudoBD() {
-            mostrarConfirmacao("🚨 ATENÇÃO: Tem a certeza que deseja APAGAR TUDO?\nEsta ação irá eliminar todos os cartões e não pode ser desfeita.", function() {
+            mostrarConfirmacao("🚨 ATENÇÃO: Tem a certeza que deseja APAGAR TUDO?\nEsta ação irá eliminar todos os cartões em todas as fases e não pode ser desfeita.", function() {
                 setTimeout(() => {
                     mostrarConfirmacao("ÚLTIMO AVISO: Confirma que quer ELIMINAR A BASE DE DADOS COMPLETA?", async function() {
                         const { error } = await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
@@ -743,7 +745,7 @@
                         return;
                     }
 
-                    // Previne duplicações lendo as chaves já existentes na Base de Dados de forma estrita
+                    // Verifica chaves existentes na base de dados para evitar re-importação ou destruição do que já está na fábrica
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
 
                     const obrasParaInserir = [];
@@ -757,7 +759,6 @@
                         let designacaoPeca = null;
                         let trabalhadorAtribuido = 'Não Atribuído';
                         
-                        // Extrai Célula a Célula em segurança (Anti-Crash)
                         const linhaCompletaSegura = row.map(cell => String(cell || '')).join(' | ');
 
                         for (let j = 0; j < row.length; j++) {
@@ -773,7 +774,7 @@
                         if (refEncontrada) {
                             const idUnico = String(refEncontrada + designacaoPeca).trim().toLowerCase().replace(/\s+/g, '');
 
-                            // REGRA: Sem alterar os antigos e não duplica obras
+                            // REGRA: Ignora se a peça já existe na base de dados (mesmo que noutra fase/quadro)
                             if (chavesExistentesBD.has(idUnico)) continue;
                             if (referenciasProcessadasNesteExcel.has(idUnico)) continue;
                             referenciasProcessadasNesteExcel.add(idUnico);
@@ -803,7 +804,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro.");
+                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro (ou em andamento).");
                         return;
                     }
 
@@ -838,7 +839,7 @@
             todasAsObras.forEach(o => {
                 let mostrarCartao = true; 
 
-                // Apenas oculta cartões que estão no "Projeto" se houver uma pesquisa e a pesquisa falhar
+                // Apenas oculta cartões que estão no "Projeto" se houver uma pesquisa e a pesquisa não corresponder
                 if (query && String(o.fase) === 'Projeto') {
                     const strObra = String(o.obra_ref || '').toLowerCase();
                     const strRef = String(o.referencia || '').toLowerCase();
@@ -889,7 +890,7 @@
             `).join('');
         }
 
-        // DRAG AND DROP - Sem recarregamento de BD para manter instantâneo e não piscar o ecrã
+        // DRAG AND DROP
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
@@ -903,7 +904,7 @@
                 const cartao = document.getElementById(cardId);
                 
                 if (cartao && novaFase) {
-                    zone.appendChild(cartao); // Movimenta de imediato visualmente
+                    zone.appendChild(cartao); 
 
                     // Atualiza a memória local da Aplicação
                     const obraIndex = todasAsObras.findIndex(o => o.id === cardId);
@@ -913,7 +914,7 @@
                         todasAsObras[obraIndex].trabalhador = novoOperador;
                     }
 
-                    // Envia para o Supabase silenciosamente
+                    // Envia para o Supabase silenciosamente (não recarrega a página)
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
                 }
             });
@@ -928,6 +929,7 @@
 
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ obra_ref: 'MANUAL', referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
+                document.getElementById('kanban-search-input').value = ref;
                 carregarTudo();
                 document.getElementById('new-ref').value = '';
                 document.getElementById('new-ton').value = '';
@@ -1036,7 +1038,7 @@
             document.getElementById('kpi-tons-ano').innerText = totalTons.toFixed(1) + " Ton";
         }
 
-        // PAGINAÇÃO INFINITA (Lida com bases de dados de qualquer tamanho de forma rápida)
+        // PAGINAÇÃO INFINITA AUTOMÁTICA
         async function carregarTudo() {
             document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
             let allData = [];
