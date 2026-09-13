@@ -68,6 +68,7 @@
             border-radius: 4px;
             background: #ffffff;
             padding: 2px;
+            object-fit: contain;
         }
 
         .header-buttons {
@@ -97,7 +98,7 @@
         .page { display: none; padding: 20px; flex-grow: 1; }
         .page.active { display: flex; flex-direction: column; }
 
-        /* MENU INICIAL */
+        /* MENU INICIAL COM LOGO REAL */
         #page-home {
             align-items: center;
             justify-content: center;
@@ -120,6 +121,7 @@
             box-shadow: 0 6px 20px rgba(0, 151, 167, 0.3);
             background: #ffffff;
             padding: 8px;
+            object-fit: contain;
         }
 
         .home-title { font-size: 24px; color: var(--text-main) !important; margin-top: 10px; font-weight: bold; }
@@ -320,13 +322,13 @@
             color: #333333 !important;
         }
 
-        /* MODAIS / AVISOS CUSTOMIZADOS (OCULTA O DOMÍNIO) */
+        /* MODAIS / AVISOS CUSTOMIZADOS (OCULTA O DOMÍNIO/NOME) */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
+            z-index: 9999; /* Z-index elevado para ficar acima de tudo */
             justify-content: center;
             align-items: center;
         }
@@ -343,9 +345,10 @@
             flex-direction: column;
             gap: 12px;
             color: var(--text-main);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 16px; }
+        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
         .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
         /* KPIS GRID */
@@ -380,7 +383,8 @@
 
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
-            <img src="https://raw.githubusercontent.com/luisgarcia-gif/prf-kanban-producao/main/prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img">
+            <!-- A imagem é carregada diretamente da raiz do teu repositório -->
+            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img">
             <span>PRF Gas Solutions</span>
         </div>
         
@@ -393,7 +397,8 @@
     <!-- PÁGINA INICIAL -->
     <div id="page-home" class="page active">
         <div class="home-logo-container">
-            <img src="https://raw.githubusercontent.com/luisgarcia-gif/prf-kanban-producao/main/prf_principal_gassolutions.png" alt="PRF Gas Solutions" class="home-logo-img">
+            <!-- A imagem é carregada diretamente da raiz do teu repositório -->
+            <img src="prf_principal_gassolutions.png" alt="PRF Gas Solutions" class="home-logo-img">
         </div>
 
         <div>
@@ -556,8 +561,8 @@
         </div>
     </div>
 
-    <!-- CAIXAS DE ALERTA E CONFIRMAÇÃO (Substituem os alertas do browser) -->
-    <div id="custom-alert" class="modal-overlay" style="z-index: 2000;">
+    <!-- CAIXAS DE ALERTA E CONFIRMAÇÃO (Substituem os alertas irritantes do browser) -->
+    <div id="custom-alert" class="modal-overlay">
         <div class="modal" style="width: 320px; text-align: center; align-items: center;">
             <h3 style="margin-bottom: 10px;">Sistema PRF</h3>
             <p id="custom-alert-msg" style="font-size: 14px; margin-bottom: 20px; color: var(--text-main);"></p>
@@ -565,7 +570,7 @@
         </div>
     </div>
 
-    <div id="custom-confirm" class="modal-overlay" style="z-index: 2000;">
+    <div id="custom-confirm" class="modal-overlay">
         <div class="modal" style="width: 320px; text-align: center;">
             <h3 style="margin-bottom: 10px;">Atenção</h3>
             <p id="custom-confirm-msg" style="font-size: 14px; margin-bottom: 20px; color: var(--text-main);"></p>
@@ -583,7 +588,7 @@
 
         let todasAsObras = [];
 
-        // FUNÇÕES PARA ALERTAS CUSTOMIZADOS (Sem o URL do Github)
+        // FUNÇÕES PARA ALERTAS CUSTOMIZADOS (Ocultam o teu URL)
         function mostrarAlerta(mensagem) {
             document.getElementById('custom-alert-msg').innerText = mensagem;
             document.getElementById('custom-alert').classList.add('active');
@@ -607,7 +612,6 @@
         function fecharConfirmacao() {
             document.getElementById('custom-confirm').classList.remove('active');
         }
-
 
         // LIMPEZA DA CACHE
         function limparCacheERefresh() {
