@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban PRF - Drag & Drop</title>
-    <!-- Importar a biblioteca da nossa Base de Dados -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Biblioteca Supabase oficial -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,8 +16,9 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            box-sizing: border-box;
         }
-        h1 { color: #fff; margin-bottom: 20px; font-weight: 400; }
+        h1 { color: #fff; margin-bottom: 20px; font-weight: 400; font-size: 24px; }
         
         .board {
             display: flex;
@@ -30,20 +31,25 @@
         .column {
             background-color: #f4f5f7;
             border-radius: 8px;
-            min-width: 280px;
-            width: 280px;
+            min-width: 250px;
+            width: 250px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            max-height: 85vh;
         }
         
         .column-header {
             padding: 12px 15px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             color: #5e6c84;
             border-bottom: 2px solid #e1e4e8;
             text-transform: uppercase;
+            text-align: center;
+            background-color: #ebecf0;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
         }
         
         .column-content {
@@ -53,14 +59,12 @@
             min-height: 150px;
         }
         
-        /* Zona para onde podemos largar os cartões */
         .column-content.drag-over {
             background-color: #e2e4e9;
             border: 2px dashed #0097A7;
             border-radius: 5px;
         }
 
-        /* O Design do Cartão */
         .card {
             background-color: #fff;
             border-radius: 5px;
@@ -69,17 +73,16 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.15);
             cursor: grab;
             border-left: 5px solid #0097A7;
-            transition: transform 0.1s ease;
+            user-select: none;
         }
         
         .card:active {
             cursor: grabbing;
-            transform: scale(1.02);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            opacity: 0.6;
         }
         
-        .card-ref { font-weight: bold; font-size: 15px; margin-bottom: 5px; }
-        .card-worker { font-size: 12px; color: #6b778c; }
+        .card-ref { font-weight: bold; font-size: 14px; color: #172b4d; margin-bottom: 4px; }
+        .card-worker { font-size: 12px; color: #5e6c84; }
     </style>
 </head>
 <body>
@@ -87,30 +90,23 @@
     <h1>📊 Quadro Kanban Produção</h1>
     
     <div class="board" id="kanban-board">
-        <!-- As colunas serão injetadas aqui pelo JavaScript -->
+        <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
+        <div class="column"><div class="column-header">Desenho</div><div class="column-content" data-fase="Desenho"></div></div>
+        <div class="column"><div class="column-header">Material</div><div class="column-content" data-fase="Material"></div></div>
+        <div class="column"><div class="column-header">Produção</div><div class="column-content" data-fase="Produção"></div></div>
+        <div class="column"><div class="column-header">Qualidade</div><div class="column-content" data-fase="Qualidade"></div></div>
+        <div class="column"><div class="column-header">Tratamento</div><div class="column-content" data-fase="Tratamento"></div></div>
+        <div class="column"><div class="column-header">Concluído</div><div class="column-content" data-fase="Concluído"></div></div>
     </div>
 
     <script>
-        // LIGAÇÃO AO SUPABASE (As tuas chaves exatas)
         const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Inicialização robusta do cliente Supabase
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        const fases = ['Projeto', 'Desenho', 'Material', 'Produção', 'Qualidade', 'Tratamento', 'Concluído'];
-        const board = document.getElementById('kanban-board');
-
-        // 1. Criar as Colunas Visuais
-        fases.forEach(fase => {
-            const col = document.createElement('div');
-            col.className = 'column';
-            col.innerHTML = `
-                <div class="column-header">${fase}</div>
-                <div class="column-content" data-fase="${fase}"></div>
-            `;
-            board.appendChild(col);
-        });
-
-        // Lógica de Drag & Drop (Zonas de largar)
+        // Configurar Zonas de Drag & Drop
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => {
                 e.preventDefault();
@@ -130,17 +126,19 @@
                 const cartao = document.getElementById(cardId);
                 
                 if (cartao && novaFase) {
-                    zone.appendChild(cartao); // Move visualmente logo!
-                    // Atualiza silenciosamente na base de dados
-                    await supabase.table('cartoes_kanban').update({ fase: novaFase }).eq('id', cardId);
+                    zone.appendChild(cartao);
+                    await supabaseClient.from('cartoes_kanban').update({ fase: novaFase }).eq('id', cardId);
                 }
             });
         });
 
-        // 2. Ir buscar os cartões à base de dados
+        // Carregar dados da nuvem
         async function carregarCartoes() {
-            const { data: cartoes, error } = await supabase.table('cartoes_kanban').select('*');
-            if (error) { console.error("Erro:", error); return; }
+            const { data: cartoes, error } = await supabaseClient.from('cartoes_kanban').select('*');
+            if (error) {
+                console.error("Erro Supabase:", error);
+                return;
+            }
 
             cartoes.forEach(cartao => {
                 const zone = document.querySelector(`.column-content[data-fase="${cartao.fase}"]`);
@@ -154,14 +152,8 @@
                         <div class="card-worker">👷 ${cartao.trabalhador || 'Não Atribuído'}</div>
                     `;
                     
-                    // Lógica para pegar no cartão
                     el.addEventListener('dragstart', e => {
                         e.dataTransfer.setData('text/plain', cartao.id);
-                        setTimeout(() => el.style.opacity = '0.5', 0);
-                    });
-                    
-                    el.addEventListener('dragend', () => {
-                        el.style.opacity = '1';
                     });
                     
                     zone.appendChild(el);
@@ -169,8 +161,7 @@
             });
         }
 
-        // Iniciar
-        carregarCartoes();
+        window.onload = carregarCartoes;
     </script>
 </body>
 </html>
