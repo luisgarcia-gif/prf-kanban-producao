@@ -391,7 +391,7 @@
 
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
-            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img">
+            <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img" onerror="this.style.display='none'">
             <span>PRF Gas Solutions</span>
         </div>
         
@@ -436,8 +436,12 @@
     <div id="page-kanban" class="page">
         
         <div class="search-container">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <p style="font-size: 11px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">* O quadro encontra-se <b>oculto por padrão</b>. Pesquise para encontrar obras.</p>
+                <!-- CONTADOR DE OBRAS NA BASE DE DADOS -->
+                <span id="db-counter" style="font-size: 12px; color: #69f0ae; font-weight: bold;">🟢 A ligar à BD...</span>
+            </div>
             <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar referência, obra ou operador para visualizar no quadro..." onkeyup="renderizarKanbanComFiltro()">
-            <p style="font-size: 11px; color: #888; margin-top: 8px; margin-bottom: 0;">* O quadro encontra-se <b>oculto por padrão</b> para não sobrecarregar a visualização. Pesquise para encontrar obras.</p>
         </div>
 
         <div class="add-form">
@@ -639,7 +643,7 @@
             if (pageId === 'page-kpis') calcularKPIs();
         }
 
-        // IMPORTADOR EXCEL À PROVA DE FALHAS (IGNORA LINHAS EM BRANCO)
+        // IMPORTADOR EXCEL
         async function importarExcel(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -665,7 +669,6 @@
                                     r.codigo || r.Codigo || r.CÓDIGO || 
                                     r.ref || r.Ref || r.REF || r.PO;
 
-                        // SE A LINHA NÃO TIVER REFERÊNCIA, É IGNORADA E NÃO ENTRA NA BASE DE DADOS
                         if (!ref || String(ref).trim() === '') continue;
 
                         const ton = r.toneladas || r.Toneladas || r.TONELADAS || r.tons || r.Tons;
@@ -706,21 +709,23 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // MOSTRAR CARTÕES NO KANBAN APENAS SE HOUVER PESQUISA
+        // REDERIZAR KANBAN E MOSTRAR ALERTA SE NÃO ENCONTRAR NADA
         function renderizarKanbanComFiltro() {
             const query = document.getElementById('kanban-search-input').value.trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
-            if (!query) {
-                // Fica tudo oculto se a caixa de pesquisa estiver vazia
-                return;
-            }
+            if (!query) return;
 
             const obrasFiltradas = todasAsObras.filter(o => 
                 (o.referencia && o.referencia.toLowerCase().includes(query)) ||
                 (o.trabalhador && o.trabalhador.toLowerCase().includes(query)) ||
                 (o.comentarios && o.comentarios.toLowerCase().includes(query))
             );
+
+            if (obrasFiltradas.length === 0) {
+                mostrarAlerta(`Nenhum resultado encontrado para a pesquisa: "${query}"`);
+                return;
+            }
 
             obrasFiltradas.forEach(c => renderCartao(c));
         }
@@ -795,15 +800,26 @@
             }
         }
 
+        // SISTEMA ANTI-INVISIBILIDADE (FORÇA RENDERIZAÇÃO)
         function renderCartao(c) {
             const prioClass = (c.prioridade || 'Normal').toLowerCase();
-            let targetZone;
+            let targetZone = null;
 
+            // Tenta colocar na fase certa com o operador certo
             if (c.trabalhador && c.trabalhador !== 'Não Atribuído') {
                 targetZone = document.querySelector(`.column-content[data-fase="${c.fase}"][data-operador="${c.trabalhador}"]`);
             }
+            
+            // Se falhar (operador errado ou inexistente), tenta colocar na coluna genérica da fase
             if (!targetZone) {
                 targetZone = document.querySelector(`.column-content[data-fase="${c.fase}"]`);
+            }
+
+            // FALLBACK DE SEGURANÇA: Se a fase não existir (ex: erro no excel "Producao" em vez de "Produção"), 
+            // obriga o cartão a aparecer na primeira coluna ("Projeto") para não ficar invisível!
+            if (!targetZone) {
+                targetZone = document.querySelector(`.column-content[data-fase="Projeto"]`);
+                c.fase = "Projeto (Recuperado)"; // Informa o erro subtilmente
             }
 
             if (targetZone) {
@@ -878,6 +894,7 @@
             const { data } = await supabaseClient.from('cartoes_kanban').select('*');
             if (data) {
                 todasAsObras = data;
+                document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} obras na BD`;
                 renderizarKanbanComFiltro();
             }
         }
