@@ -504,6 +504,12 @@
                 <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Camila</div><div class="column-content" data-fase="Material" data-operador="Camila"></div></div>
             </div>
 
+            <!-- NOVA COLUNA: LASER -->
+            <div class="column">
+                <div class="column-header">Laser</div>
+                <div class="column-content" data-fase="Laser"></div>
+            </div>
+
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
@@ -524,6 +530,7 @@
                         <div class="worker-lane"><div class="worker-title">Jorge</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div></div>
                         <div class="worker-lane"><div class="worker-title">Diogo</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div></div>
                         <div class="worker-lane"><div class="worker-title">Yaroslav</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div></div>
+                        <div class="worker-lane"><div class="worker-title">Luís</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Luís"></div></div>
                     </div>
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
@@ -550,7 +557,7 @@
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form">
-            <input type="text" id="search-query" placeholder="Escreva o código da obra (HY25003), ou 'Arquivado' para ver as obras finalizadas..." onkeyup="filtrarConsultas()" style="width: 100%;">
+            <input type="text" id="search-query" placeholder="Escreva o código da obra (ex: HY25003), ou 'Arquivado' para ver as obras finalizadas..." onkeyup="filtrarConsultas()" style="width: 100%;">
         </div>
         <div id="consulta-results">
             <p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">
@@ -671,7 +678,7 @@
                     names.forEach(name => caches.delete(name));
                 });
             }
-            window.location.href = window.location.pathname; // Remove parâmetros sujos do URL
+            window.location.href = window.location.pathname; 
         }
 
         function navesPara(pageId) {
@@ -698,7 +705,6 @@
 
         function limparConcluidos() {
             mostrarConfirmacao("Deseja ARQUIVAR e limpar do quadro todas as obras que estão na fase 'Concluído'?\n\n(Elas ficarão guardadas no menu Consultas)", async function() {
-                // Em vez de APAGAR, atualiza a fase para 'Arquivado'. Isto mantém os dados históricos!
                 const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).eq('fase', 'Concluído');
                 if (!error) {
                     mostrarAlerta("Obras arquivadas com sucesso. Pode consultá-las a qualquer momento no menu 'Consultas'.");
@@ -725,7 +731,7 @@
             });
         }
 
-        // IMPORTADOR INTELIGENTE (Procura Obras Novas sem duplicar nem estragar o em andamento)
+        // IMPORTADOR INTELIGENTE
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -745,9 +751,7 @@
                         return;
                     }
 
-                    // Lê a BD e guarda as referências atuais para garantir que não subscreve o trabalho atual
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
-
                     const obrasParaInserir = [];
                     const referenciasProcessadasNesteExcel = new Set(); 
 
@@ -774,18 +778,19 @@
                         if (refEncontrada) {
                             const idUnico = String(refEncontrada + designacaoPeca).trim().toLowerCase().replace(/\s+/g, '');
 
-                            // REGRA: Ignora se a peça já existe na base de dados (mesmo que noutra fase/quadro)
                             if (chavesExistentesBD.has(idUnico)) continue;
                             if (referenciasProcessadasNesteExcel.has(idUnico)) continue;
                             referenciasProcessadasNesteExcel.add(idUnico);
 
                             const linhaMin = linhaCompletaSegura.toLowerCase();
-                            const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor'];
+                            // Atualizado para incluir o Luís
+                            const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor', 'luís', 'luis'];
                             
                             for (let trab of equipa) {
                                 if (linhaMin.includes(trab)) {
                                     trabalhadorAtribuido = trab.charAt(0).toUpperCase() + trab.slice(1);
-                                    if (trabalhadorAtribuido === 'Jose') trabalhadorAtribuido = 'José';
+                                    if (trabalhadorAtribuido.toLowerCase() === 'jose') trabalhadorAtribuido = 'José';
+                                    if (trabalhadorAtribuido.toLowerCase() === 'luis') trabalhadorAtribuido = 'Luís';
                                     break;
                                 }
                             }
@@ -804,7 +809,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro (ou em andamento noutras colunas).");
+                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro (ou em andamento).");
                         return;
                     }
 
@@ -831,13 +836,12 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // RENDERIZAÇÃO BLINDADA E 100% VISÍVEL POR DEFEITO
+        // RENDERIZAÇÃO BLINDADA E 100% VISÍVEL POR DEFEITO (Correção do Bug de Pesquisa)
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
             todasAsObras.forEach(o => {
-                // REGRA DO ARQUIVO: Se a fase for 'Arquivado' (via botão limpar concluídos), não desenha no Kanban.
                 if (String(o.fase) === 'Arquivado') return;
 
                 let mostrarCartao = true; 
@@ -847,8 +851,10 @@
                     const strObra = String(o.obra_ref || '').toLowerCase();
                     const strRef = String(o.referencia || '').toLowerCase();
                     const strTrab = String(o.trabalhador || '').toLowerCase();
+                    const strCom = String(o.comentarios || '').toLowerCase();
 
-                    if (!strObra.includes(query) && !strRef.includes(query) && !strTrab.includes(query)) {
+                    // Se a pesquisa (ex: 'manual') não estiver em nenhum dos campos vitais do cartão
+                    if (!strObra.includes(query) && !strRef.includes(query) && !strTrab.includes(query) && !strCom.includes(query)) {
                         mostrarCartao = false;
                     }
                 }
@@ -923,6 +929,7 @@
             });
         });
 
+        // ADICIONAR MANUALMENTE SEM INTERFERIR NA LUPA
         async function adicionarObra() {
             const ref = document.getElementById('new-ref').value.trim();
             const ton = parseFloat(document.getElementById('new-ton').value) || 0;
@@ -932,14 +939,14 @@
 
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ obra_ref: 'MANUAL', referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
             if (!error && data.length > 0) {
-                document.getElementById('kanban-search-input').value = ref;
+                // Removemos o preenchimento automático da lupa para não perturbar o trabalho
                 carregarTudo();
                 document.getElementById('new-ref').value = '';
                 document.getElementById('new-ton').value = '';
             }
         }
 
-        // RENDER CARTÃO SEGURO (Evita Crashes de Símbolos Estranhos)
+        // RENDER CARTÃO SEGURO
         function renderCartao(c) {
             try {
                 const prioClass = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
