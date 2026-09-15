@@ -42,8 +42,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            /* Scroll vertical livre para acomodar crescimento das colunas */
-            overflow-y: auto; 
+            overflow-y: auto; /* Scroll vertical livre */
         }
 
         /* HEADER */
@@ -235,7 +234,7 @@
             margin-bottom: 5px;
             cursor: pointer;
             position: sticky;
-            top: 61px; /* Abaixo do Header */
+            top: 61px;
             z-index: 90;
         }
         .top-scroll-dummy { height: 14px; }
@@ -247,7 +246,7 @@
             overflow-x: auto;
             flex-grow: 1;
             padding-bottom: 15px;
-            align-items: stretch;
+            align-items: flex-start; /* As colunas base não esticam umas com as outras */
         }
 
         .column {
@@ -285,6 +284,7 @@
             gap: 8px;
             padding: 8px;
             flex-grow: 1;
+            align-items: flex-start; /* Correção: Impede o crescimento "fantasma" */
         }
 
         .sub-sector {
@@ -309,7 +309,7 @@
         .sub-sector-grid {
             display: flex;
             gap: 6px;
-            align-items: stretch;
+            align-items: flex-start; /* Correção: As raias só crescem conforme o conteúdo */
         }
 
         .worker-lane {
@@ -350,7 +350,7 @@
             padding: 6px;
             display: flex;
             flex-direction: column;
-            flex-grow: 1; /* Faz a coluna crescer livremente */
+            flex-grow: 1;
             min-height: 80px;
         }
 
@@ -559,7 +559,7 @@
         <div class="bulk-actions-bar">
             <span style="font-size: 12px; color: var(--text-secondary); font-weight: bold;">⚙️ Operações:</span>
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
-            <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos (Arquivar)</button>
+            <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos Final (Arquivar)</button>
             
             <button class="btn-action" style="background-color: #0288d1 !important; padding: 6px 12px !important; margin-left: 10px;" onclick="abrirMenuBackup()">🛡️ Central de Checkpoints</button>
 
@@ -585,24 +585,34 @@
             </label>
         </div>
 
-        <!-- BARRA DE SCROLL NO TOPO PARA FACILITAR NAVEGAÇÃO -->
+        <!-- BARRA DE SCROLL NO TOPO -->
         <div class="top-scroll-wrapper" id="topScrollWrapper">
             <div class="top-scroll-dummy" id="topScrollDummy"></div>
         </div>
 
         <div class="board" id="boardKanban">
-            <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
-            <div class="column"><div class="column-header">Desenho</div><div class="column-content" data-fase="Desenho"></div></div>
             
-            <div class="column">
-                <div class="column-header">Material</div>
-                <div class="worker-lane" style="margin: 6px; flex-grow: 1;">
-                    <div class="worker-title">Camila</div>
-                    <div class="column-content" data-fase="Material" data-operador="Camila"></div>
-                </div>
+            <div class="column" style="min-width: 200px; width: 200px;">
+                <div class="column-header">Projeto</div>
+                <div class="column-content" data-fase="Projeto"></div>
+            </div>
+            
+            <div class="column" style="min-width: 200px; width: 200px;">
+                <div class="column-header">Desenho</div>
+                <div class="column-content" data-fase="Desenho"></div>
+            </div>
+            
+            <!-- MATERIAL (Corrigido para coluna limpa) -->
+            <div class="column" style="min-width: 200px; width: 200px;">
+                <div class="column-header">Material (Camila)</div>
+                <div class="column-content" data-fase="Material" data-operador="Camila"></div>
             </div>
 
-            <div class="column"><div class="column-header">Laser</div><div class="column-content" data-fase="Laser"></div></div>
+            <!-- LASER -->
+            <div class="column" style="min-width: 200px; width: 200px;">
+                <div class="column-header">Laser</div>
+                <div class="column-content" data-fase="Laser"></div>
+            </div>
 
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
@@ -626,7 +636,6 @@
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Tubistas" data-operador="José"></div>
                             </div>
-                            <!-- CONCLUIDO DO SETOR -->
                             <div class="sector-done-lane">
                                 <div class="worker-title">✅ Concluído</div>
                                 <div class="column-content" data-fase="Concluído Setor" data-setor="Tubistas" data-operador="Qualquer"></div>
@@ -733,39 +742,33 @@
                 </div>
             </div>
 
-            <!-- QUALIDADE -->
-            <div class="column">
-                <div class="column-header">Qualidade</div>
-                <div class="worker-lane" style="margin: 6px; flex-grow: 1;">
-                    <div class="worker-title">Ismael</div>
-                    <div class="zone-title">A Decorrer</div>
-                    <div class="column-content" data-fase="Qualidade" data-setor="Qualidade" data-operador="Ismael"></div>
-                    <div class="zone-title">Pendente</div>
-                    <div class="column-content" data-fase="Pendente" data-setor="Qualidade" data-operador="Ismael"></div>
-                </div>
+            <!-- QUALIDADE (Corrigido para coluna limpa) -->
+            <div class="column" style="min-width: 200px; width: 200px;">
+                <div class="column-header">Qualidade (Ismael)</div>
+                <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
             </div>
 
-            <!-- TRATAMENTO -->
-            <div class="column">
-                <div class="column-header">Tratamento</div>
-                <div class="worker-lane" style="margin: 6px; flex-grow: 1;">
-                    <div class="worker-title">Igor</div>
-                    <div class="zone-title">A Decorrer</div>
-                    <div class="column-content" data-fase="Tratamento" data-setor="Tratamento" data-operador="Igor"></div>
-                    <div class="zone-title">Pendente</div>
-                    <div class="column-content" data-fase="Pendente" data-setor="Tratamento" data-operador="Igor"></div>
-                </div>
+            <!-- TRATAMENTO (Corrigido para coluna limpa) -->
+            <div class="column" style="min-width: 200px; width: 200px;">
+                <div class="column-header">Tratamento (Igor)</div>
+                <div class="column-content" data-fase="Tratamento" data-operador="Igor"></div>
             </div>
 
-            <div class="column"><div class="column-header">Concluído Final</div><div class="column-content" data-fase="Concluído"></div></div>
+            <div class="column" style="min-width: 200px; width: 200px;">
+                <div class="column-header">Concluído Final</div>
+                <div class="column-content" data-fase="Concluído"></div>
+            </div>
         </div>
     </div>
 
     <!-- PÁGINA 2: CONSULTAS -->
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
-        <div class="add-form">
-            <input type="text" id="search-query" placeholder="Escreva o código da obra (ex: HY25003), ou 'Arquivado' para ver as obras finalizadas..." onkeyup="filtrarConsultas()" style="width: 100%;">
+        <div class="add-form" style="display: flex;">
+            <input type="text" id="search-query" placeholder="Escreva o código da obra (ex: HY25003)..." onkeyup="filtrarConsultas()" style="flex-grow: 1;">
+            
+            <!-- NOVO: BOTÃO PARA VER AS OBRAS ARQUIVADAS -->
+            <button class="btn-action" style="background-color: #475569 !important; white-space: nowrap;" onclick="document.getElementById('search-query').value='Arquivado'; filtrarConsultas();">🗄️ Ver Obras Concluídas (Arquivo)</button>
         </div>
         <div id="consulta-results">
             <p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">
@@ -1015,7 +1018,6 @@
             });
         }
 
-
         /* -----------------------------------------------------
            BOTÕES DE LIMPEZA GERAL
            ----------------------------------------------------- */
@@ -1033,10 +1035,11 @@
         }
 
         function limparConcluidos() {
-            mostrarConfirmacao("Deseja ARQUIVAR e limpar do quadro todas as obras que estão na fase 'Concluído'?\n\n(Elas ficarão guardadas no menu Consultas)", async function() {
-                const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).in('fase', ['Concluído', 'Concluído Setor']);
+            // CORREÇÃO 3: Limpa apenas a fase 'Concluído' Final, deixando os concluídos dos setores intactos.
+            mostrarConfirmacao("Deseja ARQUIVAR e limpar do quadro todas as obras que estão na fase 'Concluído Final'?\n\n(Elas ficarão guardadas no menu Consultas)", async function() {
+                const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).eq('fase', 'Concluído');
                 if (!error) {
-                    mostrarAlerta("Obras arquivadas com sucesso. Pode consultá-las a qualquer momento no menu 'Consultas'.");
+                    mostrarAlerta("Obras da coluna Concluído arquivadas com sucesso. Pode consultá-las no menu 'Consultas'.");
                     carregarTudo();
                 } else {
                     mostrarAlerta("Erro ao arquivar concluídos: " + error.message);
@@ -1060,7 +1063,7 @@
             });
         }
 
-        // IMPORTADOR INTELIGENTE (ATUALIZADO PARA "GN", "MT", etc.)
+        // IMPORTADOR INTELIGENTE
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1099,7 +1102,6 @@
 
                         for (let j = 0; j < row.length; j++) {
                             const cellText = String(row[j] || '').trim();
-                            // Deteta qualquer prefixo de 2 letras seguidas de 5 números! (Ex: HY26005, GN26009, MT24011)
                             const match = cellText.match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
                             if (match) {
                                 refEncontrada = match[1].toUpperCase();
@@ -1146,7 +1148,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas no seu Excel. Ignorámos ${ignoradasPorDuplicacao} que já existiam na BD. Nenhuma obra nova adicionada.`);
+                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas (incluindo GN, MT, HY, etc.). Ignorámos ${ignoradasPorDuplicacao} que já estavam na BD. Nenhuma obra nova adicionada.`);
                         return;
                     }
 
@@ -1237,7 +1239,7 @@
             `).join('');
         }
 
-        // DRAG AND DROP COM GUARDA DO TRABALHADOR
+        // DRAG AND DROP
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
@@ -1255,7 +1257,7 @@
 
                     const idx = todasAsObras.findIndex(o => o.id === cardId);
                     
-                    // Se for atirado para a caixa de Concluído do Setor, retém a quem pertencia
+                    // Retém o trabalhador original se atirado para a caixa de Concluído do Setor
                     if (!novoOperador || novoOperador === 'Qualquer') {
                         novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
                     }
@@ -1300,7 +1302,7 @@
             }
         }
 
-        // RENDER CARTÃO NAS NOVAS ÁREAS DE A DECORRER / PENDENTE / CONCLUÍDO SETOR
+        // RENDER CARTÃO 
         function renderCartao(c) {
             try {
                 const prioClass = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
@@ -1309,7 +1311,7 @@
                 const s = String(c.setor || '').replace(/"/g, '');
                 let targetZone = null;
 
-                // 1. Procura exata (ex: fase Produção, operador Suellen)
+                // 1. Procura exata (ex: fase Produção, operador Suellen, ou Fase Material operador Camila)
                 if (f && t && t !== 'Não Atribuído') {
                     targetZone = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
