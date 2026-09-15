@@ -905,7 +905,7 @@
 
                         for (let j = 0; j < row.length; j++) {
                             const cellText = String(row[j] || '').trim();
-                            // EXPRESSÃO REGULAR ATUALIZADA: Deteta qualquer prefixo de 2 letras seguidas de 5 números! (Ex: HY26005, GN26009, MT24011)
+                            // Deteta qualquer prefixo de 2 letras seguidas de 5 números! (Ex: HY26005, GN26009, MT24011)
                             const match = cellText.match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
                             if (match) {
                                 refEncontrada = match[1].toUpperCase();
@@ -952,7 +952,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas no seu Excel, mas TODAS eram repetidas (já se encontram na Base de Dados ou duplicadas no ficheiro). Nenhuma obra nova adicionada.`);
+                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas (incluindo GN, MT, HY, etc.). Ignorámos ${ignoradasPorDuplicacao} que já estavam na BD. Nenhuma obra nova adicionada.`);
                         return;
                     }
 
@@ -969,7 +969,7 @@
                         inseridosTotal += lote.length;
                     }
 
-                    mostrarAlerta(`Sucesso! Encontramos ${totalLidasExcel} peças válidas. Foram ignoradas ${ignoradasPorDuplicacao} por já existirem. Adicionamos ${inseridosTotal} NOVOS componentes à coluna de Projeto.`);
+                    mostrarAlerta(`Sucesso! Encontramos ${totalLidasExcel} peças válidas. Foram ignoradas ${ignoradasPorDuplicacao} por já existirem. Adicionamos ${inseridosTotal} NOVAS obras!`);
                     carregarTudo();
                     
                 } catch (err) {
