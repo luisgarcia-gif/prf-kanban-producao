@@ -48,7 +48,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Permite que o ecrã cresça para baixo */
+            overflow-y: auto; /* Permite que o ecrã cresça para baixo livremente */
         }
 
         /* --------------------------------------
@@ -296,7 +296,7 @@
         }
 
         /* --------------------------------------
-           KANBAN BOARD
+           KANBAN BOARD E COLUNAS
            -------------------------------------- */
         .board {
             display: flex; 
@@ -451,7 +451,7 @@
             opacity: 0.8; 
         }
         
-        /* Blindagem contra largar cartões em cima do texto (causa bugs de drag) */
+        /* Blindagem contra largar cartões em cima de texto do cartão */
         .card * { 
             pointer-events: none; 
         }
@@ -460,59 +460,22 @@
             pointer-events: auto; 
         }
 
-        .card.prio-raio-x { 
-            background-color: #9c27b0 !important; 
-            border: none; 
-        }
-
-        .card.prio-raio-x * { 
-            color: #ffffff !important; 
-        }
+        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
+        .card.prio-raio-x * { color: #ffffff !important; }
         
-        .card.prio-vermelho { 
-            background-color: #ef5350 !important; 
-            border: none; 
-        }
+        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
+        .card.prio-vermelho * { color: #ffffff !important; }
 
-        .card.prio-vermelho * { 
-            color: #ffffff !important; 
-        }
+        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
+        .card.prio-laranja * { color: #ffffff !important; }
 
-        .card.prio-laranja { 
-            background-color: #ff9800 !important; 
-            border: none; 
-        }
+        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
+        .card.prio-amarelo * { color: #222222 !important; }
 
-        .card.prio-laranja * { 
-            color: #ffffff !important; 
-        }
-
-        .card.prio-amarelo { 
-            background-color: #ffeb3b !important; 
-            border: none; 
-        }
-
-        .card.prio-amarelo * { 
-            color: #222222 !important; 
-        }
-
-        .card.prio-normal { 
-            background-color: var(--bg-card) !important; 
-            border: 1px solid var(--border-color); 
-        }
-
-        .card.prio-normal .card-ref { 
-            color: var(--text-main) !important; 
-        }
-
-        .card.prio-normal .card-info, 
-        .card.prio-normal .btn-card { 
-            color: var(--text-secondary) !important; 
-        }
-
-        .card.prio-normal .card-comment { 
-            color: var(--prf-blue-dark) !important; 
-        }
+        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
+        .card.prio-normal .card-ref { color: var(--text-main) !important; }
+        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
+        .card.prio-normal .card-comment { color: var(--prf-blue-dark) !important; }
 
         .obra-badge {
             display: inline-block; 
@@ -524,52 +487,16 @@
             margin-bottom: 4px;
         }
 
-        .card.prio-normal .obra-badge { 
-            background: var(--prf-blue) !important; 
-            color: white !important;
-        }
+        .card.prio-normal .obra-badge { background: var(--prf-blue) !important; color: white !important;}
 
-        .card-ref { 
-            font-weight: bold; 
-            font-size: 11px; 
-            line-height: 1.2; 
-            margin-bottom: 4px; 
-            word-break: break-word; 
-        }
-
-        .card-info { 
-            font-size: 10px; 
-            margin-top: 3px; 
-        }
-
-        .card-comment { 
-            font-size: 10px; 
-            font-style: italic; 
-            margin-top: 4px; 
-            padding: 3px 5px; 
-            border-radius: 3px; 
-            background: rgba(255,255,255,0.2); 
-        }
-
-        .card-actions { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-top: 6px; 
-            padding-top: 4px; 
-            border-top: 1px solid rgba(128,128,128,0.3); 
-        }
-
-        .btn-card { 
-            background: none !important; 
-            border: none !important; 
-            cursor: pointer !important; 
-            font-size: 11px !important; 
-            padding: 0 !important; 
-            font-weight: bold; 
-        }
+        .card-ref { font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
+        .card-info { font-size: 10px; margin-top: 3px; }
+        .card-comment { font-size: 10px; font-style: italic; margin-top: 4px; padding: 3px 5px; border-radius: 3px; background: rgba(255,255,255,0.2); }
+        .card-actions { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(128,128,128,0.3); }
+        .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
 
         /* --------------------------------------
-           MODAIS
+           MODAIS DE AVISOS E EDIÇÃO
            -------------------------------------- */
         .modal-overlay {
             display: none; 
@@ -602,17 +529,8 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .modal h3 { 
-            margin: 0; 
-            color: var(--prf-blue-light); 
-            font-size: 18px; 
-        }
-
-        .modal label { 
-            font-size: 12px; 
-            color: var(--text-secondary); 
-            margin-bottom: -6px; 
-        }
+        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
+        .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
         /* --------------------------------------
            KPIS GRID
@@ -648,11 +566,14 @@
 
         .kpi-subtitle { 
             font-size: 13px; 
-            color: #64748b; 
+            color: var(--text-secondary); 
             font-weight: normal; 
             margin-left: 5px; 
         }
 
+        /* --------------------------------------
+           ITENS DE CONSULTA
+           -------------------------------------- */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -665,7 +586,7 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO DA APP -->
+    <!-- CABEÇALHO -->
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
             <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img" onerror="this.style.display='none'">
@@ -708,7 +629,6 @@
     <!-- PÁGINA KANBAN -->
     <div id="page-kanban" class="page">
         
-        <!-- BARRA DE PESQUISA -->
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 12px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
@@ -719,7 +639,6 @@
             <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador ou Fase..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
-        <!-- OPERAÇÕES EM LOTE -->
         <div class="bulk-actions-bar">
             <span style="font-size: 12px; color: var(--text-secondary); font-weight: bold;">⚙️ Operações:</span>
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
@@ -728,7 +647,6 @@
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
-        <!-- FORMULÁRIO DE ADIÇÃO MANUAL -->
         <div class="add-form">
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
@@ -753,7 +671,7 @@
             <div class="top-scroll-dummy" id="topScrollDummy"></div>
         </div>
 
-        <!-- QUADRO KANBAN PRINCIPAL -->
+        <!-- QUADRO KANBAN BASE -->
         <div class="board" id="boardKanban">
             
             <div class="column" style="min-width: 200px; width: 200px;">
@@ -766,18 +684,17 @@
                 <div class="column-content" data-fase="Desenho"></div>
             </div>
             
-            <!-- MATERIAL (COLUNA SIMPLES) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-fase="Material" data-operador="Camila"></div>
             </div>
 
-            <!-- LASER -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Laser</div>
                 <div class="column-content" data-fase="Laser"></div>
             </div>
 
+            <!-- ÁREA DA PRODUÇÃO -->
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
@@ -902,13 +819,11 @@
                 </div>
             </div>
 
-            <!-- QUALIDADE (COLUNA SIMPLES E LIMPA) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
             </div>
             
-            <!-- TRATAMENTO (COLUNA SIMPLES E LIMPA) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Tratamento (Igor)</div>
                 <div class="column-content" data-fase="Tratamento" data-operador="Igor"></div>
@@ -927,7 +842,6 @@
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form" style="display: flex;">
             <input type="text" id="search-query" placeholder="Escreva o código da obra (ex: HY25003)..." onkeyup="filtrarConsultas()" style="flex-grow: 1;">
-            <!-- NOVO BOTÃO ARQUIVO -->
             <button class="btn-action" style="background-color: #475569 !important; white-space: nowrap;" onclick="document.getElementById('search-query').value='Arquivado'; filtrarConsultas();">🗄️ Ver Obras Concluídas (Arquivo)</button>
         </div>
         <div id="consulta-results">
@@ -937,26 +851,34 @@
         </div>
     </div>
 
-    <!-- PÁGINA 3: KPIS E MÉTRICAS (NOVO LAYOUT DE PRODUÇÃO) -->
+    <!-- PÁGINA 3: KPIS E MÉTRICAS -->
     <div id="page-kpis" class="page">
         <h2 style="margin-top:0; color:var(--text-main);">📊 Estado Atual da Fábrica (Tempo Real)</h2>
         <div class="kpi-grid">
-            <div class="kpi-card" style="border-left-color: #0288d1; background: #e1f5fe;">
-                <div class="kpi-title" style="color: #01579b;">Em Execução (Produção)</div>
-                <div class="kpi-value" id="kpi-em-execucao" style="color: #01579b;">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
+            <div class="kpi-card" style="border-left-color: #0288d1;">
+                <div class="kpi-title" style="color: #0288d1;">Em Execução (Produção)</div>
+                <div class="kpi-value" id="kpi-em-execucao">0.0 Kg</div>
             </div>
-            <div class="kpi-card" style="border-left-color: #fbc02d; background: #fffde7;">
-                <div class="kpi-title" style="color: #f57f17;">Pendentes (Produção)</div>
-                <div class="kpi-value" id="kpi-pendentes" style="color: #f57f17;">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
+            <div class="kpi-card" style="border-left-color: #fbc02d;">
+                <div class="kpi-title" style="color: #fbc02d;">Pendentes (Produção)</div>
+                <div class="kpi-value" id="kpi-pendentes">0.0 Kg</div>
             </div>
-            <div class="kpi-card" style="border-left-color: #2e7d32; background: #e8f5e9;">
-                <div class="kpi-title" style="color: #1b5e20;">Concluído Final</div>
-                <div class="kpi-value" id="kpi-concluido-final" style="color: #1b5e20;">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
+            <div class="kpi-card" style="border-left-color: #2e7d32;">
+                <div class="kpi-title" style="color: #2e7d32;">Concluído Final</div>
+                <div class="kpi-value" id="kpi-concluido-final">0.0 Kg</div>
             </div>
         </div>
 
         <h2 style="color:var(--text-main);">📈 Histórico e Qualidade Geral</h2>
         <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">Kg Soldados (Semana)</div>
+                <div class="kpi-value" id="kpi-tons-semana">0.0 Kg</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Kg Soldados (Mês)</div>
+                <div class="kpi-value" id="kpi-tons-mes">0.0 Kg</div>
+            </div>
             <div class="kpi-card">
                 <div class="kpi-title">Total Processado (Ano)</div>
                 <div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div>
@@ -967,6 +889,10 @@
             </div>
             <div class="kpi-card" style="border-left-color: #d32f2f;">
                 <div class="kpi-title">% Peças Rejeitadas</div>
+                <div class="kpi-value">Aguardar Exec.</div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #9c27b0;">
+                <div class="kpi-title">Total de Raio X</div>
                 <div class="kpi-value">Aguardar Exec.</div>
             </div>
         </div>
@@ -1092,21 +1018,21 @@
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
         // -----------------------------------------------------
-        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES
+        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES (MELHORADO)
         // -----------------------------------------------------
         document.addEventListener('dragover', function(e) {
-            const edgeSize = 100; // Limite de margem para ativar o scroll (em pixels)
-            const speed = 15; // Velocidade do scroll
+            const edgeSize = 150; // Margem aumentada para ser mais fácil de ativar
+            const speed = 25; // Velocidade de deslize rápida
             
             if(!boardKanban) return;
             
-            // Se o rato encostar à borda direita do ecrã
             if (e.clientX > window.innerWidth - edgeSize) {
-                boardKanban.scrollLeft += speed;
+                // Rato encostado à direita
+                boardKanban.scrollBy({ left: speed, behavior: 'auto' });
             } 
-            // Se o rato encostar à borda esquerda do ecrã
             else if (e.clientX < edgeSize) {
-                boardKanban.scrollLeft -= speed;
+                // Rato encostado à esquerda
+                boardKanban.scrollBy({ left: -speed, behavior: 'auto' });
             }
         });
 
@@ -1271,7 +1197,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL (SISTEMA DE FALLBACK AUTOMÁTICO)
+        // IMPORTAR EXCEL (SISTEMA DE FALLBACK AUTOMÁTICO PARA A BD)
         // -----------------------------------------------------
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
@@ -1691,38 +1617,50 @@
         }
 
         // -----------------------------------------------------
-        // CÁLCULO DOS NOVOS KPIS
+        // CÁLCULO DOS NOVOS KPIS (ATUALIZADO)
         // -----------------------------------------------------
         function calcularKPIs() {
             let totalKgAno = 0;
-            let kgEmExecucao = 0; let pecasEmExecucao = 0;
-            let kgPendente = 0; let pecasPendente = 0;
-            let kgConcluido = 0; let pecasConcluido = 0;
+            let kgEmExecucao = 0; 
+            let pecasEmExecucao = 0;
+            let kgPendente = 0; 
+            let pecasPendente = 0;
+            let kgConcluido = 0; 
+            let pecasConcluido = 0;
 
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
-                totalKgAno += peso;
+                
+                // Se a obra NÃO estiver no Arquivo, soma ao histórico do ano
+                if (o.fase !== 'Arquivado') {
+                    totalKgAno += peso;
+                }
 
-                // Contadores para o "Estado Atual"
+                // Soma aos contadores do Estado Atual com base na fase onde o cartão está agora
                 if (o.fase === 'Produção') {
                     kgEmExecucao += peso;
                     pecasEmExecucao++;
                 } else if (o.fase === 'Pendente') {
                     kgPendente += peso;
                     pecasPendente++;
-                } else if (o.fase === 'Concluído') { // Só o Concluído Final
+                } else if (o.fase === 'Concluído') { // Apenas o Concluído Final
                     kgConcluido += peso;
                     pecasConcluido++;
                 }
             });
             
-            // Atualiza Histórico Geral
+            // Atualiza o Histórico (Em baixo)
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             
-            // Atualiza Tempo Real (Em Execução, Pendentes, Concluído Final)
-            document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmExecucao + " Peças)</span>";
-            document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " Peças)</span>";
-            document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " Peças)</span>";
+            // Atualiza os blocos Novos de Tempo Real (No Topo)
+            // Em Execução
+            document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasEmExecucao + " unid)</span>";
+            
+            // Pendentes
+            document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasPendente + " unid)</span>";
+            
+            // Concluído Final
+            document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasConcluido + " unid)</span>";
         }
 
         // -----------------------------------------------------
@@ -1758,6 +1696,7 @@
             todasAsObras = allData;
             document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
             renderizarKanbanComFiltro();
+            calcularKPIs(); // Força o calculo imediato ao carregar
         }
 
         window.onload = carregarTudo;
