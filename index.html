@@ -32,7 +32,10 @@
             }
         }
 
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-main);
@@ -68,431 +71,566 @@
             cursor: pointer;
         }
 
-        .header-logo-img {
-            height: 38px;
-            width: auto;
-            border-radius: 4px;
-            background: #ffffff;
-            padding: 2px;
-            object-fit: contain;
+        .header-logo-img { 
+            height: 38px; 
+            width: auto; 
+            border-radius: 4px; 
+            background: #ffffff; 
+            padding: 2px; 
+            object-fit: contain; 
         }
 
-        .header-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        .header-buttons { 
+            display: flex; 
+            gap: 10px; 
+            align-items: center; 
         }
 
         .btn-header {
-            background-color: var(--prf-blue);
-            color: #ffffff;
-            border: none;
+            background-color: var(--prf-blue); 
+            color: #ffffff; 
+            border: none; 
             padding: 8px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: bold; 
+            display: flex; 
+            align-items: center; 
             gap: 6px;
         }
-        .btn-header:hover { background-color: var(--prf-blue-dark); }
-        .btn-refresh { background-color: #64748b; }
-        .btn-refresh:hover { background-color: #475569; }
+
+        .btn-header:hover { 
+            background-color: var(--prf-blue-dark); 
+        }
+
+        .btn-refresh { 
+            background-color: #64748b; 
+        }
+
+        .btn-refresh:hover { 
+            background-color: #475569; 
+        }
 
         /* PÁGINAS */
-        .page { display: none; padding: 20px; flex-grow: 1; }
-        .page.active { display: flex; flex-direction: column; }
+        .page { 
+            display: none; 
+            padding: 20px; 
+            flex-grow: 1; 
+        }
+
+        .page.active { 
+            display: flex; 
+            flex-direction: column; 
+        }
 
         /* MENU INICIAL */
-        #page-home {
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            gap: 15px;
+        #page-home { 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            gap: 15px; 
         }
 
-        .home-logo-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
+        .home-logo-container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 10px; 
         }
 
-        .home-logo-img {
-            width: 220px;
-            max-width: 80vw;
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 151, 167, 0.3);
-            background: #ffffff;
-            padding: 8px;
-            object-fit: contain;
+        .home-logo-img { 
+            width: 220px; 
+            max-width: 80vw; 
+            height: auto; 
+            border-radius: 12px; 
+            box-shadow: 0 6px 20px rgba(0, 151, 167, 0.3); 
+            background: #ffffff; 
+            padding: 8px; 
+            object-fit: contain; 
         }
 
-        .home-title { font-size: 24px; color: var(--text-main); margin-top: 10px; font-weight: bold; }
-        .home-subtitle { font-size: 14px; color: var(--text-secondary); }
+        .home-title { 
+            font-size: 24px; 
+            color: var(--text-main); 
+            margin-top: 10px; 
+            font-weight: bold; 
+        }
 
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 210px);
-            gap: 15px;
-            margin-top: 15px;
+        .home-subtitle { 
+            font-size: 14px; 
+            color: var(--text-secondary); 
+        }
+
+        .menu-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 210px); 
+            gap: 15px; 
+            margin-top: 15px; 
         }
 
         .menu-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 10px; 
             padding: 22px 15px;
-            cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            cursor: pointer; 
+            transition: transform 0.2s, border-color 0.2s; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
             gap: 10px;
         }
 
-        .menu-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--prf-blue);
+        .menu-card:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--prf-blue); 
         }
 
-        .menu-icon { font-size: 30px; }
-        .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main); }
+        .menu-icon { 
+            font-size: 30px; 
+        }
+
+        .menu-label { 
+            font-size: 14px; 
+            font-weight: bold; 
+            color: var(--text-main); 
+        }
 
         /* FORMULÁRIOS E PESQUISA */
-        .search-container {
-            background: var(--bg-card);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 2px solid var(--prf-blue);
+        .search-container { 
+            background: var(--bg-card); 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 15px; 
+            border: 2px solid var(--prf-blue); 
         }
 
-        .search-input-large {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-subcard);
-            color: var(--text-main);
+        .search-input-large { 
+            width: 100%; 
+            padding: 12px; 
+            font-size: 16px; 
+            border-radius: 6px; 
+            border: 1px solid var(--border-color); 
+            background: var(--bg-subcard); 
+            color: var(--text-main); 
         }
 
         .bulk-actions-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+            flex-wrap: wrap; 
             padding: 10px;
-            background: var(--bg-card);
-            border-radius: 6px;
-            border: 1px dashed var(--border-color);
+            background: var(--bg-card); 
+            border-radius: 6px; 
+            border: 1px dashed var(--border-color); 
             align-items: center;
         }
 
         .add-form {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 15px;
+            display: flex; 
+            gap: 10px; 
+            align-items: center; 
+            margin-bottom: 15px; 
             background: var(--bg-card);
-            padding: 12px 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
+            padding: 12px 15px; 
+            border-radius: 6px; 
+            border: 1px solid var(--border-color); 
             flex-wrap: wrap;
         }
 
-        .add-form input, .add-form select, .modal input, .modal select, .modal textarea {
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-subcard);
-            color: var(--text-main);
+        .add-form input, 
+        .add-form select, 
+        .modal input, 
+        .modal select, 
+        .modal textarea {
+            padding: 8px 12px; 
+            border-radius: 4px; 
+            border: 1px solid var(--border-color); 
+            background: var(--bg-subcard); 
+            color: var(--text-main); 
             font-size: 13px;
         }
 
         .btn-action {
-            background-color: var(--prf-blue) !important;
-            color: #ffffff !important;
+            background-color: var(--prf-blue) !important; 
+            color: #ffffff !important; 
             border: none !important;
-            padding: 9px 18px !important;
-            border-radius: 4px !important;
-            font-size: 13px !important;
-            font-weight: bold !important;
+            padding: 9px 18px !important; 
+            border-radius: 4px !important; 
+            font-size: 13px !important; 
+            font-weight: bold !important; 
             cursor: pointer !important;
         }
 
         /* BARRA DE SCROLL NO TOPO */
         .top-scroll-wrapper {
-            overflow-x: auto;
-            overflow-y: hidden;
-            min-height: 14px;
-            background: #e2e8f0;
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            min-height: 14px; 
+            background: #e2e8f0; 
             border-radius: 6px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            position: sticky;
-            top: 61px;
+            margin-bottom: 5px; 
+            cursor: pointer; 
+            position: sticky; 
+            top: 61px; 
             z-index: 90;
         }
-        .top-scroll-dummy { height: 14px; }
+
+        .top-scroll-dummy { 
+            height: 14px; 
+        }
 
         /* KANBAN BOARD */
         .board {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            flex-grow: 1;
-            padding-bottom: 15px;
-            align-items: flex-start; /* As colunas base não esticam umas com as outras */
+            display: flex; 
+            gap: 12px; 
+            overflow-x: auto; 
+            flex-grow: 1; 
+            padding-bottom: 15px; 
+            align-items: flex-start;
         }
 
         .column {
-            background-color: var(--bg-card);
-            border-radius: 8px;
-            min-width: 210px;
+            background-color: var(--bg-card); 
+            border-radius: 8px; 
+            min-width: 210px; 
             width: 210px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             border: 1px solid var(--border-color);
         }
 
-        .column.production-col {
-            min-width: auto;
-            width: auto;
-            border: 2px solid var(--prf-blue);
+        .column.production-col { 
+            min-width: auto; 
+            width: auto; 
+            border: 2px solid var(--prf-blue); 
         }
 
         .column-header {
-            padding: 10px;
-            font-weight: bold;
-            font-size: 12px;
-            color: var(--prf-blue);
+            padding: 10px; 
+            font-weight: bold; 
+            font-size: 12px; 
+            color: var(--prf-blue); 
             border-bottom: 2px solid var(--border-color);
-            text-transform: uppercase;
-            text-align: center;
-            background-color: var(--bg-subcard);
-            border-top-left-radius: 8px;
+            text-transform: uppercase; 
+            text-align: center; 
+            background-color: var(--bg-subcard); 
+            border-top-left-radius: 8px; 
             border-top-right-radius: 8px;
         }
 
-        .sub-sectors-container {
-            display: flex;
-            gap: 8px;
-            padding: 8px;
-            flex-grow: 1;
-            align-items: flex-start; /* Correção: Impede o crescimento "fantasma" */
+        /* SUBSETORES (Produção) */
+        .sub-sectors-container { 
+            display: flex; 
+            gap: 8px; 
+            padding: 8px; 
+            flex-grow: 1; 
+            align-items: flex-start; 
         }
 
         .sub-sector {
-            background: var(--bg-subcard);
-            border-radius: 6px;
-            padding: 6px;
-            border: 1px dashed var(--border-color);
-            display: flex;
+            background: var(--bg-subcard); 
+            border-radius: 6px; 
+            padding: 6px; 
+            border: 1px dashed var(--border-color); 
+            display: flex; 
             flex-direction: column;
         }
 
         .sub-sector-title {
-            font-size: 11px;
-            font-weight: bold;
-            color: #f57c00;
-            text-align: center;
-            margin-bottom: 6px;
-            padding-bottom: 4px;
+            font-size: 11px; 
+            font-weight: bold; 
+            color: #f57c00; 
+            text-align: center; 
+            margin-bottom: 6px; 
+            padding-bottom: 4px; 
             border-bottom: 1px solid var(--border-color);
         }
 
-        .sub-sector-grid {
-            display: flex;
-            gap: 6px;
-            align-items: flex-start; /* Correção: As raias só crescem conforme o conteúdo */
+        .sub-sector-grid { 
+            display: flex; 
+            gap: 6px; 
+            align-items: flex-start; 
         }
-
+        
         .worker-lane {
-            background: var(--bg-card);
-            display: flex;
-            flex-direction: column;
-            min-width: 140px;
-            width: 140px;
-            margin-top: 4px;
-            border-radius: 4px;
+            background: var(--bg-card); 
+            display: flex; 
+            flex-direction: column; 
+            min-width: 140px; 
+            width: 140px; 
+            margin-top: 4px; 
+            border-radius: 4px; 
             border: 1px solid var(--border-color);
         }
 
         .worker-title {
-            font-size: 10px;
-            color: var(--text-secondary);
-            font-weight: bold;
-            text-align: center;
-            padding: 4px;
-            background: #e2e8f0;
-            margin-bottom: 0;
+            font-size: 10px; 
+            color: var(--text-secondary); 
+            font-weight: bold; 
+            text-align: center; 
+            padding: 4px; 
+            background: #e2e8f0; 
+            margin-bottom: 0; 
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* Divisores Pendente / Decorrer */
         .zone-title {
-            font-size: 9px;
-            font-weight: bold;
-            text-align: center;
-            background-color: #f1f5f9;
-            color: #333;
-            padding: 2px;
-            border-bottom: 1px solid #cbd5e1;
+            font-size: 9px; 
+            font-weight: bold; 
+            text-align: center; 
+            background-color: #f1f5f9; 
+            color: #333; 
+            padding: 2px; 
+            border-bottom: 1px solid #cbd5e1; 
             border-top: 1px solid #cbd5e1;
         }
 
         .column-content {
-            padding: 6px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            min-height: 80px;
+            padding: 6px; 
+            display: flex; 
+            flex-direction: column; 
+            flex-grow: 1; 
+            min-height: 80px; 
         }
 
-        .column-content.drag-over {
-            background-color: rgba(0, 151, 167, 0.1);
-            border: 2px dashed var(--prf-blue);
-            border-radius: 5px;
+        .column-content.drag-over { 
+            background-color: rgba(0, 151, 167, 0.1); 
+            border: 2px dashed var(--prf-blue); 
+            border-radius: 5px; 
         }
 
-        /* Raia "Concluído" no fim de cada Setor */
         .sector-done-lane {
-            display: flex;
-            flex-direction: column;
-            min-width: 130px;
-            width: 130px;
-            border-left: 2px dashed #cbd5e1;
-            padding-left: 6px;
+            display: flex; 
+            flex-direction: column; 
+            min-width: 130px; 
+            width: 130px; 
+            border-left: 2px dashed #cbd5e1; 
+            padding-left: 6px; 
             margin-top: 4px;
         }
-        .sector-done-lane .worker-title {
-            color: white;
-            background: #2e7d32;
+
+        .sector-done-lane .worker-title { 
+            color: white; 
+            background: #2e7d32; 
         }
 
         /* --------------------------------------
-           CORES TOTAIS DOS CARTÕES
+           CORES TOTAIS DOS CARTÕES E BLINDAGEM DE DRAG
            -------------------------------------- */
         .card {
-            border-radius: 5px;
-            padding: 9px;
-            margin-bottom: 8px;
+            border-radius: 5px; 
+            padding: 9px; 
+            margin-bottom: 8px; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            cursor: grab;
-            user-select: none;
+            cursor: grab; 
+            user-select: none; 
             transition: transform 0.1s;
         }
 
-        .card:active { cursor: grabbing; opacity: 0.8; }
-
-        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
-        .card.prio-raio-x * { color: #ffffff !important; }
+        .card:active { 
+            cursor: grabbing; 
+            opacity: 0.8; 
+        }
         
-        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
-        .card.prio-vermelho * { color: #ffffff !important; }
+        /* Blindagem contra largar cartões em cima de texto do cartão */
+        .card * { 
+            pointer-events: none; 
+        }
+        
+        .card-actions button { 
+            pointer-events: auto; 
+        }
 
-        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
-        .card.prio-laranja * { color: #ffffff !important; }
+        .card.prio-raio-x { 
+            background-color: #9c27b0 !important; 
+            border: none; 
+        }
 
-        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
-        .card.prio-amarelo * { color: #222222 !important; }
+        .card.prio-raio-x * { 
+            color: #ffffff !important; 
+        }
+        
+        .card.prio-vermelho { 
+            background-color: #ef5350 !important; 
+            border: none; 
+        }
 
-        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
-        .card.prio-normal .card-ref { color: var(--text-main) !important; }
-        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
-        .card.prio-normal .card-comment { color: var(--prf-blue-dark) !important; }
+        .card.prio-vermelho * { 
+            color: #ffffff !important; 
+        }
+
+        .card.prio-laranja { 
+            background-color: #ff9800 !important; 
+            border: none; 
+        }
+
+        .card.prio-laranja * { 
+            color: #ffffff !important; 
+        }
+
+        .card.prio-amarelo { 
+            background-color: #ffeb3b !important; 
+            border: none; 
+        }
+
+        .card.prio-amarelo * { 
+            color: #222222 !important; 
+        }
+
+        .card.prio-normal { 
+            background-color: var(--bg-card) !important; 
+            border: 1px solid var(--border-color); 
+        }
+
+        .card.prio-normal .card-ref { 
+            color: var(--text-main) !important; 
+        }
+
+        .card.prio-normal .card-info, 
+        .card.prio-normal .btn-card { 
+            color: var(--text-secondary) !important; 
+        }
+
+        .card.prio-normal .card-comment { 
+            color: var(--prf-blue-dark) !important; 
+        }
 
         .obra-badge {
-            display: inline-block;
-            background: rgba(0,0,0,0.3);
-            font-size: 10px;
+            display: inline-block; 
+            background: rgba(0,0,0,0.3); 
+            font-size: 10px; 
             font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 2px 6px; 
+            border-radius: 4px; 
             margin-bottom: 4px;
         }
-        
-        .card.prio-normal .obra-badge { background: var(--prf-blue) !important; color: white !important;}
 
-        .card-ref { font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
-        .card-info { font-size: 10px; margin-top: 3px; }
-        .card-comment { font-size: 10px; font-style: italic; margin-top: 4px; padding: 3px 5px; border-radius: 3px; background: rgba(255,255,255,0.2); }
-
-        .card-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 6px;
-            padding-top: 4px;
-            border-top: 1px solid rgba(128,128,128,0.3);
+        .card.prio-normal .obra-badge { 
+            background: var(--prf-blue) !important; 
+            color: white !important;
         }
 
-        .btn-card {
-            background: none !important;
-            border: none !important;
-            cursor: pointer !important;
-            font-size: 11px !important;
-            padding: 0 !important;
-            font-weight: bold;
+        .card-ref { 
+            font-weight: bold; 
+            font-size: 11px; 
+            line-height: 1.2; 
+            margin-bottom: 4px; 
+            word-break: break-word; 
         }
 
-        /* MODAIS / AVISOS CUSTOMIZADOS */
+        .card-info { 
+            font-size: 10px; 
+            margin-top: 3px; 
+        }
+
+        .card-comment { 
+            font-size: 10px; 
+            font-style: italic; 
+            margin-top: 4px; 
+            padding: 3px 5px; 
+            border-radius: 3px; 
+            background: rgba(255,255,255,0.2); 
+        }
+
+        .card-actions { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 6px; 
+            padding-top: 4px; 
+            border-top: 1px solid rgba(128,128,128,0.3); 
+        }
+
+        .btn-card { 
+            background: none !important; 
+            border: none !important; 
+            cursor: pointer !important; 
+            font-size: 11px !important; 
+            padding: 0 !important; 
+            font-weight: bold; 
+        }
+
+        /* MODAIS */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            justify-content: center;
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); 
+            z-index: 9999; 
+            justify-content: center; 
             align-items: center;
         }
-        .modal-overlay.active { display: flex; }
+
+        .modal-overlay.active { 
+            display: flex; 
+        }
 
         .modal {
-            background: var(--bg-card);
-            border: 1px solid var(--prf-blue);
-            padding: 20px;
-            border-radius: 8px;
+            background: var(--bg-card); 
+            border: 1px solid var(--prf-blue); 
+            padding: 20px; 
+            border-radius: 8px; 
             width: 400px;
-            max-width: 90%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            color: var(--text-main);
+            max-width: 90%; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            color: var(--text-main); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
-        .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
+        .modal h3 { 
+            margin: 0; 
+            color: var(--prf-blue-light); 
+            font-size: 18px; 
+        }
+
+        .modal label { 
+            font-size: 12px; 
+            color: var(--text-secondary); 
+            margin-bottom: -6px; 
+        }
 
         /* KPIS GRID */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+        .kpi-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin-top: 15px; 
         }
 
-        .kpi-card {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--prf-blue);
+        .kpi-card { 
+            background: var(--bg-card); 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid var(--prf-blue); 
         }
 
-        .kpi-title { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; }
-        .kpi-value { font-size: 24px; font-weight: bold; color: var(--text-main); margin-top: 8px; }
+        .kpi-title { 
+            font-size: 12px; 
+            color: var(--text-secondary); 
+            text-transform: uppercase; 
+        }
+
+        .kpi-value { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: var(--text-main); 
+            margin-top: 8px; 
+        }
 
         .consult-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-left: 5px solid var(--prf-blue);
-            border-radius: 6px;
-            padding: 12px;
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-left: 5px solid var(--prf-blue); 
+            border-radius: 6px; 
+            padding: 12px; 
             margin-bottom: 10px;
         }
     </style>
@@ -504,7 +642,6 @@
             <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img" onerror="this.style.display='none'">
             <span>PRF Gas Solutions</span>
         </div>
-        
         <div class="header-buttons">
             <button class="btn-header btn-refresh" onclick="limparCacheERefresh()">🔄 Atualizar Página</button>
             <button class="btn-header" onclick="navesPara('page-home')">🏠 Menu Inicial</button>
@@ -516,12 +653,9 @@
         <div class="home-logo-container">
             <img src="prf_principal_gassolutions.png" alt="PRF Gas Solutions" class="home-logo-img">
         </div>
-
-        <div>
-            <div class="home-title">Sistema de Gestão de Produção</div>
-            <div class="home-subtitle">Selecione o módulo pretendido</div>
-        </div>
-
+        <div class="home-title">Sistema de Gestão de Produção</div>
+        <div class="home-subtitle">Selecione o módulo pretendido</div>
+        
         <div class="menu-grid">
             <div class="menu-card" onclick="navesPara('page-kanban')">
                 <span class="menu-icon">📊</span>
@@ -542,9 +676,8 @@
         </div>
     </div>
 
-    <!-- PÁGINA 1: QUADRO KANBAN -->
+    <!-- PÁGINA KANBAN -->
     <div id="page-kanban" class="page">
-        
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 12px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
@@ -555,14 +688,11 @@
             <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador ou Fase..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
-        <!-- BARRA DE GESTÃO E LIMPEZA EM LOTE -->
         <div class="bulk-actions-bar">
             <span style="font-size: 12px; color: var(--text-secondary); font-weight: bold;">⚙️ Operações:</span>
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
             <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos Final (Arquivar)</button>
-            
             <button class="btn-action" style="background-color: #0288d1 !important; padding: 6px 12px !important; margin-left: 10px;" onclick="abrirMenuBackup()">🛡️ Central de Checkpoints</button>
-
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
@@ -585,7 +715,6 @@
             </label>
         </div>
 
-        <!-- BARRA DE SCROLL NO TOPO -->
         <div class="top-scroll-wrapper" id="topScrollWrapper">
             <div class="top-scroll-dummy" id="topScrollDummy"></div>
         </div>
@@ -602,7 +731,7 @@
                 <div class="column-content" data-fase="Desenho"></div>
             </div>
             
-            <!-- MATERIAL (Corrigido para coluna limpa) -->
+            <!-- MATERIAL (COLUNA SIMPLES) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-fase="Material" data-operador="Camila"></div>
@@ -618,7 +747,6 @@
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
                     
-                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="sub-sector-grid">
@@ -643,7 +771,6 @@
                         </div>
                     </div>
                     
-                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
@@ -675,7 +802,6 @@
                         </div>
                     </div>
                     
-                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="sub-sector-grid">
@@ -721,7 +847,6 @@
                         </div>
                     </div>
                     
-                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="sub-sector-grid">
@@ -742,13 +867,13 @@
                 </div>
             </div>
 
-            <!-- QUALIDADE (Corrigido para coluna limpa) -->
+            <!-- QUALIDADE (COLUNA SIMPLES) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
             </div>
 
-            <!-- TRATAMENTO (Corrigido para coluna limpa) -->
+            <!-- TRATAMENTO (COLUNA SIMPLES) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Tratamento (Igor)</div>
                 <div class="column-content" data-fase="Tratamento" data-operador="Igor"></div>
@@ -766,8 +891,6 @@
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form" style="display: flex;">
             <input type="text" id="search-query" placeholder="Escreva o código da obra (ex: HY25003)..." onkeyup="filtrarConsultas()" style="flex-grow: 1;">
-            
-            <!-- NOVO: BOTÃO PARA VER AS OBRAS ARQUIVADAS -->
             <button class="btn-action" style="background-color: #475569 !important; white-space: nowrap;" onclick="document.getElementById('search-query').value='Arquivado'; filtrarConsultas();">🗄️ Ver Obras Concluídas (Arquivo)</button>
         </div>
         <div id="consulta-results">
@@ -893,47 +1016,52 @@
         const topScrollWrapper = document.getElementById('topScrollWrapper');
         const boardKanban = document.getElementById('boardKanban');
         
-        topScrollWrapper.addEventListener('scroll', () => { boardKanban.scrollLeft = topScrollWrapper.scrollLeft; });
-        boardKanban.addEventListener('scroll', () => { topScrollWrapper.scrollLeft = boardKanban.scrollLeft; });
+        topScrollWrapper.addEventListener('scroll', () => { 
+            boardKanban.scrollLeft = topScrollWrapper.scrollLeft; 
+        });
         
-        function atualizarTamanhoScrollTopo() {
-            document.getElementById('topScrollDummy').style.width = boardKanban.scrollWidth + 'px';
+        boardKanban.addEventListener('scroll', () => { 
+            topScrollWrapper.scrollLeft = boardKanban.scrollLeft; 
+        });
+        
+        function atualizarTamanhoScrollTopo() { 
+            document.getElementById('topScrollDummy').style.width = boardKanban.scrollWidth + 'px'; 
         }
+        
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
-        function mostrarAlerta(mensagem) {
-            document.getElementById('custom-alert-msg').innerText = mensagem;
-            document.getElementById('custom-alert').classList.add('active');
+        function mostrarAlerta(mensagem) { 
+            document.getElementById('custom-alert-msg').innerText = mensagem; 
+            document.getElementById('custom-alert').classList.add('active'); 
         }
 
-        function fecharAlerta() {
-            document.getElementById('custom-alert').classList.remove('active');
+        function fecharAlerta() { 
+            document.getElementById('custom-alert').classList.remove('active'); 
         }
 
-        function mostrarConfirmacao(mensagem, callbackSim) {
-            document.getElementById('custom-confirm-msg').innerText = mensagem;
-            document.getElementById('custom-confirm').classList.add('active');
-            
+        function mostrarConfirmacao(mensagem, callbackSim) { 
+            document.getElementById('custom-confirm-msg').innerText = mensagem; 
+            document.getElementById('custom-confirm').classList.add('active'); 
             const btnSim = document.getElementById('btn-confirm-yes');
-            btnSim.onclick = function() {
-                fecharConfirmacao();
-                callbackSim();
-            };
+            btnSim.onclick = function() { 
+                fecharConfirmacao(); 
+                callbackSim(); 
+            }; 
         }
 
-        function fecharConfirmacao() {
-            document.getElementById('custom-confirm').classList.remove('active');
+        function fecharConfirmacao() { 
+            document.getElementById('custom-confirm').classList.remove('active'); 
         }
 
-        function limparCacheERefresh() {
-            if ('caches' in window) {
-                caches.keys().then(names => {
-                    names.forEach(name => caches.delete(name));
-                });
-            }
+        function limparCacheERefresh() { 
+            if ('caches' in window) { 
+                caches.keys().then(names => { 
+                    names.forEach(name => caches.delete(name)); 
+                }); 
+            } 
             window.location.href = window.location.pathname; 
         }
-
+        
         function navesPara(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
@@ -941,263 +1069,213 @@
             setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
-        /* -----------------------------------------------------
-           SISTEMA DE CHECKPOINT E BACKUPS
-           ----------------------------------------------------- */
-        function abrirMenuBackup() { document.getElementById('backup-modal').classList.add('active'); }
-        function fecharMenuBackup() { document.getElementById('backup-modal').classList.remove('active'); }
+        // CHECKPOINT
+        function abrirMenuBackup() { 
+            document.getElementById('backup-modal').classList.add('active'); 
+        }
+
+        function fecharMenuBackup() { 
+            document.getElementById('backup-modal').classList.remove('active'); 
+        }
 
         function exportarExcelCheckPoint() {
-            fecharMenuBackup();
+            fecharMenuBackup(); 
             mostrarAlerta("A gerar relatório Excel do estado atual da fábrica...");
             
             const dadosExcel = todasAsObras.map(o => ({
-                "Código Obra": o.obra_ref || "MANUAL",
-                "Designação": o.referencia,
-                "Fase Atual": o.fase,
+                "Código Obra": o.obra_ref || "MANUAL", 
+                "Designação": o.referencia, 
+                "Fase Atual": o.fase, 
                 "Trabalhador": o.trabalhador,
-                "Peso (Kg)": o.kg || o.toneladas || 0,
-                "Polegadas": o.polegadas || 0,
-                "Prioridade": o.prioridade || 'Normal',
+                "Peso (Kg)": o.kg || 0, 
+                "Polegadas": o.polegadas || 0, 
+                "Prioridade": o.prioridade || 'Normal', 
                 "Comentários": o.comentarios || ''
             }));
-
-            const ws = XLSX.utils.json_to_sheet(dadosExcel);
-            const wb = XLSX.utils.book_new();
+            
+            const ws = XLSX.utils.json_to_sheet(dadosExcel); 
+            const wb = XLSX.utils.book_new(); 
             XLSX.utils.book_append_sheet(wb, ws, "Estado Fabrica");
-            const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-');
+            const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-'); 
             XLSX.writeFile(wb, `Checkpoint_PRF_${dataHoje}.xlsx`);
         }
 
         function descarregarBackupJSON() {
-            fecharMenuBackup();
+            fecharMenuBackup(); 
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(todasAsObras));
-            const downloadAnchorNode = document.createElement('a');
+            const downloadAnchorNode = document.createElement('a'); 
             downloadAnchorNode.setAttribute("href", dataStr);
-            const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-');
+            const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-'); 
             downloadAnchorNode.setAttribute("download", `Backup_Sistema_PRF_${dataHoje}.json`);
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
+            document.body.appendChild(downloadAnchorNode); 
+            downloadAnchorNode.click(); 
             downloadAnchorNode.remove();
-            mostrarAlerta("Backup de Segurança descarregado para o seu computador. Guarde-o num local seguro!");
+            mostrarAlerta("Backup descarregado para o computador!");
         }
 
         function restaurarBackupJSON(event) {
-            fecharMenuBackup();
-            const file = event.target.files[0];
+            fecharMenuBackup(); 
+            const file = event.target.files[0]; 
             if (!file) return;
 
-            mostrarConfirmacao("⚠️ PERIGO: O restauro vai apagar o quadro atual inteiro e repor as informações que estão neste ficheiro de Backup. Confirma a operação?", async function() {
-                mostrarAlerta('A restaurar a Base de Dados. Por favor não feche a janela...');
+            mostrarConfirmacao("⚠️ O restauro apaga o quadro atual e repõe as informações do ficheiro. Confirma?", async function() {
+                mostrarAlerta('A restaurar a Base de Dados...'); 
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     try {
                         const backupData = JSON.parse(e.target.result);
-                        if (!Array.isArray(backupData)) throw new Error("Ficheiro corrompido ou inválido.");
-
-                        await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
-
-                        const lotesParaInserir = backupData.map(o => {
-                            delete o.id; 
-                            return o;
-                        });
-
-                        const limite = 500;
-                        for (let i = 0; i < lotesParaInserir.length; i += limite) {
-                            const lote = lotesParaInserir.slice(i, i + limite);
-                            await supabaseClient.from('cartoes_kanban').insert(lote);
+                        await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'ZZZ');
+                        const lotesParaInserir = backupData.map(o => { delete o.id; return o; });
+                        
+                        for (let i = 0; i < lotesParaInserir.length; i += 500) { 
+                            await supabaseClient.from('cartoes_kanban').insert(lotesParaInserir.slice(i, i + 500)); 
                         }
-
-                        mostrarAlerta("♻️ Sistema restaurado com sucesso a partir da cópia de segurança!");
+                        
+                        mostrarAlerta("♻️ Sistema restaurado!"); 
                         carregarTudo();
-                    } catch (err) {
-                        mostrarAlerta("Erro ao restaurar backup: " + err.message);
+                    } catch (err) { 
+                        mostrarAlerta("Erro ao restaurar backup: " + err.message); 
                     }
-                };
+                }; 
                 reader.readAsText(file);
             });
         }
 
-        /* -----------------------------------------------------
-           BOTÕES DE LIMPEZA GERAL
-           ----------------------------------------------------- */
-
-        function limparProjetos() {
-            mostrarConfirmacao("Deseja LIMPAR TODOS OS FICHEIROS que estão na fase inicial de 'Projeto'?\n\n(Obras já em andamento não serão afetadas)", async function() {
-                const { error } = await supabaseClient.from('cartoes_kanban').delete().eq('fase', 'Projeto');
-                if (!error) {
-                    mostrarAlerta("Os ficheiros na coluna de Projeto foram limpos com sucesso.");
-                    carregarTudo();
-                } else {
-                    mostrarAlerta("Erro ao limpar projetos: " + error.message);
-                }
-            });
+        // LIMPEZAS
+        function limparProjetos() { 
+            mostrarConfirmacao("Deseja LIMPAR os projetos não iniciados?", async function() { 
+                const { error } = await supabaseClient.from('cartoes_kanban').delete().eq('fase', 'Projeto'); 
+                carregarTudo(); 
+            }); 
         }
 
-        function limparConcluidos() {
-            // CORREÇÃO 3: Limpa apenas a fase 'Concluído' Final, deixando os concluídos dos setores intactos.
-            mostrarConfirmacao("Deseja ARQUIVAR e limpar do quadro todas as obras que estão na fase 'Concluído Final'?\n\n(Elas ficarão guardadas no menu Consultas)", async function() {
-                const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).eq('fase', 'Concluído');
-                if (!error) {
-                    mostrarAlerta("Obras da coluna Concluído arquivadas com sucesso. Pode consultá-las no menu 'Consultas'.");
-                    carregarTudo();
-                } else {
-                    mostrarAlerta("Erro ao arquivar concluídos: " + error.message);
-                }
-            });
+        function limparConcluidos() { 
+            mostrarConfirmacao("Deseja ARQUIVAR as obras da coluna 'Concluído Final'?", async function() { 
+                const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).eq('fase', 'Concluído'); 
+                carregarTudo(); 
+            }); 
         }
 
-        function apagarTudoBD() {
-            mostrarConfirmacao("🚨 ATENÇÃO: Tem a certeza que deseja APAGAR TUDO?\nEsta ação irá eliminar todos os cartões em todas as fases e não pode ser desfeita.", function() {
-                setTimeout(() => {
-                    mostrarConfirmacao("ÚLTIMO AVISO: Confirma que quer ELIMINAR A BASE DE DADOS COMPLETA?", async function() {
-                        const { error } = await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
-                        if (!error) {
-                            mostrarAlerta("A base de dados foi completamente apagada.");
-                            carregarTudo();
-                        } else {
-                            mostrarAlerta("Erro fatal: " + error.message);
-                        }
-                    });
-                }, 300);
-            });
+        function apagarTudoBD() { 
+            mostrarConfirmacao("🚨 APAGAR TUDO?", function() { 
+                setTimeout(() => { 
+                    mostrarConfirmacao("ÚLTIMO AVISO: ELIMINAR A BASE DE DADOS COMPLETA?", async function() { 
+                        await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'ZZZ'); 
+                        carregarTudo(); 
+                    }); 
+                }, 300); 
+            }); 
         }
 
-        // IMPORTADOR INTELIGENTE
+        // IMPORTAR EXCEL
         async function importarExcelInteligente(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            mostrarAlerta('A processar ficheiro e extrair as peças das Obras. Aguarde...');
+            const file = event.target.files[0]; 
+            if (!file) return; 
+            mostrarAlerta('A processar ficheiro...');
 
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
-                    const data = new Uint8Array(e.target.result);
+                    const data = new Uint8Array(e.target.result); 
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
-
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+                    
                     if (rows.length === 0) {
-                        mostrarAlerta('O ficheiro Excel selecionado está vazio!');
-                        return;
+                        return mostrarAlerta('Ficheiro vazio!');
                     }
 
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
-                    const obrasParaInserir = [];
-                    const referenciasProcessadasNesteExcel = new Set(); 
-                    
-                    let totalLidasExcel = 0;
-                    let ignoradasPorDuplicacao = 0;
+                    const obrasParaInserir = []; 
+                    const refsSet = new Set();
+                    let totalLidas = 0, ignoradas = 0;
 
                     for (let i = 0; i < rows.length; i++) {
-                        const row = rows[i];
+                        const row = rows[i]; 
                         if (!row || row.length === 0) continue;
-
-                        let refEncontrada = null;
-                        let designacaoPeca = null;
-                        let trabalhadorAtribuido = 'Não Atribuído';
                         
-                        const linhaCompletaSegura = row.map(cell => String(cell || '')).join(' | ');
+                        let refE = null, desig = null, trab = 'Não Atribuído';
+                        const linhaStr = row.map(c => String(c || '')).join(' | ');
 
                         for (let j = 0; j < row.length; j++) {
-                            const cellText = String(row[j] || '').trim();
-                            const match = cellText.match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
-                            if (match) {
-                                refEncontrada = match[1].toUpperCase();
-                                designacaoPeca = match[2].replace(/^-/, '').trim() || 'Conjunto Principal';
-                                break;
+                            const match = String(row[j] || '').trim().match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
+                            if (match) { 
+                                refE = match[1].toUpperCase(); 
+                                desig = match[2].replace(/^-/, '').trim() || 'Conjunto Principal'; 
+                                break; 
                             }
                         }
 
-                        if (refEncontrada) {
-                            totalLidasExcel++;
-                            const idUnico = String(refEncontrada + designacaoPeca).trim().toLowerCase().replace(/\s+/g, '');
-
-                            if (chavesExistentesBD.has(idUnico) || referenciasProcessadasNesteExcel.has(idUnico)) {
-                                ignoradasPorDuplicacao++;
-                                continue;
+                        if (refE) {
+                            totalLidas++; 
+                            const idUnico = String(refE + desig).trim().toLowerCase().replace(/\s+/g, '');
+                            
+                            if (chavesExistentesBD.has(idUnico) || refsSet.has(idUnico)) { 
+                                ignoradas++; 
+                                continue; 
                             }
                             
-                            referenciasProcessadasNesteExcel.add(idUnico);
+                            refsSet.add(idUnico);
 
-                            const linhaMin = linhaCompletaSegura.toLowerCase();
                             const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor', 'luís', 'luis'];
-                            
-                            for (let trab of equipa) {
-                                if (linhaMin.includes(trab)) {
-                                    trabalhadorAtribuido = trab.charAt(0).toUpperCase() + trab.slice(1);
-                                    if (trabalhadorAtribuido.toLowerCase() === 'jose') trabalhadorAtribuido = 'José';
-                                    if (trabalhadorAtribuido.toLowerCase() === 'luis') trabalhadorAtribuido = 'Luís';
-                                    break;
+                            for (let t of equipa) {
+                                if (linhaStr.toLowerCase().includes(t)) { 
+                                    trab = t.charAt(0).toUpperCase() + t.slice(1); 
+                                    if (trab.toLowerCase() === 'jose') trab = 'José'; 
+                                    if (trab.toLowerCase() === 'luis') trab = 'Luís'; 
+                                    break; 
                                 }
                             }
-
-                            obrasParaInserir.push({
-                                obra_ref: refEncontrada, 
-                                referencia: designacaoPeca, 
-                                toneladas: 0,
-                                polegadas: 0,
-                                prioridade: 'Normal',
-                                fase: 'Projeto',
-                                setor: 'Geral',
-                                trabalhador: trabalhadorAtribuido,
-                                comentarios: 'Importação Excel'
+                            
+                            obrasParaInserir.push({ 
+                                obra_ref: refE, 
+                                referencia: desig, 
+                                kg: 0, 
+                                polegadas: 0, 
+                                prioridade: 'Normal', 
+                                fase: 'Projeto', 
+                                trabalhador: trab 
                             });
                         }
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas (incluindo GN, MT, HY, etc.). Ignorámos ${ignoradasPorDuplicacao} que já estavam na BD. Nenhuma obra nova adicionada.`);
-                        return;
+                        return mostrarAlerta(`Lidas ${totalLidas} peças. Todas já existem na BD (ignoradas ${ignoradas}). Nenhuma nova obra adicionada.`);
                     }
-
-                    const limite = 500; 
-                    let inseridosTotal = 0;
-
-                    for (let i = 0; i < obrasParaInserir.length; i += limite) {
-                        const lote = obrasParaInserir.slice(i, i + limite);
-                        const { error } = await supabaseClient.from('cartoes_kanban').insert(lote);
-                        if (error) {
-                            mostrarAlerta('Erro ao guardar: ' + error.message);
-                            return;
-                        }
-                        inseridosTotal += lote.length;
-                    }
-
-                    mostrarAlerta(`Sucesso! Encontramos ${totalLidasExcel} peças válidas. Foram ignoradas ${ignoradasPorDuplicacao} por já existirem. Adicionamos ${inseridosTotal} NOVAS obras!`);
-                    carregarTudo();
                     
-                } catch (err) {
-                    mostrarAlerta('Erro de leitura do Excel: ' + err.message);
+                    let inseridos = 0;
+                    for (let i = 0; i < obrasParaInserir.length; i += 500) {
+                        const { error } = await supabaseClient.from('cartoes_kanban').insert(obrasParaInserir.slice(i, i + 500));
+                        if (error) return mostrarAlerta('Erro ao guardar: ' + error.message);
+                        inseridos += obrasParaInserir.slice(i, i + 500).length;
+                    }
+                    
+                    mostrarAlerta(`Sucesso! Encontramos ${totalLidas} peças válidas. Foram ignoradas ${ignoradas} por já existirem. Adicionamos ${inseridos} NOVAS obras!`); 
+                    carregarTudo();
+                } catch (err) { 
+                    mostrarAlerta('Erro: ' + err.message); 
                 }
-            };
+            }; 
             reader.readAsArrayBuffer(file);
         }
 
-        // RENDERIZAÇÃO E PESQUISA GLOBAL
+        // PESQUISA E RENDERIZAÇÃO
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
 
             todasAsObras.forEach(o => {
                 if (String(o.fase) === 'Arquivado') return;
-
-                let mostrarCartao = true; 
-
+                
+                let mostrar = true; 
+                
                 if (query) {
-                    const strObra = String(o.obra_ref || '').toLowerCase();
-                    const strRef = String(o.referencia || '').toLowerCase();
-                    const strTrab = String(o.trabalhador || '').toLowerCase();
-                    const strCom = String(o.comentarios || '').toLowerCase();
-                    const strPrio = String(o.prioridade || '').toLowerCase();
-
-                    if (!strObra.includes(query) && !strRef.includes(query) && !strTrab.includes(query) && !strCom.includes(query) && !strPrio.includes(query)) {
-                        mostrarCartao = false;
+                    const texto = `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.comentarios||''} ${o.prioridade||''}`.toLowerCase();
+                    if (!texto.includes(query)) {
+                        mostrar = false;
                     }
                 }
-
-                if (mostrarCartao) {
+                
+                if (mostrar) {
                     renderCartao(o);
                 }
             });
@@ -1207,23 +1285,15 @@
         function filtrarConsultas() {
             const query = String(document.getElementById('search-query').value || '').trim().toLowerCase();
             const container = document.getElementById('consulta-results');
-
+            
             if (!query) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Digite o código da obra (ex: HY25003) para listar as peças.</p>';
-                return;
+                return container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Digite o código da obra para listar as peças.</p>';
             }
 
-            const resultados = todasAsObras.filter(o => {
-                const strObra = String(o.obra_ref || '').toLowerCase();
-                const strRef = String(o.referencia || '').toLowerCase();
-                const strTrab = String(o.trabalhador || '').toLowerCase();
-                const strFase = String(o.fase || '').toLowerCase();
-                return strObra.includes(query) || strRef.includes(query) || strTrab.includes(query) || strFase.includes(query);
-            });
-
+            const resultados = todasAsObras.filter(o => `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.fase||''}`.toLowerCase().includes(query));
+            
             if (resultados.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">Nenhuma obra ou peça encontrada.</p>';
-                return;
+                return container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">Nenhuma obra ou peça encontrada.</p>';
             }
 
             container.innerHTML = resultados.map(o => `
@@ -1233,189 +1303,208 @@
                         <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${o.fase}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
-                        ⚖️ <b>${(o.kg || o.toneladas) || 0}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
+                        ⚖️ <b>${o.kg || 0}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
                     </div>
                 </div>
             `).join('');
         }
 
-        // DRAG AND DROP
+        // DRAG AND DROP BLINDADO CONTRA CARTÕES
         document.querySelectorAll('.column-content').forEach(zone => {
-            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            zone.addEventListener('dragover', e => { 
+                e.preventDefault(); 
+                zone.classList.add('drag-over'); 
+            });
+            
+            zone.addEventListener('dragleave', () => { 
+                zone.classList.remove('drag-over'); 
+            });
+            
             zone.addEventListener('drop', async e => {
-                e.preventDefault();
+                e.preventDefault(); 
                 zone.classList.remove('drag-over');
-                const cardId = e.dataTransfer.getData('text/plain');
-                const novaFase = zone.getAttribute('data-fase');
-                const novoSetor = zone.getAttribute('data-setor') || 'Geral';
-                let novoOperador = zone.getAttribute('data-operador');
+                
+                const cardId = e.dataTransfer.getData('text/plain'); 
                 const cartao = document.getElementById(cardId);
                 
-                if (cartao && novaFase) {
-                    zone.appendChild(cartao); 
-
-                    const idx = todasAsObras.findIndex(o => o.id === cardId);
-                    
-                    // Retém o trabalhador original se atirado para a caixa de Concluído do Setor
-                    if (!novoOperador || novoOperador === 'Qualquer') {
-                        novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
-                    }
-
-                    if (idx !== -1) {
-                        todasAsObras[idx].fase = novaFase;
-                        todasAsObras[idx].setor = novoSetor;
-                        todasAsObras[idx].trabalhador = novoOperador;
-                    }
-
-                    await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
-                    setTimeout(atualizarTamanhoScrollTopo, 100);
+                // Procura a zona correta subindo pela árvore caso largue o rato em cima de outro elemento
+                let target = e.target;
+                while (target && !target.classList.contains('column-content')) { 
+                    target = target.parentElement; 
                 }
+                
+                if (!target || !cartao) return; // Se não for zona válida aborta
+
+                const novaFase = target.getAttribute('data-fase');
+                const novoSetor = target.getAttribute('data-setor') || 'Geral';
+                let novoOperador = target.getAttribute('data-operador');
+                
+                target.appendChild(cartao); 
+                
+                const idx = todasAsObras.findIndex(o => o.id === cardId);
+                
+                if (!novoOperador || novoOperador === 'Qualquer') {
+                    novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
+                }
+                
+                if (idx !== -1) { 
+                    todasAsObras[idx].fase = novaFase; 
+                    todasAsObras[idx].setor = novoSetor; 
+                    todasAsObras[idx].trabalhador = novoOperador; 
+                }
+
+                await supabaseClient.from('cartoes_kanban').update({ 
+                    fase: novaFase, 
+                    setor: novoSetor, 
+                    trabalhador: novoOperador 
+                }).eq('id', cardId);
+                
+                setTimeout(atualizarTamanhoScrollTopo, 100);
             });
         });
 
-        // ADICIONAR MANUAL
+        // ADICIONAR E EDITAR (CORREÇÃO DE KG E POL)
         async function adicionarObra() {
-            const ref = document.getElementById('new-ref').value.trim();
-            const kg = parseFloat(document.getElementById('new-kg').value) || 0;
-            const pol = parseFloat(document.getElementById('new-pol').value) || 0;
+            const ref = document.getElementById('new-ref').value.trim(); 
             const prio = document.getElementById('new-prio').value;
+            
+            // Lê exatamente os campos numéricos certos
+            const vKg = parseFloat(document.getElementById('new-kg').value) || 0;
+            const vPol = parseFloat(document.getElementById('new-pol').value) || 0;
 
-            if (!ref) { mostrarAlerta('Digite a referência/descrição da peça!'); return; }
+            if (!ref) {
+                return mostrarAlerta('Digite a referência!');
+            }
 
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ 
                 obra_ref: 'MANUAL', 
                 referencia: ref, 
-                toneladas: kg, 
-                polegadas: pol,
+                kg: vKg, 
+                polegadas: vPol, 
                 prioridade: prio, 
                 fase: 'Projeto', 
-                setor: 'Geral', 
                 trabalhador: 'Não Atribuído' 
             }]).select();
 
             if (!error && data.length > 0) {
-                carregarTudo();
-                document.getElementById('new-ref').value = '';
-                document.getElementById('new-kg').value = '';
+                carregarTudo(); 
+                document.getElementById('new-ref').value = ''; 
+                document.getElementById('new-kg').value = ''; 
                 document.getElementById('new-pol').value = '';
             }
         }
 
-        // RENDER CARTÃO 
         function renderCartao(c) {
             try {
-                const prioClass = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
-                const f = String(c.fase || 'Projeto').replace(/"/g, '');
-                const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, '');
+                const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
+                const f = String(c.fase || 'Projeto').replace(/"/g, ''); 
+                const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, ''); 
                 const s = String(c.setor || '').replace(/"/g, '');
-                let targetZone = null;
-
-                // 1. Procura exata (ex: fase Produção, operador Suellen, ou Fase Material operador Camila)
+                
+                let z = null;
+                
                 if (f && t && t !== 'Não Atribuído') {
-                    targetZone = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
+                    z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
                 
-                // 2. Se for Concluído Setor, procura pela fase e pelo setor
-                if (!targetZone && f === 'Concluído Setor' && s) {
-                    targetZone = document.querySelector(`.column-content[data-fase="${f}"][data-setor="${s}"]`);
+                if (!z && f === 'Concluído Setor' && s) {
+                    z = document.querySelector(`.column-content[data-fase="${f}"][data-setor="${s}"]`);
                 }
                 
-                // 3. Fallback genérico para a Fase
-                if (!targetZone) {
-                    targetZone = document.querySelector(`.column-content[data-fase="${f}"]`);
+                if (!z) {
+                    z = document.querySelector(`.column-content[data-fase="${f}"]`);
                 }
                 
-                // 4. Último recurso (vai para projeto)
-                if (!targetZone) {
-                    targetZone = document.querySelector(`.column-content[data-fase="Projeto"]`);
+                if (!z) {
+                    z = document.querySelector(`.column-content[data-fase="Projeto"]`);
                 }
 
-                if (targetZone) {
-                    const el = document.createElement('div');
-                    el.className = `card prio-${prioClass}`;
-                    el.draggable = true;
+                if (z) {
+                    const el = document.createElement('div'); 
+                    el.className = `card prio-${p}`; 
+                    el.draggable = true; 
                     el.id = c.id;
                     
-                    const commentHTML = c.comentarios ? `<div class="card-comment">💬 ${String(c.comentarios)}</div>` : '';
-                    const badgeObra = c.obra_ref ? `<div class="obra-badge">${String(c.obra_ref)}</div>` : '';
-
-                    const obraSafe = String(c.obra_ref || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                    const refSafe = String(c.referencia || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                    const prioSafe = String(c.prioridade || 'Normal').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                    const comSafe = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const cmt = c.comentarios ? `<div class="card-comment">💬 ${String(c.comentarios)}</div>` : '';
+                    const bdg = c.obra_ref ? `<div class="obra-badge">${String(c.obra_ref)}</div>` : '';
                     
-                    const valorKg = c.kg !== undefined ? c.kg : (c.toneladas || 0);
-                    const valorPol = c.polegadas || 0;
+                    const oS = String(c.obra_ref || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
+                    const rS = String(c.referencia || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const pS = String(c.prioridade || 'Normal').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
+                    const cS = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    
+                    // Lê a coluna kg pura (abandona o sistema antigo de ler toneladas)
+                    const vKg = c.kg || 0; 
+                    const vPol = c.polegadas || 0;
 
                     el.innerHTML = `
-                        ${badgeObra}
-                        <div class="card-ref">${String(c.referencia || 'Sem Referência')}</div>
-                        <div class="card-info">⚖️ ${valorKg} Kg | 📏 ${valorPol}" <br> 👷 ${t}</div>
-                        ${commentHTML}
+                        ${bdg}
+                        <div class="card-ref">${c.referencia||''}</div>
+                        <div class="card-info">⚖️ ${vKg} Kg | 📏 ${vPol}" <br> 👷 ${t}</div>
+                        ${cmt}
                         <div class="card-actions">
-                            <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${obraSafe}', '${refSafe}', ${valorKg}, ${valorPol}, '${prioSafe}', '${comSafe}')">✏️ Editar</button>
+                            <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${oS}', '${rS}', ${vKg}, ${vPol}, '${pS}', '${cS}')">✏️ Editar</button>
                             <button class="btn-card" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
                         </div>
                     `;
+                    
                     el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
-                    targetZone.appendChild(el);
+                    z.appendChild(el);
                 }
             } catch (err) {
-                console.error("Cartão problemático ignorado na renderização para não bloquear o quadro:", c, err);
+                console.error(err);
             }
         }
 
-        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
-            document.getElementById('edit-id').value = id;
-            document.getElementById('edit-obra').value = obra;
+        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentários) {
+            document.getElementById('edit-id').value = id; 
+            document.getElementById('edit-obra').value = obra; 
             document.getElementById('edit-ref').value = ref;
-            document.getElementById('edit-kg').value = kg;
+            
+            // Preenche o formulário com a info real
+            document.getElementById('edit-kg').value = kg; 
             document.getElementById('edit-pol').value = pol;
-            document.getElementById('edit-prio').value = prio;
-            document.getElementById('edit-comments').value = comentarios;
+            document.getElementById('edit-prio').value = prio; 
+            document.getElementById('edit-comments').value = comentários;
+            
             document.getElementById('edit-modal').classList.add('active');
         }
 
-        function fecharModal() {
-            document.getElementById('edit-modal').classList.remove('active');
+        function fecharModal() { 
+            document.getElementById('edit-modal').classList.remove('active'); 
         }
 
         async function salvarEdicao() {
             const id = document.getElementById('edit-id').value;
-            const obra = document.getElementById('edit-obra').value.trim();
-            const ref = document.getElementById('edit-ref').value.trim();
-            const kg = parseFloat(document.getElementById('edit-kg').value) || 0;
-            const pol = parseFloat(document.getElementById('edit-pol').value) || 0;
-            const prio = document.getElementById('edit-prio').value;
-            const comments = document.getElementById('edit-comments').value.trim();
+            
+            // Puxa exatamente os campos numéricos
+            const vKg = parseFloat(document.getElementById('edit-kg').value) || 0;
+            const vPol = parseFloat(document.getElementById('edit-pol').value) || 0;
 
             await supabaseClient.from('cartoes_kanban').update({
-                obra_ref: obra,
-                referencia: ref,
-                toneladas: kg, 
-                polegadas: pol,
-                prioridade: prio,
-                comentarios: comments
+                obra_ref: document.getElementById('edit-obra').value.trim(), 
+                referencia: document.getElementById('edit-ref').value.trim(),
+                kg: vKg, 
+                polegadas: vPol, // Grava nas colunas corretas
+                prioridade: document.getElementById('edit-prio').value, 
+                comentarios: document.getElementById('edit-comments').value.trim()
             }).eq('id', id);
 
-            fecharModal();
+            fecharModal(); 
             carregarTudo();
         }
 
         function apagarCartao(id) {
-            mostrarConfirmacao("Deseja apagar este componente permanentemente?", async function() {
-                await supabaseClient.from('cartoes_kanban').delete().eq('id', id);
-                const el = document.getElementById(id);
-                if (el) el.remove();
-                
-                const index = todasAsObras.findIndex(o => o.id === id);
-                if (index > -1) todasAsObras.splice(index, 1);
+            mostrarConfirmacao("Apagar componente permanentemente?", async function() { 
+                await supabaseClient.from('cartoes_kanban').delete().eq('id', id); 
+                carregarTudo(); 
             });
         }
 
         function calcularKPIs() {
-            let totalKg = todasAsObras.reduce((acc, o) => acc + (parseFloat(o.kg || o.toneladas) || 0), 0);
+            // O KPI agora lê SOMENTE a coluna kg. (Esquece as toneladas do passado)
+            let totalKg = todasAsObras.reduce((acc, o) => acc + (parseFloat(o.kg) || 0), 0);
+            
             document.getElementById('kpi-tons-semana').innerText = (totalKg * 0.25).toFixed(1) + " Kg";
             document.getElementById('kpi-tons-mes').innerText = (totalKg * 0.75).toFixed(1) + " Kg";
             document.getElementById('kpi-tons-ano').innerText = totalKg.toFixed(1) + " Kg";
@@ -1424,31 +1513,28 @@
         // PAGINAÇÃO INFINITA AUTOMÁTICA
         async function carregarTudo() {
             document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
-            let allData = [];
-            let from = 0;
-            let step = 999;
+            let allData = []; 
+            let from = 0; 
+            let step = 999; 
             let keepFetching = true;
 
             while (keepFetching) {
-                const { data, error } = await supabaseClient
-                    .from('cartoes_kanban')
-                    .select('*')
-                    .range(from, from + step);
+                const { data, error } = await supabaseClient.from('cartoes_kanban').select('*').range(from, from + step);
                 
-                if (error) {
-                    mostrarAlerta('Erro de ligação ao carregar dados. Verifique a internet.');
-                    break;
+                if (error) { 
+                    mostrarAlerta('Erro de ligação!'); 
+                    break; 
                 }
                 
-                if (data && data.length > 0) {
-                    allData = allData.concat(data);
+                if (data && data.length > 0) { 
+                    allData = allData.concat(data); 
                     from += data.length; 
                     
                     if (data.length <= step) {
                         keepFetching = false; 
                     }
-                } else {
-                    keepFetching = false;
+                } else { 
+                    keepFetching = false; 
                 }
             }
             
