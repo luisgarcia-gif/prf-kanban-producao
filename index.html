@@ -10,7 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
-        /* TEMA CLARO (Default PRF) */
+        /* =========================================
+           TEMA CLARO (Default PRF)
+           ========================================= */
         :root {
             --prf-blue: #0097A7;
             --prf-blue-dark: #00796B;
@@ -23,7 +25,9 @@
             --border-color: #cbd5e1;
         }
 
-        /* TEMA ESCURO (Só se o sistema do utilizador pedir) */
+        /* =========================================
+           TEMA ESCURO (Se o sistema do utilizador pedir)
+           ========================================= */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-main: #121212;
@@ -51,9 +55,9 @@
             overflow-y: auto; /* Permite que o ecrã cresça para baixo */
         }
 
-        /* --------------------------------------
+        /* =========================================
            CABEÇALHO / HEADER
-           -------------------------------------- */
+           ========================================= */
         header {
             background-color: var(--bg-card);
             padding: 10px 20px;
@@ -117,9 +121,9 @@
             background-color: #475569; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            PÁGINAS GERAIS
-           -------------------------------------- */
+           ========================================= */
         .page { 
             display: none; 
             padding: 20px; 
@@ -131,9 +135,9 @@
             flex-direction: column; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            MENU INICIAL
-           -------------------------------------- */
+           ========================================= */
         #page-home { 
             align-items: center; 
             justify-content: center; 
@@ -206,9 +210,9 @@
             color: var(--text-main); 
         }
 
-        /* --------------------------------------
+        /* =========================================
            FORMULÁRIOS E PESQUISA
-           -------------------------------------- */
+           ========================================= */
         .search-container { 
             background: var(--bg-card); 
             padding: 15px; 
@@ -275,9 +279,9 @@
             cursor: pointer !important;
         }
 
-        /* --------------------------------------
+        /* =========================================
            BARRA DE SCROLL NO TOPO
-           -------------------------------------- */
+           ========================================= */
         .top-scroll-wrapper {
             overflow-x: auto; 
             overflow-y: hidden; 
@@ -295,9 +299,9 @@
             height: 14px; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            KANBAN BOARD E COLUNAS
-           -------------------------------------- */
+           ========================================= */
         .board {
             display: flex; 
             gap: 12px; 
@@ -433,9 +437,9 @@
             background: #2e7d32; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            CORES TOTAIS DOS CARTÕES E BLINDAGEM
-           -------------------------------------- */
+           ========================================= */
         .card {
             border-radius: 5px; 
             padding: 9px; 
@@ -464,6 +468,7 @@
             background-color: #94a3b8 !important; 
             border: none; 
         }
+
         .card.prio-retrabalho * { 
             color: #ffffff !important; 
         }
@@ -506,9 +511,9 @@
         .card-actions { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(128,128,128,0.3); }
         .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
 
-        /* --------------------------------------
-           MODAIS E AVISOS
-           -------------------------------------- */
+        /* =========================================
+           MODAIS DE AVISOS E EDIÇÃO
+           ========================================= */
         .modal-overlay {
             display: none; 
             position: fixed; 
@@ -543,9 +548,9 @@
         .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
         .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
-        /* --------------------------------------
+        /* =========================================
            KPIS GRID
-           -------------------------------------- */
+           ========================================= */
         .kpi-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
@@ -582,6 +587,9 @@
             margin-left: 5px; 
         }
 
+        /* =========================================
+           ITENS DE CONSULTA
+           ========================================= */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -708,10 +716,12 @@
                 <div class="column-content" data-fase="Laser"></div>
             </div>
 
+            <!-- ÁREA DE PRODUÇÃO -->
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
                     
+                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="sub-sector-grid">
@@ -736,6 +746,7 @@
                         </div>
                     </div>
                     
+                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
@@ -767,6 +778,7 @@
                         </div>
                     </div>
                     
+                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="sub-sector-grid">
@@ -812,6 +824,7 @@
                         </div>
                     </div>
                     
+                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="sub-sector-grid">
@@ -865,32 +878,33 @@
         </div>
     </div>
 
-    <!-- PÁGINA 3: KPIS E MÉTRICAS -->
+    <!-- PÁGINA 3: KPIS E MÉTRICAS (TOTALMENTE REVISTO) -->
     <div id="page-kpis" class="page">
         <h2 style="margin-top:0; color:var(--text-main);">📊 Estado Atual da Fábrica (Tempo Real)</h2>
         <div class="kpi-grid">
             <div class="kpi-card" style="border-left-color: #0288d1; background: #e1f5fe;">
                 <div class="kpi-title" style="color: #01579b;">Em Execução (Produção)</div>
-                <div class="kpi-value" id="kpi-em-execucao">0.0 Kg</div>
+                <div class="kpi-value" id="kpi-em-execucao">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
             <div class="kpi-card" style="border-left-color: #fbc02d; background: #fffde7;">
                 <div class="kpi-title" style="color: #f57f17;">Pendentes (Produção)</div>
-                <div class="kpi-value" id="kpi-pendentes">0.0 Kg</div>
+                <div class="kpi-value" id="kpi-pendentes">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
             <div class="kpi-card" style="border-left-color: #2e7d32; background: #e8f5e9;">
                 <div class="kpi-title" style="color: #1b5e20;">Concluído Final</div>
-                <div class="kpi-value" id="kpi-concluido-final">0.0 Kg</div>
+                <div class="kpi-value" id="kpi-concluido-final">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
         </div>
 
         <h2 style="color:var(--text-main);">📈 Histórico e Qualidade Geral</h2>
         <div class="kpi-grid">
+            <!-- NOVO KPI DE RETRABALHOS (VALOR E PERCENTAGEM EXATA) -->
             <div class="kpi-card" style="border-left-color: #f57c00;">
                 <div class="kpi-title" style="color: #f57c00;">Peças Retrabalhadas</div>
-                <div class="kpi-value" id="kpi-retrabalho">0 Unid <span class="kpi-subtitle">(0%)</span></div>
+                <div class="kpi-value" id="kpi-retrabalho">0 Unid <span class="kpi-subtitle">(0.0% Taxa Final)</span></div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-title">Kg Soldados (Total)</div>
+                <div class="kpi-title">Kg Soldados (Acumulado Total)</div>
                 <div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div>
             </div>
             <div class="kpi-card">
@@ -972,6 +986,7 @@
                 <option value="Amarelo">🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
+                <!-- NOVA OPÇÃO DE RETRABALHO -->
                 <option value="Retrabalho">⚪ Retrabalho</option>
             </select>
 
@@ -1033,20 +1048,20 @@
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
         // -----------------------------------------------------
-        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES (MELHORADO)
+        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES (APERFEIÇOADO)
         // -----------------------------------------------------
         document.addEventListener('dragover', function(e) {
-            const edgeSize = 150; // Margem aumentada para ser mais fácil de ativar
-            const speed = 25; // Velocidade de deslize rápida
+            const edgeSize = 150; // Margem para ativar o scroll (em pixels)
+            const speed = 25; // Velocidade do scroll
             
             if(!boardKanban) return;
             
+            // Rato encostado à direita
             if (e.clientX > window.innerWidth - edgeSize) {
-                // Rato encostado à direita
                 boardKanban.scrollBy({ left: speed, behavior: 'auto' });
             } 
+            // Rato encostado à esquerda
             else if (e.clientX < edgeSize) {
-                // Rato encostado à esquerda
                 boardKanban.scrollBy({ left: -speed, behavior: 'auto' });
             }
         });
@@ -1094,7 +1109,7 @@
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT E BACKUPS
+        // CHECKPOINT E BACKUPS (AGORA COM SETORES INCLUIDOS NO EXCEL)
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1114,6 +1129,7 @@
                     "Código Obra": o.obra_ref || "MANUAL", 
                     "Designação": o.referencia, 
                     "Fase Atual": o.fase, 
+                    "Setor": o.setor || "Geral",
                     "Trabalhador": o.trabalhador,
                     "Peso (Kg)": pesoFinal, 
                     "Polegadas": o.polegadas || 0, 
@@ -1212,7 +1228,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL (SISTEMA DE FALLBACK AUTOMÁTICO)
+        // IMPORTAR EXCEL (COM DETEÇÃO SE É CHECKPOINT OU FICHEIRO NOVO)
         // -----------------------------------------------------
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
@@ -1235,53 +1251,107 @@
                     const refsSet = new Set();
                     let totalLidas = 0, ignoradas = 0;
 
-                    for (let i = 0; i < rows.length; i++) {
-                        const row = rows[i]; 
-                        if (!row || row.length === 0) continue;
-                        
-                        let refE = null, desig = null, trab = 'Não Atribuído';
-                        const linhaStr = row.map(c => String(c || '')).join(' | ');
+                    // Deteta se o utilizador está a importar o Excel de Checkpoint
+                    const headerRow = rows[0] || [];
+                    const isCheckpoint = headerRow.includes("Código Obra") && headerRow.includes("Designação") && headerRow.includes("Fase Atual");
 
-                        for (let j = 0; j < row.length; j++) {
-                            const match = String(row[j] || '').trim().match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
-                            if (match) { 
-                                refE = match[1].toUpperCase(); 
-                                desig = match[2].replace(/^-/, '').trim() || 'Conjunto Principal'; 
-                                break; 
+                    if (isCheckpoint) {
+                        // ==== MODO RESTAURO A PARTIR DE EXCEL CHECKPOINT ====
+                        const colObra = headerRow.indexOf("Código Obra");
+                        const colDesig = headerRow.indexOf("Designação");
+                        const colFase = headerRow.indexOf("Fase Atual");
+                        const colSetor = headerRow.indexOf("Setor");
+                        const colTrab = headerRow.indexOf("Trabalhador");
+                        const colKg = headerRow.indexOf("Peso (Kg)");
+                        const colPol = headerRow.indexOf("Polegadas");
+                        const colPrio = headerRow.indexOf("Prioridade");
+                        const colObs = headerRow.indexOf("Comentários");
+
+                        for (let i = 1; i < rows.length; i++) {
+                            const row = rows[i];
+                            if (!row || row.length === 0) continue;
+
+                            const refE = String(row[colObra] || '').trim();
+                            const desig = String(row[colDesig] || '').trim();
+                            
+                            if (refE || desig) {
+                                totalLidas++; 
+                                const idUnico = String(refE + desig).trim().toLowerCase().replace(/\s+/g, '');
+                                
+                                if (chavesExistentesBD.has(idUnico) || refsSet.has(idUnico)) { 
+                                    ignoradas++; 
+                                    continue; 
+                                }
+                                refsSet.add(idUnico);
+
+                                const vKg = parseFloat(String(row[colKg] || '0').replace(',', '.')) || 0;
+                                const vPol = parseFloat(String(row[colPol] || '0').replace(',', '.')) || 0;
+
+                                obrasParaInserir.push({ 
+                                    obra_ref: refE || 'MANUAL', 
+                                    referencia: desig || 'Sem Referência', 
+                                    kg: vKg, 
+                                    toneladas: vKg,
+                                    polegadas: vPol, 
+                                    prioridade: String(row[colPrio] || 'Normal'), 
+                                    fase: String(row[colFase] || 'Projeto'), 
+                                    setor: colSetor !== -1 ? String(row[colSetor] || 'Geral') : 'Geral',
+                                    trabalhador: String(row[colTrab] || 'Não Atribuído'),
+                                    comentarios: String(row[colObs] || '') 
+                                });
                             }
                         }
-
-                        if (refE) {
-                            totalLidas++; 
-                            const idUnico = String(refE + desig).trim().toLowerCase().replace(/\s+/g, '');
+                    } else {
+                        // ==== MODO NORMAL A PARTIR DE EXCEL DE ENGENHARIA ====
+                        for (let i = 0; i < rows.length; i++) {
+                            const row = rows[i]; 
+                            if (!row || row.length === 0) continue;
                             
-                            if (chavesExistentesBD.has(idUnico) || refsSet.has(idUnico)) { 
-                                ignoradas++; 
-                                continue; 
-                            }
-                            
-                            refsSet.add(idUnico);
+                            let refE = null, desig = null, trab = 'Não Atribuído';
+                            const linhaStr = row.map(c => String(c || '')).join(' | ');
 
-                            const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor', 'luís', 'luis'];
-                            for (let t of equipa) {
-                                if (linhaStr.toLowerCase().includes(t)) { 
-                                    trab = t.charAt(0).toUpperCase() + t.slice(1); 
-                                    if (trab.toLowerCase() === 'jose') trab = 'José'; 
-                                    if (trab.toLowerCase() === 'luis') trab = 'Luís'; 
+                            for (let j = 0; j < row.length; j++) {
+                                const match = String(row[j] || '').trim().match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
+                                if (match) { 
+                                    refE = match[1].toUpperCase(); 
+                                    desig = match[2].replace(/^-/, '').trim() || 'Conjunto Principal'; 
                                     break; 
                                 }
                             }
-                            
-                            obrasParaInserir.push({ 
-                                obra_ref: refE, 
-                                referencia: desig, 
-                                kg: 0, 
-                                toneladas: 0, 
-                                polegadas: 0, 
-                                prioridade: 'Normal', 
-                                fase: 'Projeto', 
-                                trabalhador: trab 
-                            });
+
+                            if (refE) {
+                                totalLidas++; 
+                                const idUnico = String(refE + desig).trim().toLowerCase().replace(/\s+/g, '');
+                                
+                                if (chavesExistentesBD.has(idUnico) || refsSet.has(idUnico)) { 
+                                    ignoradas++; 
+                                    continue; 
+                                }
+                                
+                                refsSet.add(idUnico);
+
+                                const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor', 'luís', 'luis'];
+                                for (let t of equipa) {
+                                    if (linhaStr.toLowerCase().includes(t)) { 
+                                        trab = t.charAt(0).toUpperCase() + t.slice(1); 
+                                        if (trab.toLowerCase() === 'jose') trab = 'José'; 
+                                        if (trab.toLowerCase() === 'luis') trab = 'Luís'; 
+                                        break; 
+                                    }
+                                }
+                                
+                                obrasParaInserir.push({ 
+                                    obra_ref: refE, 
+                                    referencia: desig, 
+                                    kg: 0, 
+                                    toneladas: 0, 
+                                    polegadas: 0, 
+                                    prioridade: 'Normal', 
+                                    fase: 'Projeto', 
+                                    setor: 'Geral',
+                                    trabalhador: trab 
+                                });
+                            }
                         }
                     }
 
@@ -1297,7 +1367,6 @@
                         
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
-                        // SE FALHAR (coluna nova não existe), Ativa o Plano B Silencioso
                         if (res.error) {
                             dbFailsOnNewColumns = true;
                             const loteSeguro = lote.map(o => {
@@ -1406,7 +1475,6 @@
                 const cardId = e.dataTransfer.getData('text/plain'); 
                 const cartao = document.getElementById(cardId);
                 
-                // Procura a zona de conteúdo caso o rato solte o cartão em cima de algo escondido
                 let target = e.target;
                 while (target && !target.classList.contains('column-content')) { 
                     target = target.parentElement; 
@@ -1422,7 +1490,6 @@
                 
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
-                // Lógica Inteligente para caixas "Concluído Setor" manterem o nome de quem fez
                 if (!novoOperador || novoOperador === 'Qualquer') {
                     novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
                 }
@@ -1444,7 +1511,7 @@
         });
 
         // -----------------------------------------------------
-        // ADICIONAR E EDITAR
+        // ADICIONAR E EDITAR (COM LEITURA FORÇADA DE VALORES NUMÉRICOS)
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1510,22 +1577,18 @@
                 
                 let z = null;
                 
-                // 1. Procura pela combo exata Trabalhador e Fase
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
                 
-                // 2. Se for Concluído Setor
                 if (!z && f === 'Concluído Setor' && s) {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-setor="${s}"]`);
                 }
                 
-                // 3. Fallback genérico
                 if (!z) {
                     z = document.querySelector(`.column-content[data-fase="${f}"]`);
                 }
                 
-                // 4. Último recurso
                 if (!z) {
                     z = document.querySelector(`.column-content[data-fase="Projeto"]`);
                 }
@@ -1626,13 +1689,16 @@
         }
 
         // -----------------------------------------------------
-        // CÁLCULO DOS NOVOS KPIS (RETRABALHOS INCLUÍDOS)
+        // CÁLCULO DOS NOVOS KPIS (RETRABALHO INCLUIDO)
         // -----------------------------------------------------
         function calcularKPIs() {
             let totalKgAno = 0;
-            let kgEmExecucao = 0; let pecasEmExecucao = 0;
-            let kgPendente = 0; let pecasPendente = 0;
-            let kgConcluido = 0; let pecasConcluido = 0;
+            let kgEmExecucao = 0; 
+            let pecasEmExecucao = 0;
+            let kgPendente = 0; 
+            let pecasPendente = 0;
+            let kgConcluido = 0; 
+            let pecasConcluido = 0;
 
             let totalRetrabalhos = 0;
             let retrabalhosConcluidos = 0;
@@ -1640,7 +1706,6 @@
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
-                // Contabiliza total de retrabalhos da fábrica (cinza)
                 if (o.prioridade === 'Retrabalho') {
                     totalRetrabalhos++;
                 }
@@ -1659,29 +1724,28 @@
                     kgConcluido += peso;
                     pecasConcluido++;
                     
-                    // Se estiver no Concluído Final E for Cinza (Retrabalho)
                     if (o.prioridade === 'Retrabalho') {
                         retrabalhosConcluidos++;
                     }
                 }
             });
             
-            // Calcula a percentagem real de peças cinzentas na caixa de Concluídos Finais
+            // Taxa real de peças retrabalhadas vs peças perfeitas no Concluído Final
             let taxaRetrabalho = 0;
             if (pecasConcluido > 0) {
                 taxaRetrabalho = ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1);
             }
 
             // Atualiza KPI Retrabalhos
-            document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(${taxaRetrabalho}% nos Concluídos)</span>`;
+            document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% nos Concluídos)</span>`;
 
             // Atualiza Histórico Geral
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             
             // Atualiza Tempo Real (Em Execução, Pendentes, Concluído Final)
-            document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasEmExecucao + " unid)</span>";
-            document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasPendente + " unid)</span>";
-            document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasConcluido + " unid)</span>";
+            document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmExecucao + " unid)</span>";
+            document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
+            document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
         }
 
         // -----------------------------------------------------
