@@ -48,7 +48,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Permite que o ecrã cresça para baixo livremente */
+            overflow-y: auto; /* Permite que o ecrã cresça para baixo */
         }
 
         /* --------------------------------------
@@ -304,7 +304,7 @@
             overflow-x: auto; 
             flex-grow: 1; 
             padding-bottom: 15px; 
-            align-items: flex-start; /* Impede o esticamento fantasma das colunas vazias */
+            align-items: flex-start;
         }
 
         .column {
@@ -434,7 +434,7 @@
         }
 
         /* --------------------------------------
-           CORES TOTAIS DOS CARTÕES E BLINDAGEM DE DRAG
+           CORES TOTAIS DOS CARTÕES E BLINDAGEM
            -------------------------------------- */
         .card {
             border-radius: 5px; 
@@ -451,13 +451,21 @@
             opacity: 0.8; 
         }
         
-        /* Blindagem contra largar cartões em cima de texto do cartão */
         .card * { 
             pointer-events: none; 
         }
         
         .card-actions button { 
             pointer-events: auto; 
+        }
+
+        /* NOVA COR: RETRABALHO (CINZA) */
+        .card.prio-retrabalho { 
+            background-color: #94a3b8 !important; 
+            border: none; 
+        }
+        .card.prio-retrabalho * { 
+            color: #ffffff !important; 
         }
 
         .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
@@ -487,7 +495,10 @@
             margin-bottom: 4px;
         }
 
-        .card.prio-normal .obra-badge { background: var(--prf-blue) !important; color: white !important;}
+        .card.prio-normal .obra-badge { 
+            background: var(--prf-blue) !important; 
+            color: white !important;
+        }
 
         .card-ref { font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
         .card-info { font-size: 10px; margin-top: 3px; }
@@ -496,7 +507,7 @@
         .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
 
         /* --------------------------------------
-           MODAIS DE AVISOS E EDIÇÃO
+           MODAIS E AVISOS
            -------------------------------------- */
         .modal-overlay {
             display: none; 
@@ -571,9 +582,6 @@
             margin-left: 5px; 
         }
 
-        /* --------------------------------------
-           ITENS DE CONSULTA
-           -------------------------------------- */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -586,7 +594,7 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO DA APP -->
     <header>
         <div class="brand-logo" onclick="navesPara('page-home')">
             <img src="prf_principal_gassolutions.png" alt="PRF Logo" class="header-logo-img" onerror="this.style.display='none'">
@@ -629,6 +637,7 @@
     <!-- PÁGINA KANBAN -->
     <div id="page-kanban" class="page">
         
+        <!-- BARRA DE PESQUISA -->
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 12px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
@@ -639,6 +648,7 @@
             <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador ou Fase..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
+        <!-- OPERAÇÕES EM LOTE -->
         <div class="bulk-actions-bar">
             <span style="font-size: 12px; color: var(--text-secondary); font-weight: bold;">⚙️ Operações:</span>
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
@@ -647,6 +657,7 @@
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
+        <!-- FORMULÁRIO DE ADIÇÃO MANUAL -->
         <div class="add-form">
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
@@ -657,6 +668,7 @@
                 <option value="Amarelo" selected>🟡 Baixa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
+                <option value="Retrabalho">⚪ Retrabalho</option>
             </select>
             <button class="btn-action" onclick="adicionarObra()">+ Adicionar Manual</button>
             
@@ -671,7 +683,7 @@
             <div class="top-scroll-dummy" id="topScrollDummy"></div>
         </div>
 
-        <!-- QUADRO KANBAN BASE -->
+        <!-- QUADRO KANBAN PRINCIPAL -->
         <div class="board" id="boardKanban">
             
             <div class="column" style="min-width: 200px; width: 200px;">
@@ -684,17 +696,18 @@
                 <div class="column-content" data-fase="Desenho"></div>
             </div>
             
+            <!-- MATERIAL (COLUNA SIMPLES) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-fase="Material" data-operador="Camila"></div>
             </div>
 
+            <!-- LASER -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Laser</div>
                 <div class="column-content" data-fase="Laser"></div>
             </div>
 
-            <!-- ÁREA DA PRODUÇÃO -->
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
@@ -819,6 +832,7 @@
                 </div>
             </div>
 
+            <!-- QUALIDADE E TRATAMENTO (COLUNAS SIMPLES E LIMPAS) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
@@ -855,37 +869,37 @@
     <div id="page-kpis" class="page">
         <h2 style="margin-top:0; color:var(--text-main);">📊 Estado Atual da Fábrica (Tempo Real)</h2>
         <div class="kpi-grid">
-            <div class="kpi-card" style="border-left-color: #0288d1;">
-                <div class="kpi-title" style="color: #0288d1;">Em Execução (Produção)</div>
+            <div class="kpi-card" style="border-left-color: #0288d1; background: #e1f5fe;">
+                <div class="kpi-title" style="color: #01579b;">Em Execução (Produção)</div>
                 <div class="kpi-value" id="kpi-em-execucao">0.0 Kg</div>
             </div>
-            <div class="kpi-card" style="border-left-color: #fbc02d;">
-                <div class="kpi-title" style="color: #fbc02d;">Pendentes (Produção)</div>
+            <div class="kpi-card" style="border-left-color: #fbc02d; background: #fffde7;">
+                <div class="kpi-title" style="color: #f57f17;">Pendentes (Produção)</div>
                 <div class="kpi-value" id="kpi-pendentes">0.0 Kg</div>
             </div>
-            <div class="kpi-card" style="border-left-color: #2e7d32;">
-                <div class="kpi-title" style="color: #2e7d32;">Concluído Final</div>
+            <div class="kpi-card" style="border-left-color: #2e7d32; background: #e8f5e9;">
+                <div class="kpi-title" style="color: #1b5e20;">Concluído Final</div>
                 <div class="kpi-value" id="kpi-concluido-final">0.0 Kg</div>
             </div>
         </div>
 
         <h2 style="color:var(--text-main);">📈 Histórico e Qualidade Geral</h2>
         <div class="kpi-grid">
+            <div class="kpi-card" style="border-left-color: #f57c00;">
+                <div class="kpi-title" style="color: #f57c00;">Peças Retrabalhadas</div>
+                <div class="kpi-value" id="kpi-retrabalho">0 Unid <span class="kpi-subtitle">(0%)</span></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Kg Soldados (Total)</div>
+                <div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div>
+            </div>
             <div class="kpi-card">
                 <div class="kpi-title">Kg Soldados (Semana)</div>
-                <div class="kpi-value" id="kpi-tons-semana">0.0 Kg</div>
+                <div class="kpi-value" id="kpi-tons-semana"><span style="font-size:14px; color:#94a3b8;">Requer Registo de Datas</span></div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-title">Kg Soldados (Mês)</div>
-                <div class="kpi-value" id="kpi-tons-mes">0.0 Kg</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-title">Total Processado (Ano)</div>
-                <div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div>
-            </div>
-            <div class="kpi-card" style="border-left-color: #f57c00;">
-                <div class="kpi-title">% Peças Retrabalhadas</div>
-                <div class="kpi-value">Aguardar Exec.</div>
+                <div class="kpi-value" id="kpi-tons-mes"><span style="font-size:14px; color:#94a3b8;">Requer Registo de Datas</span></div>
             </div>
             <div class="kpi-card" style="border-left-color: #d32f2f;">
                 <div class="kpi-title">% Peças Rejeitadas</div>
@@ -958,6 +972,7 @@
                 <option value="Amarelo">🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
+                <option value="Retrabalho">⚪ Retrabalho</option>
             </select>
 
             <label>Comentários / Observações:</label>
@@ -1197,7 +1212,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL (SISTEMA DE FALLBACK AUTOMÁTICO PARA A BD)
+        // IMPORTAR EXCEL (SISTEMA DE FALLBACK AUTOMÁTICO)
         // -----------------------------------------------------
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
@@ -1261,7 +1276,7 @@
                                 obra_ref: refE, 
                                 referencia: desig, 
                                 kg: 0, 
-                                toneladas: 0, // Injetado por segurança retroativa
+                                toneladas: 0, 
                                 polegadas: 0, 
                                 prioridade: 'Normal', 
                                 fase: 'Projeto', 
@@ -1280,7 +1295,6 @@
                     for (let i = 0; i < obrasParaInserir.length; i += 500) {
                         let lote = obrasParaInserir.slice(i, i + 500);
                         
-                        // Primeira tentativa de Inserir
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
                         // SE FALHAR (coluna nova não existe), Ativa o Plano B Silencioso
@@ -1293,7 +1307,7 @@
                                 return copy;
                             });
                             const fallbackRes = await supabaseClient.from('cartoes_kanban').insert(loteSeguro).select();
-                            res.error = fallbackRes.error; // Atualiza o erro para ver se o plano B falhou também
+                            res.error = fallbackRes.error; 
                         }
 
                         if (res.error) {
@@ -1373,7 +1387,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP BLINDADO
+        // DRAG AND DROP BLINDADO (Proteção contra arrastar texto do cartão)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1430,7 +1444,7 @@
         });
 
         // -----------------------------------------------------
-        // ADICIONAR E EDITAR (COM LEITURA FORÇADA DE VALORES NUMÉRICOS)
+        // ADICIONAR E EDITAR
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1455,7 +1469,7 @@
                 obra_ref: 'MANUAL', 
                 referencia: ref, 
                 kg: vKg, 
-                toneladas: vKg, // Guarda na coluna antiga também para segurança
+                toneladas: vKg, 
                 polegadas: vPol, 
                 prioridade: prio, 
                 fase: 'Projeto', 
@@ -1464,7 +1478,6 @@
 
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
-            // PLANO B (Caso as colunas não existam no Supabase)
             if (res.error) {
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
@@ -1512,7 +1525,7 @@
                     z = document.querySelector(`.column-content[data-fase="${f}"]`);
                 }
                 
-                // 4. Último recurso (vai para projeto para não ficar invisível)
+                // 4. Último recurso
                 if (!z) {
                     z = document.querySelector(`.column-content[data-fase="Projeto"]`);
                 }
@@ -1526,13 +1539,11 @@
                     const cmt = c.comentarios ? `<div class="card-comment">💬 ${String(c.comentarios)}</div>` : '';
                     const bdg = c.obra_ref ? `<div class="obra-badge">${String(c.obra_ref)}</div>` : '';
                     
-                    // Proteção rigorosa contra quebras de linha e aspas no JS
                     const oS = String(c.obra_ref || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
                     const rS = String(c.referencia || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     const pS = String(c.prioridade || 'Normal').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
                     const cS = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
                     
-                    // Lógica de Leitura Segura do Peso (NOVO e ANTIGO em simultâneo)
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
@@ -1560,7 +1571,6 @@
             document.getElementById('edit-obra').value = obra; 
             document.getElementById('edit-ref').value = ref;
             
-            // Preenche formulário. Converte as quebras de linha de volta ao normal
             document.getElementById('edit-kg').value = kg; 
             document.getElementById('edit-pol').value = pol;
             document.getElementById('edit-prio').value = prio; 
@@ -1582,7 +1592,7 @@
                 obra_ref: document.getElementById('edit-obra').value.trim(), 
                 referencia: document.getElementById('edit-ref').value.trim(),
                 kg: vKg, 
-                toneladas: vKg, // Guarda nas duas para não haver falhas
+                toneladas: vKg, 
                 polegadas: vPol, 
                 prioridade: document.getElementById('edit-prio').value, 
                 comentarios: document.getElementById('edit-comments').value.trim()
@@ -1590,7 +1600,6 @@
 
             let res = await supabaseClient.from('cartoes_kanban').update(updateData).eq('id', id);
 
-            // PLANO B (Caso a tabela careça das colunas atualizadas)
             if (res.error) {
                 const fallbackData = { ...updateData };
                 delete fallbackData.kg;
@@ -1617,49 +1626,61 @@
         }
 
         // -----------------------------------------------------
-        // CÁLCULO DOS NOVOS KPIS (ATUALIZADO)
+        // CÁLCULO DOS NOVOS KPIS (RETRABALHOS INCLUÍDOS)
         // -----------------------------------------------------
         function calcularKPIs() {
             let totalKgAno = 0;
-            let kgEmExecucao = 0; 
-            let pecasEmExecucao = 0;
-            let kgPendente = 0; 
-            let pecasPendente = 0;
-            let kgConcluido = 0; 
-            let pecasConcluido = 0;
+            let kgEmExecucao = 0; let pecasEmExecucao = 0;
+            let kgPendente = 0; let pecasPendente = 0;
+            let kgConcluido = 0; let pecasConcluido = 0;
+
+            let totalRetrabalhos = 0;
+            let retrabalhosConcluidos = 0;
 
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
-                // Se a obra NÃO estiver no Arquivo, soma ao histórico do ano
+                // Contabiliza total de retrabalhos da fábrica (cinza)
+                if (o.prioridade === 'Retrabalho') {
+                    totalRetrabalhos++;
+                }
+
                 if (o.fase !== 'Arquivado') {
                     totalKgAno += peso;
                 }
 
-                // Soma aos contadores do Estado Atual com base na fase onde o cartão está agora
                 if (o.fase === 'Produção') {
                     kgEmExecucao += peso;
                     pecasEmExecucao++;
                 } else if (o.fase === 'Pendente') {
                     kgPendente += peso;
                     pecasPendente++;
-                } else if (o.fase === 'Concluído') { // Apenas o Concluído Final
+                } else if (o.fase === 'Concluído') { 
                     kgConcluido += peso;
                     pecasConcluido++;
+                    
+                    // Se estiver no Concluído Final E for Cinza (Retrabalho)
+                    if (o.prioridade === 'Retrabalho') {
+                        retrabalhosConcluidos++;
+                    }
                 }
             });
             
-            // Atualiza o Histórico (Em baixo)
+            // Calcula a percentagem real de peças cinzentas na caixa de Concluídos Finais
+            let taxaRetrabalho = 0;
+            if (pecasConcluido > 0) {
+                taxaRetrabalho = ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1);
+            }
+
+            // Atualiza KPI Retrabalhos
+            document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(${taxaRetrabalho}% nos Concluídos)</span>`;
+
+            // Atualiza Histórico Geral
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             
-            // Atualiza os blocos Novos de Tempo Real (No Topo)
-            // Em Execução
+            // Atualiza Tempo Real (Em Execução, Pendentes, Concluído Final)
             document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasEmExecucao + " unid)</span>";
-            
-            // Pendentes
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasPendente + " unid)</span>";
-            
-            // Concluído Final
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span style='font-size:14px; font-weight:normal; color:var(--text-secondary);'>(" + pecasConcluido + " unid)</span>";
         }
 
