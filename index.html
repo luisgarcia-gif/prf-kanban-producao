@@ -42,6 +42,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            /* Scroll vertical livre para acomodar crescimento das colunas */
+            overflow-y: auto; 
         }
 
         /* HEADER */
@@ -52,6 +54,9 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid var(--prf-blue);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .brand-logo {
@@ -220,6 +225,21 @@
             cursor: pointer !important;
         }
 
+        /* BARRA DE SCROLL NO TOPO */
+        .top-scroll-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            min-height: 14px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            position: sticky;
+            top: 61px; /* Abaixo do Header */
+            z-index: 90;
+        }
+        .top-scroll-dummy { height: 14px; }
+
         /* KANBAN BOARD */
         .board {
             display: flex;
@@ -227,7 +247,7 @@
             overflow-x: auto;
             flex-grow: 1;
             padding-bottom: 15px;
-            align-items: flex-start;
+            align-items: stretch;
         }
 
         .column {
@@ -242,9 +262,9 @@
         }
 
         .column.production-col {
-            min-width: 760px;
-            width: 760px;
-            border: 1px solid var(--prf-blue);
+            min-width: auto;
+            width: auto;
+            border: 2px solid var(--prf-blue);
         }
 
         .column-header {
@@ -261,8 +281,7 @@
         }
 
         .sub-sectors-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: flex;
             gap: 8px;
             padding: 8px;
             flex-grow: 1;
@@ -287,10 +306,19 @@
             border-bottom: 1px solid var(--border-color);
         }
 
+        .sub-sector-grid {
+            display: flex;
+            gap: 6px;
+            align-items: stretch;
+        }
+
         .worker-lane {
             background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            min-width: 140px;
+            width: 140px;
             margin-top: 4px;
-            padding: 4px;
             border-radius: 4px;
             border: 1px solid var(--border-color);
         }
@@ -299,13 +327,30 @@
             font-size: 10px;
             color: var(--text-secondary);
             font-weight: bold;
-            margin-bottom: 3px;
+            text-align: center;
+            padding: 4px;
+            background: #e2e8f0;
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Divisores Pendente / Decorrer */
+        .zone-title {
+            font-size: 9px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #f1f5f9;
+            color: #333;
+            padding: 2px;
+            border-bottom: 1px solid #cbd5e1;
+            border-top: 1px solid #cbd5e1;
         }
 
         .column-content {
             padding: 6px;
-            flex-grow: 1;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Faz a coluna crescer livremente */
             min-height: 80px;
         }
 
@@ -313,6 +358,21 @@
             background-color: rgba(0, 151, 167, 0.1);
             border: 2px dashed var(--prf-blue);
             border-radius: 5px;
+        }
+
+        /* Raia "Concluído" no fim de cada Setor */
+        .sector-done-lane {
+            display: flex;
+            flex-direction: column;
+            min-width: 130px;
+            width: 130px;
+            border-left: 2px dashed #cbd5e1;
+            padding-left: 6px;
+            margin-top: 4px;
+        }
+        .sector-done-lane .worker-title {
+            color: white;
+            background: #2e7d32;
         }
 
         /* --------------------------------------
@@ -525,58 +585,179 @@
             </label>
         </div>
 
-        <div class="board">
+        <!-- BARRA DE SCROLL NO TOPO PARA FACILITAR NAVEGAÇÃO -->
+        <div class="top-scroll-wrapper" id="topScrollWrapper">
+            <div class="top-scroll-dummy" id="topScrollDummy"></div>
+        </div>
+
+        <div class="board" id="boardKanban">
             <div class="column"><div class="column-header">Projeto</div><div class="column-content" data-fase="Projeto"></div></div>
             <div class="column"><div class="column-header">Desenho</div><div class="column-content" data-fase="Desenho"></div></div>
             
             <div class="column">
                 <div class="column-header">Material</div>
-                <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Camila</div><div class="column-content" data-fase="Material" data-operador="Camila"></div></div>
+                <div class="worker-lane" style="margin: 6px; flex-grow: 1;">
+                    <div class="worker-title">Camila</div>
+                    <div class="column-content" data-fase="Material" data-operador="Camila"></div>
+                </div>
             </div>
 
-            <!-- COLUNA LASER -->
             <div class="column"><div class="column-header">Laser</div><div class="column-content" data-fase="Laser"></div></div>
 
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
+                    
+                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
-                        <div class="worker-lane"><div class="worker-title">Suellen</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div></div>
-                        <div class="worker-lane"><div class="worker-title">José</div><div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div></div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="worker-title">Suellen</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Tubistas" data-operador="Suellen"></div>
+                            </div>
+                            <div class="worker-lane">
+                                <div class="worker-title">José</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Tubistas" data-operador="José"></div>
+                            </div>
+                            <!-- CONCLUIDO DO SETOR -->
+                            <div class="sector-done-lane">
+                                <div class="worker-title">✅ Concluído</div>
+                                <div class="column-content" data-fase="Concluído Setor" data-setor="Tubistas" data-operador="Qualquer"></div>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
-                        <div class="worker-lane"><div class="worker-title">Jenifer</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div></div>
-                        <div class="worker-lane"><div class="worker-title">Douglas</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Douglas"></div></div>
-                        <div class="worker-lane"><div class="worker-title">Neto</div><div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div></div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="worker-title">Jenifer</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Jenifer"></div>
+                            </div>
+                            <div class="worker-lane">
+                                <div class="worker-title">Douglas</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Douglas"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Douglas"></div>
+                            </div>
+                            <div class="worker-lane">
+                                <div class="worker-title">Neto</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Neto"></div>
+                            </div>
+                            <div class="sector-done-lane">
+                                <div class="worker-title">✅ Concluído</div>
+                                <div class="column-content" data-fase="Concluído Setor" data-setor="Serralheiros" data-operador="Qualquer"></div>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
-                        <div class="worker-lane"><div class="worker-title">Alexandre</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div></div>
-                        <div class="worker-lane"><div class="worker-title">Jorge</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div></div>
-                        <div class="worker-lane"><div class="worker-title">Diogo</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div></div>
-                        <div class="worker-lane"><div class="worker-title">Yaroslav</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div></div>
-                        <div class="worker-lane"><div class="worker-title">Luís</div><div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Luís"></div></div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="worker-title">Alexandre</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Alexandre"></div>
+                            </div>
+                            <div class="worker-lane">
+                                <div class="worker-title">Jorge</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Jorge"></div>
+                            </div>
+                            <div class="worker-lane">
+                                <div class="worker-title">Diogo</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Diogo"></div>
+                            </div>
+                            <div class="worker-lane">
+                                <div class="worker-title">Yaroslav</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Yaroslav"></div>
+                            </div>
+                            <div class="worker-lane">
+                                <div class="worker-title">Luís</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Luís"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Luís"></div>
+                            </div>
+                            <div class="sector-done-lane">
+                                <div class="worker-title">✅ Concluído</div>
+                                <div class="column-content" data-fase="Concluído Setor" data-setor="Soldadores" data-operador="Qualquer"></div>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
-                        <div class="worker-lane"><div class="worker-title">Oleh</div><div class="column-content" data-fase="Produção" data-setor="Orbital" data-operador="Oleh"></div></div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="worker-title">Oleh</div>
+                                <div class="zone-title">A Decorrer</div>
+                                <div class="column-content" data-fase="Produção" data-setor="Orbital" data-operador="Oleh"></div>
+                                <div class="zone-title">Pendente</div>
+                                <div class="column-content" data-fase="Pendente" data-setor="Orbital" data-operador="Oleh"></div>
+                            </div>
+                            <div class="sector-done-lane">
+                                <div class="worker-title">✅ Concluído</div>
+                                <div class="column-content" data-fase="Concluído Setor" data-setor="Orbital" data-operador="Qualquer"></div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
+            <!-- QUALIDADE -->
             <div class="column">
                 <div class="column-header">Qualidade</div>
-                <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Ismael</div><div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div></div>
+                <div class="worker-lane" style="margin: 6px; flex-grow: 1;">
+                    <div class="worker-title">Ismael</div>
+                    <div class="zone-title">A Decorrer</div>
+                    <div class="column-content" data-fase="Qualidade" data-setor="Qualidade" data-operador="Ismael"></div>
+                    <div class="zone-title">Pendente</div>
+                    <div class="column-content" data-fase="Pendente" data-setor="Qualidade" data-operador="Ismael"></div>
+                </div>
             </div>
 
+            <!-- TRATAMENTO -->
             <div class="column">
                 <div class="column-header">Tratamento</div>
-                <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Igor</div><div class="column-content" data-fase="Tratamento" data-operador="Igor"></div></div>
+                <div class="worker-lane" style="margin: 6px; flex-grow: 1;">
+                    <div class="worker-title">Igor</div>
+                    <div class="zone-title">A Decorrer</div>
+                    <div class="column-content" data-fase="Tratamento" data-setor="Tratamento" data-operador="Igor"></div>
+                    <div class="zone-title">Pendente</div>
+                    <div class="column-content" data-fase="Pendente" data-setor="Tratamento" data-operador="Igor"></div>
+                </div>
             </div>
 
-            <div class="column"><div class="column-header">Concluído</div><div class="column-content" data-fase="Concluído"></div></div>
+            <div class="column"><div class="column-header">Concluído Final</div><div class="column-content" data-fase="Concluído"></div></div>
         </div>
     </div>
 
@@ -705,6 +886,18 @@
 
         let todasAsObras = [];
 
+        // LIGAÇÃO DA BARRA DE SCROLL DE CIMA AO KANBAN
+        const topScrollWrapper = document.getElementById('topScrollWrapper');
+        const boardKanban = document.getElementById('boardKanban');
+        
+        topScrollWrapper.addEventListener('scroll', () => { boardKanban.scrollLeft = topScrollWrapper.scrollLeft; });
+        boardKanban.addEventListener('scroll', () => { topScrollWrapper.scrollLeft = boardKanban.scrollLeft; });
+        
+        function atualizarTamanhoScrollTopo() {
+            document.getElementById('topScrollDummy').style.width = boardKanban.scrollWidth + 'px';
+        }
+        window.addEventListener('resize', atualizarTamanhoScrollTopo);
+
         function mostrarAlerta(mensagem) {
             document.getElementById('custom-alert-msg').innerText = mensagem;
             document.getElementById('custom-alert').classList.add('active');
@@ -742,6 +935,7 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'page-kpis') calcularKPIs();
+            setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
         /* -----------------------------------------------------
@@ -840,7 +1034,7 @@
 
         function limparConcluidos() {
             mostrarConfirmacao("Deseja ARQUIVAR e limpar do quadro todas as obras que estão na fase 'Concluído'?\n\n(Elas ficarão guardadas no menu Consultas)", async function() {
-                const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).eq('fase', 'Concluído');
+                const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).in('fase', ['Concluído', 'Concluído Setor']);
                 if (!error) {
                     mostrarAlerta("Obras arquivadas com sucesso. Pode consultá-las a qualquer momento no menu 'Consultas'.");
                     carregarTudo();
@@ -952,7 +1146,7 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas (incluindo GN, MT, HY, etc.). Ignorámos ${ignoradasPorDuplicacao} que já estavam na BD. Nenhuma obra nova adicionada.`);
+                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas no seu Excel. Ignorámos ${ignoradasPorDuplicacao} que já existiam na BD. Nenhuma obra nova adicionada.`);
                         return;
                     }
 
@@ -1005,6 +1199,7 @@
                     renderCartao(o);
                 }
             });
+            setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
         function filtrarConsultas() {
@@ -1042,7 +1237,7 @@
             `).join('');
         }
 
-        // DRAG AND DROP
+        // DRAG AND DROP COM GUARDA DO TRABALHADOR
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
@@ -1052,20 +1247,27 @@
                 const cardId = e.dataTransfer.getData('text/plain');
                 const novaFase = zone.getAttribute('data-fase');
                 const novoSetor = zone.getAttribute('data-setor') || 'Geral';
-                const novoOperador = zone.getAttribute('data-operador') || 'Não Atribuído';
+                let novoOperador = zone.getAttribute('data-operador');
                 const cartao = document.getElementById(cardId);
                 
                 if (cartao && novaFase) {
                     zone.appendChild(cartao); 
 
-                    const obraIndex = todasAsObras.findIndex(o => o.id === cardId);
-                    if (obraIndex !== -1) {
-                        todasAsObras[obraIndex].fase = novaFase;
-                        todasAsObras[obraIndex].setor = novoSetor;
-                        todasAsObras[obraIndex].trabalhador = novoOperador;
+                    const idx = todasAsObras.findIndex(o => o.id === cardId);
+                    
+                    // Se for atirado para a caixa de Concluído do Setor, retém a quem pertencia
+                    if (!novoOperador || novoOperador === 'Qualquer') {
+                        novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
+                    }
+
+                    if (idx !== -1) {
+                        todasAsObras[idx].fase = novaFase;
+                        todasAsObras[idx].setor = novoSetor;
+                        todasAsObras[idx].trabalhador = novoOperador;
                     }
 
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
+                    setTimeout(atualizarTamanhoScrollTopo, 100);
                 }
             });
         });
@@ -1098,20 +1300,31 @@
             }
         }
 
-        // RENDER CARTÃO 
+        // RENDER CARTÃO NAS NOVAS ÁREAS DE A DECORRER / PENDENTE / CONCLUÍDO SETOR
         function renderCartao(c) {
             try {
                 const prioClass = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
-                const faseSafe = String(c.fase || 'Projeto').replace(/"/g, '');
-                const trabSafe = String(c.trabalhador || 'Não Atribuído').replace(/"/g, '');
+                const f = String(c.fase || 'Projeto').replace(/"/g, '');
+                const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, '');
+                const s = String(c.setor || '').replace(/"/g, '');
                 let targetZone = null;
 
-                if (c.trabalhador && c.trabalhador !== 'Não Atribuído') {
-                    targetZone = document.querySelector(`.column-content[data-fase="${faseSafe}"][data-operador="${trabSafe}"]`);
+                // 1. Procura exata (ex: fase Produção, operador Suellen)
+                if (f && t && t !== 'Não Atribuído') {
+                    targetZone = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
+                
+                // 2. Se for Concluído Setor, procura pela fase e pelo setor
+                if (!targetZone && f === 'Concluído Setor' && s) {
+                    targetZone = document.querySelector(`.column-content[data-fase="${f}"][data-setor="${s}"]`);
+                }
+                
+                // 3. Fallback genérico para a Fase
                 if (!targetZone) {
-                    targetZone = document.querySelector(`.column-content[data-fase="${faseSafe}"]`);
+                    targetZone = document.querySelector(`.column-content[data-fase="${f}"]`);
                 }
+                
+                // 4. Último recurso (vai para projeto)
                 if (!targetZone) {
                     targetZone = document.querySelector(`.column-content[data-fase="Projeto"]`);
                 }
@@ -1136,7 +1349,7 @@
                     el.innerHTML = `
                         ${badgeObra}
                         <div class="card-ref">${String(c.referencia || 'Sem Referência')}</div>
-                        <div class="card-info">⚖️ ${valorKg} Kg | 📏 ${valorPol}" <br> 👷 ${String(c.trabalhador || 'Não Atribuído')}</div>
+                        <div class="card-info">⚖️ ${valorKg} Kg | 📏 ${valorPol}" <br> 👷 ${t}</div>
                         ${commentHTML}
                         <div class="card-actions">
                             <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${obraSafe}', '${refSafe}', ${valorKg}, ${valorPol}, '${prioSafe}', '${comSafe}')">✏️ Editar</button>
