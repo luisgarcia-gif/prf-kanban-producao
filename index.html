@@ -7,23 +7,36 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
+        /* TEMA CLARO (Default PRF) */
         :root {
             --prf-blue: #0097A7;
             --prf-blue-dark: #00796B;
             --prf-blue-light: #00bcd4;
-            --bg-main: #121212;
-            --bg-card: #1e1e1e;
-            --bg-subcard: #182228;
-            --text-main: #ffffff;
-            --text-secondary: #b0bec5;
-            --border-color: #334155;
+            --bg-main: #f4f6f8;
+            --bg-card: #ffffff;
+            --bg-subcard: #eef2f5;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #cbd5e1;
+        }
+
+        /* TEMA ESCURO (Só se o sistema do utilizador pedir) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-main: #121212;
+                --bg-card: #1e1e1e;
+                --bg-subcard: #182228;
+                --text-main: #ffffff;
+                --text-secondary: #b0bec5;
+                --border-color: #334155;
+            }
         }
 
         * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-main) !important;
-            color: var(--text-main) !important;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             margin: 0;
             padding: 0;
             min-height: 100vh;
@@ -47,7 +60,7 @@
             gap: 12px;
             font-size: 18px;
             font-weight: bold;
-            color: var(--prf-blue-light) !important;
+            color: var(--prf-blue-light);
             cursor: pointer;
         }
 
@@ -67,8 +80,8 @@
         }
 
         .btn-header {
-            background-color: var(--prf-blue) !important;
-            color: #ffffff !important;
+            background-color: var(--prf-blue);
+            color: #ffffff;
             border: none;
             padding: 8px 14px;
             border-radius: 4px;
@@ -79,9 +92,9 @@
             align-items: center;
             gap: 6px;
         }
-        .btn-header:hover { background-color: var(--prf-blue-dark) !important; }
-        .btn-refresh { background-color: #374151 !important; }
-        .btn-refresh:hover { background-color: #4b5563 !important; }
+        .btn-header:hover { background-color: var(--prf-blue-dark); }
+        .btn-refresh { background-color: #64748b; }
+        .btn-refresh:hover { background-color: #475569; }
 
         /* PÁGINAS */
         .page { display: none; padding: 20px; flex-grow: 1; }
@@ -113,8 +126,8 @@
             object-fit: contain;
         }
 
-        .home-title { font-size: 24px; color: var(--text-main) !important; margin-top: 10px; font-weight: bold; }
-        .home-subtitle { font-size: 14px; color: var(--text-secondary) !important; }
+        .home-title { font-size: 24px; color: var(--text-main); margin-top: 10px; font-weight: bold; }
+        .home-subtitle { font-size: 14px; color: var(--text-secondary); }
 
         .menu-grid {
             display: grid;
@@ -142,9 +155,9 @@
         }
 
         .menu-icon { font-size: 30px; }
-        .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main) !important; }
+        .menu-label { font-size: 14px; font-weight: bold; color: var(--text-main); }
 
-        /* FORMULÁRIOS E PESQUISA GIGANTE */
+        /* FORMULÁRIOS E PESQUISA */
         .search-container {
             background: var(--bg-card);
             padding: 15px;
@@ -159,8 +172,8 @@
             font-size: 16px;
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            background: #111a21 !important;
-            color: #ffffff !important;
+            background: var(--bg-subcard);
+            color: var(--text-main);
         }
 
         .bulk-actions-bar {
@@ -169,9 +182,9 @@
             margin-bottom: 15px;
             flex-wrap: wrap;
             padding: 10px;
-            background: #171f24;
+            background: var(--bg-card);
             border-radius: 6px;
-            border: 1px dashed #334155;
+            border: 1px dashed var(--border-color);
             align-items: center;
         }
 
@@ -191,13 +204,13 @@
             padding: 8px 12px;
             border-radius: 4px;
             border: 1px solid var(--border-color);
-            background: var(--bg-subcard) !important;
-            color: var(--text-main) !important;
+            background: var(--bg-subcard);
+            color: var(--text-main);
             font-size: 13px;
         }
 
         .btn-action {
-            background-color: var(--prf-blue) !important;
+            background-color: var(--prf-blue);
             color: #ffffff !important;
             border: none !important;
             padding: 9px 18px !important;
@@ -224,7 +237,7 @@
             width: 210px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             border: 1px solid var(--border-color);
         }
 
@@ -238,7 +251,7 @@
             padding: 10px;
             font-weight: bold;
             font-size: 12px;
-            color: var(--prf-blue-light) !important;
+            color: var(--prf-blue);
             border-bottom: 2px solid var(--border-color);
             text-transform: uppercase;
             text-align: center;
@@ -267,7 +280,7 @@
         .sub-sector-title {
             font-size: 11px;
             font-weight: bold;
-            color: #ffb74d !important;
+            color: #f57c00;
             text-align: center;
             margin-bottom: 6px;
             padding-bottom: 4px;
@@ -284,7 +297,7 @@
 
         .worker-title {
             font-size: 10px;
-            color: var(--text-secondary) !important;
+            color: var(--text-secondary);
             font-weight: bold;
             margin-bottom: 3px;
         }
@@ -297,34 +310,51 @@
         }
 
         .column-content.drag-over {
-            background-color: rgba(0, 151, 167, 0.2);
+            background-color: rgba(0, 151, 167, 0.1);
             border: 2px dashed var(--prf-blue);
             border-radius: 5px;
         }
 
-        /* CARTÕES E HIERARQUIA */
+        /* --------------------------------------
+           CORES TOTAIS DOS CARTÕES (NOVO)
+           -------------------------------------- */
         .card {
-            background-color: #ffffff !important;
             border-radius: 5px;
             padding: 9px;
             margin-bottom: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             cursor: grab;
             user-select: none;
-            color: #222222 !important;
+            transition: transform 0.1s;
         }
 
-        .card:active { cursor: grabbing; opacity: 0.6; }
+        .card:active { cursor: grabbing; opacity: 0.8; }
 
-        .card.prio-vermelho { border-left: 6px solid #d32f2f; background: #fff5f5 !important; }
-        .card.prio-laranja { border-left: 6px solid #f57c00; background: #fff8f0 !important; }
-        .card.prio-amarelo { border-left: 6px solid #fbc02d; background: #fffde7 !important; }
-        .card.prio-normal  { border-left: 6px solid #0097A7; background: #ffffff !important; }
+        /* RAIO X (Roxo) */
+        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
+        .card.prio-raio-x * { color: #ffffff !important; }
+        
+        /* VERMELHO (Máxima) */
+        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
+        .card.prio-vermelho * { color: #ffffff !important; }
+
+        /* LARANJA (Média) */
+        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
+        .card.prio-laranja * { color: #ffffff !important; }
+
+        /* AMARELO (Baixa) */
+        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
+        .card.prio-amarelo * { color: #222222 !important; }
+
+        /* NORMAL (Azul PRF super claro / Cor do Tema) */
+        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
+        .card.prio-normal .card-ref { color: var(--text-main) !important; }
+        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
+        .card.prio-normal .card-comment { color: var(--prf-blue-dark) !important; }
 
         .obra-badge {
             display: inline-block;
-            background: var(--prf-blue);
-            color: white;
+            background: rgba(0,0,0,0.3);
             font-size: 10px;
             font-weight: bold;
             padding: 2px 6px;
@@ -332,16 +362,18 @@
             margin-bottom: 4px;
         }
         
-        .card-ref { font-weight: bold; font-size: 11px; color: #111111 !important; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
-        .card-info { font-size: 10px; color: #555555 !important; margin-top: 3px; }
-        .card-comment { font-size: 10px; color: #00796B !important; font-style: italic; margin-top: 4px; background: #e0f2f1; padding: 3px 5px; border-radius: 3px; }
+        .card.prio-normal .obra-badge { background: var(--prf-blue) !important; color: white !important;}
+
+        .card-ref { font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
+        .card-info { font-size: 10px; margin-top: 3px; }
+        .card-comment { font-size: 10px; font-style: italic; margin-top: 4px; padding: 3px 5px; border-radius: 3px; background: rgba(255,255,255,0.2); }
 
         .card-actions {
             display: flex;
             justify-content: space-between;
             margin-top: 6px;
             padding-top: 4px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid rgba(128,128,128,0.3);
         }
 
         .btn-card {
@@ -350,7 +382,7 @@
             cursor: pointer !important;
             font-size: 11px !important;
             padding: 0 !important;
-            color: #333333 !important;
+            font-weight: bold;
         }
 
         /* MODAIS / AVISOS CUSTOMIZADOS */
@@ -397,8 +429,8 @@
             border-left: 4px solid var(--prf-blue);
         }
 
-        .kpi-title { font-size: 12px; color: var(--text-secondary) !important; text-transform: uppercase; }
-        .kpi-value { font-size: 24px; font-weight: bold; color: var(--text-main) !important; margin-top: 8px; }
+        .kpi-title { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; }
+        .kpi-value { font-size: 24px; font-weight: bold; color: var(--text-main); margin-top: 8px; }
 
         .consult-item {
             background: var(--bg-card);
@@ -460,18 +492,17 @@
         
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                <p style="font-size: 12px; color: #4db8ff; margin-top: 0; margin-bottom: 8px;">
-                    * <b>Todos os componentes carregados estão visíveis. A app memoriza onde deixou tudo.</b><br>
-                    * A pesquisa em baixo filtra apenas a coluna "Projeto". Obras nas outras colunas nunca desaparecem do ecrã.
+                <p style="font-size: 12px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
+                    * <b>PESQUISA GLOBAL:</b> Escreva algo para filtrar o quadro completo e encontrar o que procura.
                 </p>
-                <span id="db-counter" style="font-size: 13px; color: #69f0ae; font-weight: bold;">🟢 A carregar dados...</span>
+                <span id="db-counter" style="font-size: 13px; color: var(--prf-blue); font-weight: bold;">🟢 A carregar dados...</span>
             </div>
-            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça ou Trabalhador..." onkeyup="renderizarKanbanComFiltro()">
+            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador ou Fase..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
         <!-- BARRA DE GESTÃO E LIMPEZA EM LOTE -->
         <div class="bulk-actions-bar">
-            <span style="font-size: 12px; color: #aaa; font-weight: bold;">⚙️ Operações:</span>
+            <span style="font-size: 12px; color: var(--text-secondary); font-weight: bold;">⚙️ Operações:</span>
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
             <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos (Arquivar)</button>
             
@@ -480,12 +511,14 @@
 
         <div class="add-form">
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
-            <input type="number" id="new-ton" placeholder="Toneladas" step="0.1" style="width: 90px;">
+            <input type="number" id="new-kg" placeholder="Kg" step="0.1" style="width: 70px;">
+            <input type="number" id="new-pol" placeholder="Pol ('')" step="0.1" style="width: 70px;">
             <select id="new-prio">
                 <option value="Vermelho">🔴 Máxima</option>
                 <option value="Laranja">🟠 Média</option>
                 <option value="Amarelo" selected>🟡 Baixa</option>
                 <option value="Normal">🔵 Normal</option>
+                <option value="Raio X">🟣 Raio X</option>
             </select>
             <button class="btn-action" onclick="adicionarObra()">+ Adicionar Manual</button>
             
@@ -504,11 +537,8 @@
                 <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Camila</div><div class="column-content" data-fase="Material" data-operador="Camila"></div></div>
             </div>
 
-            <!-- NOVA COLUNA: LASER -->
-            <div class="column">
-                <div class="column-header">Laser</div>
-                <div class="column-content" data-fase="Laser"></div>
-            </div>
+            <!-- NOVA COLUNA LASER -->
+            <div class="column"><div class="column-header">Laser</div><div class="column-content" data-fase="Laser"></div></div>
 
             <div class="column production-col">
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
@@ -570,19 +600,19 @@
     <div id="page-kpis" class="page">
         <h2>📈 Indicadores Chave de Desempenho (KPIs)</h2>
         <div class="kpi-grid">
-            <div class="kpi-card"><div class="kpi-title">Tons Soldadas (Semana)</div><div class="kpi-value" id="kpi-tons-semana">0.0 Ton</div></div>
-            <div class="kpi-card"><div class="kpi-title">Tons Soldadas (Mês)</div><div class="kpi-value" id="kpi-tons-mes">0.0 Ton</div></div>
-            <div class="kpi-card"><div class="kpi-title">Tons Soldadas (Ano)</div><div class="kpi-value" id="kpi-tons-ano">0.0 Ton</div></div>
+            <div class="kpi-card"><div class="kpi-title">Kg Soldados (Semana)</div><div class="kpi-value" id="kpi-tons-semana">0.0 Kg</div></div>
+            <div class="kpi-card"><div class="kpi-title">Kg Soldados (Mês)</div><div class="kpi-value" id="kpi-tons-mes">0.0 Kg</div></div>
+            <div class="kpi-card"><div class="kpi-title">Kg Soldados (Ano)</div><div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div></div>
             <div class="kpi-card" style="border-left-color: #f57c00;"><div class="kpi-title">% Peças Retrabalhadas</div><div class="kpi-value">Aguardar Exec.</div></div>
             <div class="kpi-card" style="border-left-color: #d32f2f;"><div class="kpi-title">% Peças Rejeitadas</div><div class="kpi-value">Aguardar Exec.</div></div>
-            <div class="kpi-card" style="border-left-color: #fbc02d;"><div class="kpi-title">Tempo Médio de Produção</div><div class="kpi-value">Aguardar Exec.</div></div>
+            <div class="kpi-card" style="border-left-color: #9c27b0;"><div class="kpi-title">Total de Raio X</div><div class="kpi-value">Aguardar Exec.</div></div>
         </div>
     </div>
 
     <!-- PÁGINA 4: RELATÓRIOS DIÁRIOS -->
     <div id="page-relatorios" class="page">
         <h2>📄 Gerar Planeamento Diário</h2>
-        <p style="color: var(--text-secondary) !important;">Exportação do plano de trabalhos diário.</p>
+        <p style="color: var(--text-secondary);">Exportação do plano de trabalhos diário.</p>
         <div>
             <button class="btn-action" onclick="mostrarAlerta('Funcionalidade de exportação em desenvolvimento!')">📊 Exportar para Excel / PDF</button>
         </div>
@@ -600,15 +630,24 @@
             <label>Designação do Componente / Peça:</label>
             <input type="text" id="edit-ref">
 
-            <label>Toneladas:</label>
-            <input type="number" id="edit-ton" step="0.1">
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                    <label>Peso (Kg):</label>
+                    <input type="number" id="edit-kg" step="0.1" style="width:100%;">
+                </div>
+                <div style="flex:1;">
+                    <label>Polegadas ("):</label>
+                    <input type="number" id="edit-pol" step="0.1" style="width:100%;">
+                </div>
+            </div>
 
-            <label>Urgência / Prioridade:</label>
+            <label>Categoria / Prioridade:</label>
             <select id="edit-prio">
                 <option value="Vermelho">🔴 Prioridade Máxima</option>
                 <option value="Laranja">🟠 Prioridade Média</option>
                 <option value="Amarelo">🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
+                <option value="Raio X">🟣 Raio X</option>
             </select>
 
             <label>Comentários / Observações:</label>
@@ -731,7 +770,7 @@
             });
         }
 
-        // IMPORTADOR INTELIGENTE
+        // IMPORTADOR INTELIGENTE (Kg e Polegadas adicionados)
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -744,6 +783,7 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const sheetName = workbook.SheetNames[0];
+                    // Header false para procurar as colunas livremente
                     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
 
                     if (rows.length === 0) {
@@ -752,6 +792,7 @@
                     }
 
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
+
                     const obrasParaInserir = [];
                     const referenciasProcessadasNesteExcel = new Set(); 
 
@@ -783,7 +824,7 @@
                             referenciasProcessadasNesteExcel.add(idUnico);
 
                             const linhaMin = linhaCompletaSegura.toLowerCase();
-                            // Atualizado para incluir o Luís
+                            // Novo Trabalhador "Luís" incluído no radar de leitura
                             const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor', 'luís', 'luis'];
                             
                             for (let trab of equipa) {
@@ -798,7 +839,8 @@
                             obrasParaInserir.push({
                                 obra_ref: refEncontrada, 
                                 referencia: designacaoPeca, 
-                                toneladas: 0,
+                                toneladas: 0, // BD guarda em 'toneladas' mas mostramos no ecrã como Kg (por segurança estrutural)
+                                polegadas: 0,
                                 prioridade: 'Normal',
                                 fase: 'Projeto',
                                 setor: 'Geral',
@@ -836,7 +878,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // RENDERIZAÇÃO BLINDADA E 100% VISÍVEL POR DEFEITO (Correção do Bug de Pesquisa)
+        // RENDERIZAÇÃO E PESQUISA GLOBAL (BUG CORRIGIDO)
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
@@ -846,15 +888,16 @@
 
                 let mostrarCartao = true; 
 
-                // Oculta APENAS na coluna "Projeto" se a pesquisa estiver ativa e não houver correspondência
-                if (query && String(o.fase) === 'Projeto') {
+                // AGORA A PESQUISA FILTRA TODAS AS COLUNAS EFICAZMENTE!
+                if (query) {
                     const strObra = String(o.obra_ref || '').toLowerCase();
                     const strRef = String(o.referencia || '').toLowerCase();
                     const strTrab = String(o.trabalhador || '').toLowerCase();
                     const strCom = String(o.comentarios || '').toLowerCase();
+                    const strPrio = String(o.prioridade || '').toLowerCase(); // Permite pesquisar por "Raio X"
 
-                    // Se a pesquisa (ex: 'manual') não estiver em nenhum dos campos vitais do cartão
-                    if (!strObra.includes(query) && !strRef.includes(query) && !strTrab.includes(query) && !strCom.includes(query)) {
+                    // Se não encontrar em NENHUM campo, oculta.
+                    if (!strObra.includes(query) && !strRef.includes(query) && !strTrab.includes(query) && !strCom.includes(query) && !strPrio.includes(query)) {
                         mostrarCartao = false;
                     }
                 }
@@ -890,17 +933,17 @@
             container.innerHTML = resultados.map(o => `
                 <div class="consult-item">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="font-size: 14px;"><span style="color:#00bcd4;">[${o.obra_ref || 'GERAL'}]</span> ${o.referencia}</strong>
+                        <strong style="font-size: 14px;"><span style="color:var(--prf-blue-light);">[${o.obra_ref || 'GERAL'}]</span> ${o.referencia}</strong>
                         <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${o.fase}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
-                        ⚖️ <b>${o.toneladas || 0}</b> Tons | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
+                        ⚖️ <b>${(o.kg || o.toneladas) || 0}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
                     </div>
                 </div>
             `).join('');
         }
 
-        // DRAG AND DROP COM GUARDA SILENCIOSA PARA NÃO PISCAR
+        // DRAG AND DROP
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
@@ -923,30 +966,41 @@
                         todasAsObras[obraIndex].trabalhador = novoOperador;
                     }
 
-                    // Regista na base de dados (silencioso, sem recarregar a app)
                     await supabaseClient.from('cartoes_kanban').update({ fase: novaFase, setor: novoSetor, trabalhador: novoOperador }).eq('id', cardId);
                 }
             });
         });
 
-        // ADICIONAR MANUALMENTE SEM INTERFERIR NA LUPA
+        // ADICIONAR MANUAL (Sem limpar ou perturbar a lupa)
         async function adicionarObra() {
             const ref = document.getElementById('new-ref').value.trim();
-            const ton = parseFloat(document.getElementById('new-ton').value) || 0;
+            const kg = parseFloat(document.getElementById('new-kg').value) || 0;
+            const pol = parseFloat(document.getElementById('new-pol').value) || 0;
             const prio = document.getElementById('new-prio').value;
 
             if (!ref) { mostrarAlerta('Digite a referência/descrição da peça!'); return; }
 
-            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ obra_ref: 'MANUAL', referencia: ref, toneladas: ton, prioridade: prio, fase: 'Projeto', setor: 'Geral', trabalhador: 'Não Atribuído' }]).select();
+            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ 
+                obra_ref: 'MANUAL', 
+                referencia: ref, 
+                toneladas: kg, // Enviamos os Kg para a coluna que existe na DB
+                polegadas: pol,
+                prioridade: prio, 
+                fase: 'Projeto', 
+                setor: 'Geral', 
+                trabalhador: 'Não Atribuído' 
+            }]).select();
+
             if (!error && data.length > 0) {
-                // Removemos o preenchimento automático da lupa para não perturbar o trabalho
+                // Apenas recarrega e limpa os campos de inserção (a pesquisa do utilizador não é interrompida)
                 carregarTudo();
                 document.getElementById('new-ref').value = '';
-                document.getElementById('new-ton').value = '';
+                document.getElementById('new-kg').value = '';
+                document.getElementById('new-pol').value = '';
             }
         }
 
-        // RENDER CARTÃO SEGURO
+        // RENDER CARTÃO 
         function renderCartao(c) {
             try {
                 const prioClass = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
@@ -977,15 +1031,18 @@
                     const refSafe = String(c.referencia || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     const prioSafe = String(c.prioridade || 'Normal').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     const comSafe = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    
+                    const valorKg = c.kg !== undefined ? c.kg : (c.toneladas || 0);
+                    const valorPol = c.polegadas || 0;
 
                     el.innerHTML = `
                         ${badgeObra}
                         <div class="card-ref">${String(c.referencia || 'Sem Referência')}</div>
-                        <div class="card-info">⚖️ ${c.toneladas || 0} Tons | 👷 ${String(c.trabalhador || 'Não Atribuído')}</div>
+                        <div class="card-info">⚖️ ${valorKg} Kg | 📏 ${valorPol}" <br> 👷 ${String(c.trabalhador || 'Não Atribuído')}</div>
                         ${commentHTML}
                         <div class="card-actions">
-                            <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${obraSafe}', '${refSafe}', ${c.toneladas || 0}, '${prioSafe}', '${comSafe}')">✏️ Editar</button>
-                            <button class="btn-card" style="color:#d32f2f !important;" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
+                            <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${obraSafe}', '${refSafe}', ${valorKg}, ${valorPol}, '${prioSafe}', '${comSafe}')">✏️ Editar</button>
+                            <button class="btn-card" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
                         </div>
                     `;
                     el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
@@ -996,11 +1053,12 @@
             }
         }
 
-        function abrirModalEdicao(id, obra, ref, ton, prio, comentarios) {
+        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-obra').value = obra;
             document.getElementById('edit-ref').value = ref;
-            document.getElementById('edit-ton').value = ton;
+            document.getElementById('edit-kg').value = kg;
+            document.getElementById('edit-pol').value = pol;
             document.getElementById('edit-prio').value = prio;
             document.getElementById('edit-comments').value = comentarios;
             document.getElementById('edit-modal').classList.add('active');
@@ -1014,14 +1072,16 @@
             const id = document.getElementById('edit-id').value;
             const obra = document.getElementById('edit-obra').value.trim();
             const ref = document.getElementById('edit-ref').value.trim();
-            const ton = parseFloat(document.getElementById('edit-ton').value) || 0;
+            const kg = parseFloat(document.getElementById('edit-kg').value) || 0;
+            const pol = parseFloat(document.getElementById('edit-pol').value) || 0;
             const prio = document.getElementById('edit-prio').value;
             const comments = document.getElementById('edit-comments').value.trim();
 
             await supabaseClient.from('cartoes_kanban').update({
                 obra_ref: obra,
                 referencia: ref,
-                toneladas: ton,
+                toneladas: kg, // Continua a guardar na coluna toneladas por retro-compatibilidade na BD
+                polegadas: pol,
                 prioridade: prio,
                 comentarios: comments
             }).eq('id', id);
@@ -1042,13 +1102,13 @@
         }
 
         function calcularKPIs() {
-            let totalTons = todasAsObras.reduce((acc, o) => acc + (parseFloat(o.toneladas) || 0), 0);
-            document.getElementById('kpi-tons-semana').innerText = (totalTons * 0.25).toFixed(1) + " Ton";
-            document.getElementById('kpi-tons-mes').innerText = (totalTons * 0.75).toFixed(1) + " Ton";
-            document.getElementById('kpi-tons-ano').innerText = totalTons.toFixed(1) + " Ton";
+            let totalKg = todasAsObras.reduce((acc, o) => acc + (parseFloat(o.kg || o.toneladas) || 0), 0);
+            document.getElementById('kpi-tons-semana').innerText = (totalKg * 0.25).toFixed(1) + " Kg";
+            document.getElementById('kpi-tons-mes').innerText = (totalKg * 0.75).toFixed(1) + " Kg";
+            document.getElementById('kpi-tons-ano').innerText = totalKg.toFixed(1) + " Kg";
         }
 
-        // PAGINAÇÃO INFINITA AUTOMÁTICA
+        // PAGINAÇÃO AUTOMÁTICA
         async function carregarTudo() {
             document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
             let allData = [];
