@@ -210,7 +210,7 @@
         }
 
         .btn-action {
-            background-color: var(--prf-blue);
+            background-color: var(--prf-blue) !important;
             color: #ffffff !important;
             border: none !important;
             padding: 9px 18px !important;
@@ -316,7 +316,7 @@
         }
 
         /* --------------------------------------
-           CORES TOTAIS DOS CARTÕES (NOVO)
+           CORES TOTAIS DOS CARTÕES
            -------------------------------------- */
         .card {
             border-radius: 5px;
@@ -330,23 +330,18 @@
 
         .card:active { cursor: grabbing; opacity: 0.8; }
 
-        /* RAIO X (Roxo) */
         .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
         .card.prio-raio-x * { color: #ffffff !important; }
         
-        /* VERMELHO (Máxima) */
         .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
         .card.prio-vermelho * { color: #ffffff !important; }
 
-        /* LARANJA (Média) */
         .card.prio-laranja { background-color: #ff9800 !important; border: none; }
         .card.prio-laranja * { color: #ffffff !important; }
 
-        /* AMARELO (Baixa) */
         .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
         .card.prio-amarelo * { color: #222222 !important; }
 
-        /* NORMAL (Azul PRF super claro / Cor do Tema) */
         .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
         .card.prio-normal .card-ref { color: var(--text-main) !important; }
         .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
@@ -451,7 +446,7 @@
         </div>
         
         <div class="header-buttons">
-            <button class="btn-header btn-refresh" onclick="limparCacheERefresh()">🔄 Limpar Cache / Refresh</button>
+            <button class="btn-header btn-refresh" onclick="limparCacheERefresh()">🔄 Atualizar Página</button>
             <button class="btn-header" onclick="navesPara('page-home')">🏠 Menu Inicial</button>
         </div>
     </header>
@@ -487,7 +482,7 @@
         </div>
     </div>
 
-    <!-- PÁGINA 1: QUADRO KANBAN COM PESQUISA -->
+    <!-- PÁGINA 1: QUADRO KANBAN -->
     <div id="page-kanban" class="page">
         
         <div class="search-container">
@@ -506,6 +501,9 @@
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
             <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos (Arquivar)</button>
             
+            <!-- NOVO: BOTÃO CHECKPOINT CENTRAL -->
+            <button class="btn-action" style="background-color: #0288d1 !important; padding: 6px 12px !important; margin-left: 10px;" onclick="abrirMenuBackup()">🛡️ Central de Checkpoints</button>
+
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
@@ -618,6 +616,27 @@
         </div>
     </div>
 
+    <!-- MODAL DE CHECKPOINTS (NOVO) -->
+    <div id="backup-modal" class="modal-overlay">
+        <div class="modal">
+            <h3>🛡️ Central de Checkpoints</h3>
+            <p style="font-size:12px; color: var(--text-secondary);">Proteja a sua informação criando cópias de segurança locais do estado da fábrica.</p>
+            
+            <button class="btn-action" style="background-color: #2e7d32 !important; margin-top: 10px;" onclick="exportarExcelCheckPoint()">📊 Exportar Estado para Excel (Leitura)</button>
+            <button class="btn-action" style="background-color: #0288d1 !important; margin-top: 5px;" onclick="descarregarBackupJSON()">💾 Descarregar Backup de Sistema</button>
+            
+            <hr style="border: 0; border-top: 1px solid var(--border-color); width: 100%; margin: 15px 0;">
+            
+            <label style="color: #d32f2f; font-weight: bold; margin-bottom: 5px;">Recuperar Sistema (Em caso de erro Grave):</label>
+            <label class="btn-action" style="background-color: #d32f2f !important; text-align: center; cursor: pointer;">
+                ♻️ Restaurar Backup
+                <input type="file" id="restore-input" accept=".json" onchange="restaurarBackupJSON(event)" style="display:none;">
+            </label>
+
+            <button class="btn-card" style="padding: 8px 12px !important; margin-top: 10px; background: #555 !important; color: white !important; border-radius: 4px !important;" onclick="fecharMenuBackup()">Fechar Menu</button>
+        </div>
+    </div>
+
     <!-- MODAL DE EDIÇÃO AVANÇADA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
@@ -727,7 +746,90 @@
         }
 
         /* -----------------------------------------------------
-           BOTÕES DE LIMPEZA E GESTÃO EM LOTE
+           SISTEMA DE CHECKPOINT E BACKUPS (NOVO)
+           ----------------------------------------------------- */
+        function abrirMenuBackup() { document.getElementById('backup-modal').classList.add('active'); }
+        function fecharMenuBackup() { document.getElementById('backup-modal').classList.remove('active'); }
+
+        // 1. Exporta Excel de Leitura
+        function exportarExcelCheckPoint() {
+            fecharMenuBackup();
+            mostrarAlerta("A gerar relatório Excel do estado atual da fábrica...");
+            
+            const dadosExcel = todasAsObras.map(o => ({
+                "Código Obra": o.obra_ref || "MANUAL",
+                "Designação": o.referencia,
+                "Fase Atual": o.fase,
+                "Trabalhador": o.trabalhador,
+                "Peso (Kg)": o.kg || o.toneladas || 0,
+                "Polegadas": o.polegadas || 0,
+                "Prioridade": o.prioridade || 'Normal',
+                "Comentários": o.comentarios || ''
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(dadosExcel);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Estado Fabrica");
+            const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-');
+            XLSX.writeFile(wb, `Checkpoint_PRF_${dataHoje}.xlsx`);
+        }
+
+        // 2. Exporta Backup Base de Dados (JSON)
+        function descarregarBackupJSON() {
+            fecharMenuBackup();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(todasAsObras));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-');
+            downloadAnchorNode.setAttribute("download", `Backup_Sistema_PRF_${dataHoje}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            mostrarAlerta("Backup de Segurança descarregado para o seu computador. Guarde-o num local seguro!");
+        }
+
+        // 3. Restaura o Backup (Elimina a BD atual e injeta a cópia segura)
+        function restaurarBackupJSON(event) {
+            fecharMenuBackup();
+            const file = event.target.files[0];
+            if (!file) return;
+
+            mostrarConfirmacao("⚠️ PERIGO: O restauro vai apagar o quadro atual inteiro e repor as informações que estão neste ficheiro de Backup. Confirma a operação?", async function() {
+                mostrarAlerta('A restaurar a Base de Dados. Por favor não feche a janela...');
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const backupData = JSON.parse(e.target.result);
+                        if (!Array.isArray(backupData)) throw new Error("Ficheiro corrompido ou inválido.");
+
+                        // 1. Limpa a base de dados atual
+                        await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
+
+                        // 2. Injeta os dados do backup em lotes (sem IDs antigos para evitar conflitos)
+                        const lotesParaInserir = backupData.map(o => {
+                            delete o.id; // Removemos o ID antigo para o Supabase criar novos limpos
+                            return o;
+                        });
+
+                        const limite = 500;
+                        for (let i = 0; i < lotesParaInserir.length; i += limite) {
+                            const lote = lotesParaInserir.slice(i, i + limite);
+                            await supabaseClient.from('cartoes_kanban').insert(lote);
+                        }
+
+                        mostrarAlerta("♻️ Sistema restaurado com sucesso a partir da cópia de segurança!");
+                        carregarTudo();
+                    } catch (err) {
+                        mostrarAlerta("Erro ao restaurar backup: " + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
+
+
+        /* -----------------------------------------------------
+           BOTÕES DE LIMPEZA GERAL
            ----------------------------------------------------- */
 
         function limparProjetos() {
@@ -770,7 +872,7 @@
             });
         }
 
-        // IMPORTADOR INTELIGENTE (Kg e Polegadas adicionados)
+        // IMPORTADOR INTELIGENTE (COM LIMITES REMOVIDOS)
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -783,7 +885,6 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const sheetName = workbook.SheetNames[0];
-                    // Header false para procurar as colunas livremente
                     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
 
                     if (rows.length === 0) {
@@ -792,9 +893,11 @@
                     }
 
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
-
                     const obrasParaInserir = [];
                     const referenciasProcessadasNesteExcel = new Set(); 
+                    
+                    let totalLidasExcel = 0;
+                    let ignoradasPorDuplicacao = 0;
 
                     for (let i = 0; i < rows.length; i++) {
                         const row = rows[i];
@@ -817,14 +920,18 @@
                         }
 
                         if (refEncontrada) {
+                            totalLidasExcel++;
                             const idUnico = String(refEncontrada + designacaoPeca).trim().toLowerCase().replace(/\s+/g, '');
 
-                            if (chavesExistentesBD.has(idUnico)) continue;
-                            if (referenciasProcessadasNesteExcel.has(idUnico)) continue;
+                            // O sistema impede que a mesma peça seja criada 2 vezes no quadro
+                            if (chavesExistentesBD.has(idUnico) || referenciasProcessadasNesteExcel.has(idUnico)) {
+                                ignoradasPorDuplicacao++;
+                                continue;
+                            }
+                            
                             referenciasProcessadasNesteExcel.add(idUnico);
 
                             const linhaMin = linhaCompletaSegura.toLowerCase();
-                            // Novo Trabalhador "Luís" incluído no radar de leitura
                             const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor', 'luís', 'luis'];
                             
                             for (let trab of equipa) {
@@ -839,7 +946,7 @@
                             obrasParaInserir.push({
                                 obra_ref: refEncontrada, 
                                 referencia: designacaoPeca, 
-                                toneladas: 0, // BD guarda em 'toneladas' mas mostramos no ecrã como Kg (por segurança estrutural)
+                                toneladas: 0,
                                 polegadas: 0,
                                 prioridade: 'Normal',
                                 fase: 'Projeto',
@@ -851,11 +958,11 @@
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        mostrarAlerta("Não há peças NOVAS para adicionar! Os componentes do ficheiro já se encontram no seu quadro (ou em andamento).");
+                        mostrarAlerta(`Análise concluída: Lemos ${totalLidasExcel} linhas válidas no seu Excel, mas TODAS eram repetidas (já se encontram na Base de Dados ou duplicadas no ficheiro). Nenhuma obra nova adicionada.`);
                         return;
                     }
 
-                    const limite = 500;
+                    const limite = 500; // Limite de envio por pacote para a BD (não limita o total lido do ficheiro)
                     let inseridosTotal = 0;
 
                     for (let i = 0; i < obrasParaInserir.length; i += limite) {
@@ -868,7 +975,8 @@
                         inseridosTotal += lote.length;
                     }
 
-                    mostrarAlerta(`Sucesso! Foram adicionados ${inseridosTotal} NOVOS componentes à coluna de Projeto.`);
+                    // Relatório final de transparência
+                    mostrarAlerta(`Sucesso! Encontramos ${totalLidasExcel} peças válidas. Foram ignoradas ${ignoradasPorDuplicacao} por já existirem. Adicionamos ${inseridosTotal} NOVOS componentes à coluna de Projeto.`);
                     carregarTudo();
                     
                 } catch (err) {
@@ -878,7 +986,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // RENDERIZAÇÃO E PESQUISA GLOBAL (BUG CORRIGIDO)
+        // RENDERIZAÇÃO E PESQUISA GLOBAL
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
             document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
@@ -888,15 +996,13 @@
 
                 let mostrarCartao = true; 
 
-                // AGORA A PESQUISA FILTRA TODAS AS COLUNAS EFICAZMENTE!
                 if (query) {
                     const strObra = String(o.obra_ref || '').toLowerCase();
                     const strRef = String(o.referencia || '').toLowerCase();
                     const strTrab = String(o.trabalhador || '').toLowerCase();
                     const strCom = String(o.comentarios || '').toLowerCase();
-                    const strPrio = String(o.prioridade || '').toLowerCase(); // Permite pesquisar por "Raio X"
+                    const strPrio = String(o.prioridade || '').toLowerCase();
 
-                    // Se não encontrar em NENHUM campo, oculta.
                     if (!strObra.includes(query) && !strRef.includes(query) && !strTrab.includes(query) && !strCom.includes(query) && !strPrio.includes(query)) {
                         mostrarCartao = false;
                     }
@@ -971,7 +1077,7 @@
             });
         });
 
-        // ADICIONAR MANUAL (Sem limpar ou perturbar a lupa)
+        // ADICIONAR MANUAL
         async function adicionarObra() {
             const ref = document.getElementById('new-ref').value.trim();
             const kg = parseFloat(document.getElementById('new-kg').value) || 0;
@@ -983,7 +1089,7 @@
             const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ 
                 obra_ref: 'MANUAL', 
                 referencia: ref, 
-                toneladas: kg, // Enviamos os Kg para a coluna que existe na DB
+                toneladas: kg, 
                 polegadas: pol,
                 prioridade: prio, 
                 fase: 'Projeto', 
@@ -992,7 +1098,6 @@
             }]).select();
 
             if (!error && data.length > 0) {
-                // Apenas recarrega e limpa os campos de inserção (a pesquisa do utilizador não é interrompida)
                 carregarTudo();
                 document.getElementById('new-ref').value = '';
                 document.getElementById('new-kg').value = '';
@@ -1080,7 +1185,7 @@
             await supabaseClient.from('cartoes_kanban').update({
                 obra_ref: obra,
                 referencia: ref,
-                toneladas: kg, // Continua a guardar na coluna toneladas por retro-compatibilidade na BD
+                toneladas: kg, 
                 polegadas: pol,
                 prioridade: prio,
                 comentarios: comments
@@ -1108,7 +1213,7 @@
             document.getElementById('kpi-tons-ano').innerText = totalKg.toFixed(1) + " Kg";
         }
 
-        // PAGINAÇÃO AUTOMÁTICA
+        // PAGINAÇÃO INFINITA AUTOMÁTICA
         async function carregarTudo() {
             document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
             let allData = [];
