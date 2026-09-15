@@ -501,7 +501,6 @@
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
             <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos (Arquivar)</button>
             
-            <!-- NOVO: BOTÃO CHECKPOINT CENTRAL -->
             <button class="btn-action" style="background-color: #0288d1 !important; padding: 6px 12px !important; margin-left: 10px;" onclick="abrirMenuBackup()">🛡️ Central de Checkpoints</button>
 
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
@@ -535,7 +534,7 @@
                 <div class="worker-lane" style="margin: 6px;"><div class="worker-title">Camila</div><div class="column-content" data-fase="Material" data-operador="Camila"></div></div>
             </div>
 
-            <!-- NOVA COLUNA LASER -->
+            <!-- COLUNA LASER -->
             <div class="column"><div class="column-header">Laser</div><div class="column-content" data-fase="Laser"></div></div>
 
             <div class="column production-col">
@@ -616,7 +615,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE CHECKPOINTS (NOVO) -->
+    <!-- MODAL DE CHECKPOINTS -->
     <div id="backup-modal" class="modal-overlay">
         <div class="modal">
             <h3>🛡️ Central de Checkpoints</h3>
@@ -746,12 +745,11 @@
         }
 
         /* -----------------------------------------------------
-           SISTEMA DE CHECKPOINT E BACKUPS (NOVO)
+           SISTEMA DE CHECKPOINT E BACKUPS
            ----------------------------------------------------- */
         function abrirMenuBackup() { document.getElementById('backup-modal').classList.add('active'); }
         function fecharMenuBackup() { document.getElementById('backup-modal').classList.remove('active'); }
 
-        // 1. Exporta Excel de Leitura
         function exportarExcelCheckPoint() {
             fecharMenuBackup();
             mostrarAlerta("A gerar relatório Excel do estado atual da fábrica...");
@@ -774,7 +772,6 @@
             XLSX.writeFile(wb, `Checkpoint_PRF_${dataHoje}.xlsx`);
         }
 
-        // 2. Exporta Backup Base de Dados (JSON)
         function descarregarBackupJSON() {
             fecharMenuBackup();
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(todasAsObras));
@@ -788,7 +785,6 @@
             mostrarAlerta("Backup de Segurança descarregado para o seu computador. Guarde-o num local seguro!");
         }
 
-        // 3. Restaura o Backup (Elimina a BD atual e injeta a cópia segura)
         function restaurarBackupJSON(event) {
             fecharMenuBackup();
             const file = event.target.files[0];
@@ -802,12 +798,10 @@
                         const backupData = JSON.parse(e.target.result);
                         if (!Array.isArray(backupData)) throw new Error("Ficheiro corrompido ou inválido.");
 
-                        // 1. Limpa a base de dados atual
                         await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'CÓDIGO_INEXISTENTE_ZZZ');
 
-                        // 2. Injeta os dados do backup em lotes (sem IDs antigos para evitar conflitos)
                         const lotesParaInserir = backupData.map(o => {
-                            delete o.id; // Removemos o ID antigo para o Supabase criar novos limpos
+                            delete o.id; 
                             return o;
                         });
 
@@ -872,7 +866,7 @@
             });
         }
 
-        // IMPORTADOR INTELIGENTE (COM LIMITES REMOVIDOS)
+        // IMPORTADOR INTELIGENTE (ATUALIZADO PARA "GN", "MT", etc.)
         async function importarExcelInteligente(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -911,7 +905,8 @@
 
                         for (let j = 0; j < row.length; j++) {
                             const cellText = String(row[j] || '').trim();
-                            const match = cellText.match(/(HY\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
+                            // EXPRESSÃO REGULAR ATUALIZADA: Deteta qualquer prefixo de 2 letras seguidas de 5 números! (Ex: HY26005, GN26009, MT24011)
+                            const match = cellText.match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
                             if (match) {
                                 refEncontrada = match[1].toUpperCase();
                                 designacaoPeca = match[2].replace(/^-/, '').trim() || 'Conjunto Principal';
@@ -923,7 +918,6 @@
                             totalLidasExcel++;
                             const idUnico = String(refEncontrada + designacaoPeca).trim().toLowerCase().replace(/\s+/g, '');
 
-                            // O sistema impede que a mesma peça seja criada 2 vezes no quadro
                             if (chavesExistentesBD.has(idUnico) || referenciasProcessadasNesteExcel.has(idUnico)) {
                                 ignoradasPorDuplicacao++;
                                 continue;
@@ -962,7 +956,7 @@
                         return;
                     }
 
-                    const limite = 500; // Limite de envio por pacote para a BD (não limita o total lido do ficheiro)
+                    const limite = 500; 
                     let inseridosTotal = 0;
 
                     for (let i = 0; i < obrasParaInserir.length; i += limite) {
@@ -975,7 +969,6 @@
                         inseridosTotal += lote.length;
                     }
 
-                    // Relatório final de transparência
                     mostrarAlerta(`Sucesso! Encontramos ${totalLidasExcel} peças válidas. Foram ignoradas ${ignoradasPorDuplicacao} por já existirem. Adicionamos ${inseridosTotal} NOVOS componentes à coluna de Projeto.`);
                     carregarTudo();
                     
