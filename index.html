@@ -433,9 +433,9 @@
             background: #2e7d32; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            CORES TOTAIS DOS CARTÕES E BLINDAGEM
-           -------------------------------------- */
+           ========================================= */
         .card {
             border-radius: 5px; 
             padding: 9px; 
@@ -464,6 +464,7 @@
             background-color: #94a3b8 !important; 
             border: none; 
         }
+
         .card.prio-retrabalho * { 
             color: #ffffff !important; 
         }
@@ -506,9 +507,9 @@
         .card-actions { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(128,128,128,0.3); }
         .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
 
-        /* --------------------------------------
+        /* =========================================
            MODAIS DE AVISOS E EDIÇÃO
-           -------------------------------------- */
+           ========================================= */
         .modal-overlay {
             display: none; 
             position: fixed; 
@@ -543,9 +544,9 @@
         .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
         .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
-        /* --------------------------------------
+        /* =========================================
            KPIS GRID
-           -------------------------------------- */
+           ========================================= */
         .kpi-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
@@ -582,6 +583,9 @@
             margin-left: 5px; 
         }
 
+        /* =========================================
+           ITENS DE CONSULTA
+           ========================================= */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -837,7 +841,7 @@
                 </div>
             </div>
 
-            <!-- QUALIDADE E TRATAMENTO (COLUNAS SIMPLES E LIMPAS) -->
+            <!-- QUALIDADE E TRATAMENTO -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
@@ -870,7 +874,7 @@
         </div>
     </div>
 
-    <!-- PÁGINA 3: KPIS E MÉTRICAS (TOTALMENTE REVISTO) -->
+    <!-- PÁGINA 3: KPIS E MÉTRICAS -->
     <div id="page-kpis" class="page">
         <h2 style="margin-top:0; color:var(--text-main);">📊 Estado Atual da Fábrica (Tempo Real)</h2>
         <div class="kpi-grid">
@@ -890,7 +894,6 @@
 
         <h2 style="color:var(--text-main);">📈 Histórico e Qualidade Geral</h2>
         <div class="kpi-grid">
-            <!-- NOVO KPI DE RETRABALHOS (VALOR E PERCENTAGEM EXATA) -->
             <div class="kpi-card" style="border-left-color: #94a3b8;">
                 <div class="kpi-title" style="color: #64748b;">Peças Retrabalhadas</div>
                 <div class="kpi-value" id="kpi-retrabalho">0 Unid <span class="kpi-subtitle">(0.0% Taxa Final)</span></div>
@@ -978,7 +981,6 @@
                 <option value="Amarelo">🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
-                <!-- NOVA OPÇÃO DE RETRABALHO -->
                 <option value="Retrabalho">⚪ Retrabalho</option>
             </select>
 
@@ -1040,7 +1042,7 @@
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
         // -----------------------------------------------------
-        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES
+        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES (MELHORADO)
         // -----------------------------------------------------
         document.addEventListener('dragover', function(e) {
             const edgeSize = 150; // Margem aumentada para ser mais fácil de ativar
@@ -1048,11 +1050,11 @@
             
             if(!boardKanban) return;
             
-            // Se o rato encostar à borda direita do ecrã
+            // Rato encostado à direita
             if (e.clientX > window.innerWidth - edgeSize) {
                 boardKanban.scrollBy({ left: speed, behavior: 'auto' });
             } 
-            // Se o rato encostar à borda esquerda do ecrã
+            // Rato encostado à esquerda
             else if (e.clientX < edgeSize) {
                 boardKanban.scrollBy({ left: -speed, behavior: 'auto' });
             }
@@ -1101,7 +1103,7 @@
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT E BACKUPS (MUITO IMPORTANTE PARA PROTEÇÃO)
+        // CHECKPOINT E BACKUPS
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1220,7 +1222,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL INTELIGENTE (DETEÇÃO CHECKPOINT)
+        // IMPORTAR EXCEL INTELIGENTE (DETEÇÃO CHECKPOINT MEGA-ROBUSTA)
         // -----------------------------------------------------
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
@@ -1243,29 +1245,31 @@
                     const refsSet = new Set();
                     let totalLidas = 0, ignoradas = 0;
 
-                    // Deteção inteligente de formato
-                    const headerStr = JSON.stringify(rows[0] || []);
-                    const isCheckpoint = headerStr.includes("Fase Atual") && headerStr.includes("Código Obra");
+                    // Deteção super-robusta (Lê Checkpoints novos e antigos)
+                    const headers = rows[0] || [];
+                    const headerStr = JSON.stringify(headers).toLowerCase();
+                    
+                    // Se tiver a palavra Obra e Fase, é Checkpoint garantido
+                    const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
 
                     if (isCheckpoint) {
                         // MODO: Restauro por Checkpoint Excel
-                        const headers = rows[0];
-                        const colObra = headers.indexOf("Código Obra");
-                        const colDesig = headers.indexOf("Designação");
-                        const colFase = headers.indexOf("Fase Atual");
-                        const colSetor = headers.indexOf("Setor");
-                        const colTrab = headers.indexOf("Trabalhador");
-                        const colKg = headers.indexOf("Peso (Kg)");
-                        const colPol = headers.indexOf("Polegadas");
-                        const colPrio = headers.indexOf("Prioridade");
-                        const colObs = headers.indexOf("Comentários");
+                        const colObra = headers.findIndex(h => String(h).toLowerCase().includes("obra"));
+                        const colDesig = headers.findIndex(h => String(h).toLowerCase().includes("designa") || String(h).toLowerCase().includes("peça"));
+                        const colFase = headers.findIndex(h => String(h).toLowerCase().includes("fase"));
+                        const colSetor = headers.findIndex(h => String(h).toLowerCase().includes("setor"));
+                        const colTrab = headers.findIndex(h => String(h).toLowerCase().includes("trabalhador"));
+                        const colKg = headers.findIndex(h => String(h).toLowerCase().includes("kg"));
+                        const colPol = headers.findIndex(h => String(h).toLowerCase().includes("pol"));
+                        const colPrio = headers.findIndex(h => String(h).toLowerCase().includes("prio"));
+                        const colObs = headers.findIndex(h => String(h).toLowerCase().includes("coment") || String(h).toLowerCase().includes("obs"));
 
                         for (let i = 1; i < rows.length; i++) {
                             const row = rows[i];
                             if (!row || row.length === 0) continue;
 
-                            const refE = String(row[colObra] || '').trim();
-                            const desig = String(row[colDesig] || '').trim();
+                            const refE = colObra !== -1 ? String(row[colObra] || '').trim() : 'MANUAL';
+                            const desig = colDesig !== -1 ? String(row[colDesig] || '').trim() : 'Sem Referência';
                             
                             if (refE || desig) {
                                 totalLidas++; 
@@ -1277,8 +1281,8 @@
                                 }
                                 refsSet.add(idUnico);
 
-                                const vKg = parseFloat(String(row[colKg] || '0').replace(',', '.')) || 0;
-                                const vPol = parseFloat(String(row[colPol] || '0').replace(',', '.')) || 0;
+                                const vKg = colKg !== -1 ? (parseFloat(String(row[colKg] || '0').replace(',', '.')) || 0) : 0;
+                                const vPol = colPol !== -1 ? (parseFloat(String(row[colPol] || '0').replace(',', '.')) || 0) : 0;
 
                                 obrasParaInserir.push({ 
                                     obra_ref: refE || 'MANUAL', 
@@ -1286,11 +1290,11 @@
                                     kg: vKg, 
                                     toneladas: vKg,
                                     polegadas: vPol, 
-                                    prioridade: String(row[colPrio] || 'Normal'), 
-                                    fase: String(row[colFase] || 'Projeto'), 
+                                    prioridade: colPrio !== -1 ? String(row[colPrio] || 'Normal') : 'Normal', 
+                                    fase: colFase !== -1 ? String(row[colFase] || 'Projeto') : 'Projeto', 
                                     setor: colSetor !== -1 ? String(row[colSetor] || 'Geral') : 'Geral',
-                                    trabalhador: String(row[colTrab] || 'Não Atribuído'),
-                                    comentarios: String(row[colObs] || '') 
+                                    trabalhador: colTrab !== -1 ? String(row[colTrab] || 'Não Atribuído') : 'Não Atribuído',
+                                    comentarios: colObs !== -1 ? String(row[colObs] || '') : '' 
                                 });
                             }
                         }
@@ -1358,7 +1362,6 @@
                     for (let i = 0; i < obrasParaInserir.length; i += 500) {
                         let lote = obrasParaInserir.slice(i, i + 500);
                         
-                        // Primeira tentativa de Inserir
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
                         // SE FALHAR (coluna nova não existe), Ativa o Plano B Silencioso
@@ -1451,7 +1454,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP BLINDADO (Proteção e Funcionalidade)
+        // DRAG AND DROP BLINDADO (Proteção contra arrastar texto do cartão)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1470,6 +1473,7 @@
                 const cardId = e.dataTransfer.getData('text/plain'); 
                 const cartao = document.getElementById(cardId);
                 
+                // Procura a zona de conteúdo caso o rato solte o cartão em cima de algo escondido
                 let target = e.target;
                 while (target && !target.classList.contains('column-content')) { 
                     target = target.parentElement; 
@@ -1485,7 +1489,7 @@
                 
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
-                // Lógica Inteligente: caixas "Concluído Setor" mantêm o nome de quem fez
+                // Lógica Inteligente para caixas "Concluído Setor" manterem o nome de quem fez
                 if (!novoOperador || novoOperador === 'Qualquer') {
                     novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
                 }
@@ -1532,7 +1536,7 @@
                 obra_ref: 'MANUAL', 
                 referencia: ref, 
                 kg: vKg, 
-                toneladas: vKg, 
+                toneladas: vKg, // Guarda na coluna antiga também para segurança
                 polegadas: vPol, 
                 prioridade: prio, 
                 fase: 'Projeto', 
@@ -1541,6 +1545,7 @@
 
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
+            // PLANO B (Caso as colunas não existam no Supabase)
             if (res.error) {
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
@@ -1685,7 +1690,7 @@
         }
 
         // -----------------------------------------------------
-        // CÁLCULO DOS NOVOS KPIS (CORRIGIDO SEM DADOS FALSOS)
+        // CÁLCULO DOS NOVOS KPIS (RETRABALHO INCLUIDO - CORREÇÃO ABSOLUTA)
         // -----------------------------------------------------
         function calcularKPIs() {
             let totalKgAno = 0;
@@ -1700,20 +1705,16 @@
             let retrabalhosConcluidos = 0;
 
             todasAsObras.forEach(o => {
-                // Apenas pesa os KGs
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
-                // Contabiliza total absoluto de retrabalhos da fábrica (cinza)
                 if (o.prioridade === 'Retrabalho') {
                     totalRetrabalhos++;
                 }
 
-                // Soma aos KGs gerais (se não estiver no Arquivo morto)
                 if (o.fase !== 'Arquivado') {
                     totalKgAno += peso;
                 }
 
-                // Soma aos contadores de Tempo Real
                 if (o.fase === 'Produção') {
                     kgEmExecucao += peso;
                     pecasEmExecucao++;
@@ -1724,14 +1725,13 @@
                     kgConcluido += peso;
                     pecasConcluido++;
                     
-                    // Se for Concluído Final E Retrabalho, entra para a Taxa %
                     if (o.prioridade === 'Retrabalho') {
                         retrabalhosConcluidos++;
                     }
                 }
             });
             
-            // Calcula a Taxa Real (%) de peças retrabalhadas que chegaram ao fim da linha
+            // Taxa real de peças retrabalhadas vs peças perfeitas no Concluído Final
             let taxaRetrabalho = 0;
             if (pecasConcluido > 0) {
                 taxaRetrabalho = ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1);
@@ -1740,7 +1740,7 @@
             // Atualiza KPI Retrabalhos Absoluto e Percentagem
             document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% de todas as concluídas)</span>`;
 
-            // Atualiza Histórico Puro
+            // Atualiza Histórico Puro (Sem cálculos de simulação)
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             
             // Atualiza Tempo Real (Em Execução, Pendentes, Concluído Final)
@@ -1782,7 +1782,7 @@
             todasAsObras = allData;
             document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
             renderizarKanbanComFiltro();
-            calcularKPIs(); // Força o calculo imediato dos novos KPIs ao carregar
+            calcularKPIs(); // Força o calculo imediato ao carregar
         }
 
         window.onload = carregarTudo;
