@@ -867,13 +867,11 @@
                 </div>
             </div>
 
-            <!-- QUALIDADE (COLUNA SIMPLES) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
             </div>
-
-            <!-- TRATAMENTO (COLUNA SIMPLES) -->
+            
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Tratamento (Igor)</div>
                 <div class="column-content" data-fase="Tratamento" data-operador="Igor"></div>
@@ -883,6 +881,7 @@
                 <div class="column-header">Concluído Final</div>
                 <div class="column-content" data-fase="Concluído"></div>
             </div>
+            
         </div>
     </div>
 
@@ -904,12 +903,30 @@
     <div id="page-kpis" class="page">
         <h2>📈 Indicadores Chave de Desempenho (KPIs)</h2>
         <div class="kpi-grid">
-            <div class="kpi-card"><div class="kpi-title">Kg Soldados (Semana)</div><div class="kpi-value" id="kpi-tons-semana">0.0 Kg</div></div>
-            <div class="kpi-card"><div class="kpi-title">Kg Soldados (Mês)</div><div class="kpi-value" id="kpi-tons-mes">0.0 Kg</div></div>
-            <div class="kpi-card"><div class="kpi-title">Kg Soldados (Ano)</div><div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div></div>
-            <div class="kpi-card" style="border-left-color: #f57c00;"><div class="kpi-title">% Peças Retrabalhadas</div><div class="kpi-value">Aguardar Exec.</div></div>
-            <div class="kpi-card" style="border-left-color: #d32f2f;"><div class="kpi-title">% Peças Rejeitadas</div><div class="kpi-value">Aguardar Exec.</div></div>
-            <div class="kpi-card" style="border-left-color: #9c27b0;"><div class="kpi-title">Total de Raio X</div><div class="kpi-value">Aguardar Exec.</div></div>
+            <div class="kpi-card">
+                <div class="kpi-title">Kg Soldados (Semana)</div>
+                <div class="kpi-value" id="kpi-tons-semana">0.0 Kg</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Kg Soldados (Mês)</div>
+                <div class="kpi-value" id="kpi-tons-mes">0.0 Kg</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Kg Soldados (Ano)</div>
+                <div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #f57c00;">
+                <div class="kpi-title">% Peças Retrabalhadas</div>
+                <div class="kpi-value">Aguardar Exec.</div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #d32f2f;">
+                <div class="kpi-title">% Peças Rejeitadas</div>
+                <div class="kpi-value">Aguardar Exec.</div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #9c27b0;">
+                <div class="kpi-title">Total de Raio X</div>
+                <div class="kpi-value">Aguardar Exec.</div>
+            </div>
         </div>
     </div>
 
@@ -1030,6 +1047,7 @@
         
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
+        // FUNÇÕES DE AVISO
         function mostrarAlerta(mensagem) { 
             document.getElementById('custom-alert-msg').innerText = mensagem; 
             document.getElementById('custom-alert').classList.add('active'); 
@@ -1069,7 +1087,7 @@
             setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
-        // CHECKPOINT
+        // CHECKPOINT E BACKUPS
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
         }
@@ -1087,7 +1105,7 @@
                 "Designação": o.referencia, 
                 "Fase Atual": o.fase, 
                 "Trabalhador": o.trabalhador,
-                "Peso (Kg)": o.kg || 0, 
+                "Peso (Kg)": o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0), 
                 "Polegadas": o.polegadas || 0, 
                 "Prioridade": o.prioridade || 'Normal', 
                 "Comentários": o.comentarios || ''
@@ -1131,7 +1149,7 @@
                             await supabaseClient.from('cartoes_kanban').insert(lotesParaInserir.slice(i, i + 500)); 
                         }
                         
-                        mostrarAlerta("♻️ Sistema restaurado!"); 
+                        mostrarAlerta("♻️ Sistema restaurado com sucesso!"); 
                         carregarTudo();
                     } catch (err) { 
                         mostrarAlerta("Erro ao restaurar backup: " + err.message); 
@@ -1141,37 +1159,50 @@
             });
         }
 
-        // LIMPEZAS
+        // LIMPEZAS EM LOTE
         function limparProjetos() { 
             mostrarConfirmacao("Deseja LIMPAR os projetos não iniciados?", async function() { 
                 const { error } = await supabaseClient.from('cartoes_kanban').delete().eq('fase', 'Projeto'); 
-                carregarTudo(); 
+                if (error) {
+                    mostrarAlerta("Erro ao limpar projetos: " + error.message);
+                } else {
+                    carregarTudo(); 
+                }
             }); 
         }
 
         function limparConcluidos() { 
             mostrarConfirmacao("Deseja ARQUIVAR as obras da coluna 'Concluído Final'?", async function() { 
                 const { error } = await supabaseClient.from('cartoes_kanban').update({ fase: 'Arquivado' }).eq('fase', 'Concluído'); 
-                carregarTudo(); 
+                if (error) {
+                    mostrarAlerta("Erro ao arquivar: " + error.message);
+                } else {
+                    mostrarAlerta("Obras da coluna Concluído Final foram enviadas para o Arquivo.");
+                    carregarTudo(); 
+                }
             }); 
         }
 
         function apagarTudoBD() { 
-            mostrarConfirmacao("🚨 APAGAR TUDO?", function() { 
+            mostrarConfirmacao("🚨 APAGAR TUDO DO QUADRO?", function() { 
                 setTimeout(() => { 
                     mostrarConfirmacao("ÚLTIMO AVISO: ELIMINAR A BASE DE DADOS COMPLETA?", async function() { 
-                        await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'ZZZ'); 
-                        carregarTudo(); 
+                        const { error } = await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'ZZZ'); 
+                        if (error) {
+                            mostrarAlerta("Erro fatal: " + error.message);
+                        } else {
+                            carregarTudo(); 
+                        }
                     }); 
                 }, 300); 
             }); 
         }
 
-        // IMPORTAR EXCEL
+        // IMPORTAR EXCEL (COM MODO DE SEGURANÇA PARA A DB)
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
             if (!file) return; 
-            mostrarAlerta('A processar ficheiro...');
+            mostrarAlerta('A processar ficheiro Excel...');
 
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -1181,7 +1212,7 @@
                     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
                     
                     if (rows.length === 0) {
-                        return mostrarAlerta('Ficheiro vazio!');
+                        return mostrarAlerta('Ficheiro Excel selecionado está vazio!');
                     }
 
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
@@ -1230,6 +1261,7 @@
                                 obra_ref: refE, 
                                 referencia: desig, 
                                 kg: 0, 
+                                toneladas: 0, // Injetado por segurança
                                 polegadas: 0, 
                                 prioridade: 'Normal', 
                                 fase: 'Projeto', 
@@ -1243,16 +1275,40 @@
                     }
                     
                     let inseridos = 0;
+                    let dbFailsOnNewColumns = false;
+
                     for (let i = 0; i < obrasParaInserir.length; i += 500) {
-                        const { error } = await supabaseClient.from('cartoes_kanban').insert(obrasParaInserir.slice(i, i + 500));
-                        if (error) return mostrarAlerta('Erro ao guardar: ' + error.message);
-                        inseridos += obrasParaInserir.slice(i, i + 500).length;
+                        let lote = obrasParaInserir.slice(i, i + 500);
+                        let { error } = await supabaseClient.from('cartoes_kanban').insert(lote);
+                        
+                        // Sistema anti-falha: Se as colunas "kg" e "polegadas" não existirem, salva em modo de segurança
+                        if (error && error.message.includes('does not exist')) {
+                            dbFailsOnNewColumns = true;
+                            const loteSeguro = lote.map(o => {
+                                const copy = {...o};
+                                delete copy.kg;
+                                delete copy.polegadas;
+                                return copy;
+                            });
+                            const fallbackRes = await supabaseClient.from('cartoes_kanban').insert(loteSeguro);
+                            error = fallbackRes.error;
+                        }
+
+                        if (error) {
+                            return mostrarAlerta('Erro ao guardar: ' + error.message);
+                        }
+                        inseridos += lote.length;
                     }
                     
-                    mostrarAlerta(`Sucesso! Encontramos ${totalLidas} peças válidas. Foram ignoradas ${ignoradas} por já existirem. Adicionamos ${inseridos} NOVAS obras!`); 
+                    if (dbFailsOnNewColumns) {
+                        mostrarAlerta(`Aviso: As colunas "kg" e "polegadas" não foram encontradas no Supabase. Obras inseridas em modo de segurança.`);
+                    } else {
+                        mostrarAlerta(`Sucesso! Encontramos ${totalLidas} peças válidas. Ignoradas ${ignoradas} que já existiam. Adicionamos ${inseridos} NOVAS obras.`); 
+                    }
+                    
                     carregarTudo();
                 } catch (err) { 
-                    mostrarAlerta('Erro: ' + err.message); 
+                    mostrarAlerta('Erro geral no Excel: ' + err.message); 
                 }
             }; 
             reader.readAsArrayBuffer(file);
@@ -1303,13 +1359,13 @@
                         <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${o.fase}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
-                        ⚖️ <b>${o.kg || 0}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
+                        ⚖️ <b>${o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
                     </div>
                 </div>
             `).join('');
         }
 
-        // DRAG AND DROP BLINDADO CONTRA CARTÕES
+        // DRAG AND DROP BLINDADO CONTRA TEXTO DOS CARTÕES
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
                 e.preventDefault(); 
@@ -1363,34 +1419,53 @@
             });
         });
 
-        // ADICIONAR E EDITAR (CORREÇÃO DE KG E POL)
+        // ADICIONAR MANUAL (COM PREVENÇÃO DE FALHA DO BD)
         async function adicionarObra() {
             const ref = document.getElementById('new-ref').value.trim(); 
             const prio = document.getElementById('new-prio').value;
             
-            // Lê exatamente os campos numéricos certos
+            // Puxa exatamente os campos numéricos
             const vKg = parseFloat(document.getElementById('new-kg').value) || 0;
             const vPol = parseFloat(document.getElementById('new-pol').value) || 0;
 
             if (!ref) {
-                return mostrarAlerta('Digite a referência!');
+                return mostrarAlerta('Digite a referência do componente!');
             }
 
-            const { data, error } = await supabaseClient.from('cartoes_kanban').insert([{ 
+            const insertData = { 
                 obra_ref: 'MANUAL', 
                 referencia: ref, 
                 kg: vKg, 
+                toneladas: vKg, // Retrocompatibilidade
                 polegadas: vPol, 
                 prioridade: prio, 
                 fase: 'Projeto', 
                 trabalhador: 'Não Atribuído' 
-            }]).select();
+            };
 
-            if (!error && data.length > 0) {
-                carregarTudo(); 
+            let { data, error } = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
+
+            // Sistema anti-falha: se a DB não tiver as colunas
+            if (error && error.message.includes('does not exist')) {
+                mostrarAlerta("Aviso do Sistema: Colunas 'kg' e 'polegadas' ausentes no Supabase. O cartão foi gravado em modo de compatibilidade.");
+                const fallbackData = { ...insertData };
+                delete fallbackData.kg;
+                delete fallbackData.polegadas;
+                
+                const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
+                data = fallbackRes.data;
+                error = fallbackRes.error;
+            }
+
+            if (error) {
+                return mostrarAlerta('Erro ao adicionar obra: ' + error.message);
+            }
+
+            if (data && data.length > 0) {
                 document.getElementById('new-ref').value = ''; 
                 document.getElementById('new-kg').value = ''; 
                 document.getElementById('new-pol').value = '';
+                carregarTudo(); 
             }
         }
 
@@ -1428,13 +1503,14 @@
                     const cmt = c.comentarios ? `<div class="card-comment">💬 ${String(c.comentarios)}</div>` : '';
                     const bdg = c.obra_ref ? `<div class="obra-badge">${String(c.obra_ref)}</div>` : '';
                     
+                    // Proteção de Quebras de Linha e aspas para o botão Editar não bloquear
                     const oS = String(c.obra_ref || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
                     const rS = String(c.referencia || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     const pS = String(c.prioridade || 'Normal').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
-                    const cS = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const cS = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
                     
-                    // Lê a coluna kg pura (abandona o sistema antigo de ler toneladas)
-                    const vKg = c.kg || 0; 
+                    // Lê o valor Kg novo, se não existir, lê o antigo para as obras já existentes
+                    const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
                     el.innerHTML = `
@@ -1452,20 +1528,20 @@
                     z.appendChild(el);
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Cartão problemático na renderização:", err);
             }
         }
 
-        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentários) {
+        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra; 
             document.getElementById('edit-ref').value = ref;
             
-            // Preenche o formulário com a info real
+            // Preenche o formulário com a info real e converte escapes de volta para leitura
             document.getElementById('edit-kg').value = kg; 
             document.getElementById('edit-pol').value = pol;
             document.getElementById('edit-prio').value = prio; 
-            document.getElementById('edit-comments').value = comentários;
+            document.getElementById('edit-comments').value = comentarios.replace(/\\n/g, '\n');
             
             document.getElementById('edit-modal').classList.add('active');
         }
@@ -1481,14 +1557,34 @@
             const vKg = parseFloat(document.getElementById('edit-kg').value) || 0;
             const vPol = parseFloat(document.getElementById('edit-pol').value) || 0;
 
-            await supabaseClient.from('cartoes_kanban').update({
+            const updateData = {
                 obra_ref: document.getElementById('edit-obra').value.trim(), 
                 referencia: document.getElementById('edit-ref').value.trim(),
                 kg: vKg, 
-                polegadas: vPol, // Grava nas colunas corretas
+                toneladas: vKg, // Retrocompatibilidade (grava nas duas gavetas)
+                polegadas: vPol, 
                 prioridade: document.getElementById('edit-prio').value, 
                 comentarios: document.getElementById('edit-comments').value.trim()
-            }).eq('id', id);
+            };
+
+            let { error } = await supabaseClient.from('cartoes_kanban').update(updateData).eq('id', id);
+
+            // Sistema anti-falha caso as colunas novas não existam na BD
+            if (error && error.message.includes('does not exist')) {
+                mostrarAlerta("Aviso do Sistema: Colunas 'kg' e 'polegadas' ausentes no Supabase. O cartão foi gravado em modo de compatibilidade.");
+                
+                const fallbackData = { ...updateData };
+                delete fallbackData.kg;
+                delete fallbackData.polegadas;
+                
+                const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
+                error = fallbackRes.error;
+            }
+
+            if (error) {
+                mostrarAlerta('Erro ao guardar as alterações: ' + error.message);
+                return;
+            }
 
             fecharModal(); 
             carregarTudo();
@@ -1502,8 +1598,11 @@
         }
 
         function calcularKPIs() {
-            // O KPI agora lê SOMENTE a coluna kg. (Esquece as toneladas do passado)
-            let totalKg = todasAsObras.reduce((acc, o) => acc + (parseFloat(o.kg) || 0), 0);
+            // O KPI agora puxa sempre o Kg (novo) e se não encontrar puxa o Kg (antigo)
+            let totalKg = todasAsObras.reduce((acc, o) => {
+                const peso = o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0);
+                return acc + (parseFloat(peso) || 0);
+            }, 0);
             
             document.getElementById('kpi-tons-semana').innerText = (totalKg * 0.25).toFixed(1) + " Kg";
             document.getElementById('kpi-tons-mes').innerText = (totalKg * 0.75).toFixed(1) + " Kg";
@@ -1522,7 +1621,7 @@
                 const { data, error } = await supabaseClient.from('cartoes_kanban').select('*').range(from, from + step);
                 
                 if (error) { 
-                    mostrarAlerta('Erro de ligação!'); 
+                    mostrarAlerta('Erro de ligação! A aplicação não conseguiu ler a Base de Dados.'); 
                     break; 
                 }
                 
