@@ -10,7 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
-        /* TEMA CLARO (Default PRF) */
+        /* =========================================
+           TEMA CLARO (Default PRF)
+           ========================================= */
         :root {
             --prf-blue: #0097A7;
             --prf-blue-dark: #00796B;
@@ -23,7 +25,9 @@
             --border-color: #cbd5e1;
         }
 
-        /* TEMA ESCURO (Só se o sistema do utilizador pedir) */
+        /* =========================================
+           TEMA ESCURO (Se o sistema do utilizador pedir)
+           ========================================= */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-main: #121212;
@@ -51,9 +55,9 @@
             overflow-y: auto; /* Permite que o ecrã cresça para baixo livremente */
         }
 
-        /* --------------------------------------
+        /* =========================================
            CABEÇALHO / HEADER
-           -------------------------------------- */
+           ========================================= */
         header {
             background-color: var(--bg-card);
             padding: 10px 20px;
@@ -117,9 +121,9 @@
             background-color: #475569; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            PÁGINAS GERAIS
-           -------------------------------------- */
+           ========================================= */
         .page { 
             display: none; 
             padding: 20px; 
@@ -131,9 +135,9 @@
             flex-direction: column; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            MENU INICIAL
-           -------------------------------------- */
+           ========================================= */
         #page-home { 
             align-items: center; 
             justify-content: center; 
@@ -206,9 +210,9 @@
             color: var(--text-main); 
         }
 
-        /* --------------------------------------
+        /* =========================================
            FORMULÁRIOS E PESQUISA
-           -------------------------------------- */
+           ========================================= */
         .search-container { 
             background: var(--bg-card); 
             padding: 15px; 
@@ -275,9 +279,9 @@
             cursor: pointer !important;
         }
 
-        /* --------------------------------------
+        /* =========================================
            BARRA DE SCROLL NO TOPO
-           -------------------------------------- */
+           ========================================= */
         .top-scroll-wrapper {
             overflow-x: auto; 
             overflow-y: hidden; 
@@ -295,9 +299,9 @@
             height: 14px; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            KANBAN BOARD E COLUNAS
-           -------------------------------------- */
+           ========================================= */
         .board {
             display: flex; 
             gap: 12px; 
@@ -433,9 +437,9 @@
             background: #2e7d32; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            CORES TOTAIS DOS CARTÕES E BLINDAGEM
-           -------------------------------------- */
+           ========================================= */
         .card {
             border-radius: 5px; 
             padding: 9px; 
@@ -459,7 +463,7 @@
             pointer-events: auto; 
         }
 
-        /* COR: RETRABALHO (CINZA) */
+        /* NOVA COR: RETRABALHO (CINZA) */
         .card.prio-retrabalho { 
             background-color: #94a3b8 !important; 
             border: none; 
@@ -469,22 +473,59 @@
             color: #ffffff !important; 
         }
 
-        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
-        .card.prio-raio-x * { color: #ffffff !important; }
+        .card.prio-raio-x { 
+            background-color: #9c27b0 !important; 
+            border: none; 
+        }
+
+        .card.prio-raio-x * { 
+            color: #ffffff !important; 
+        }
         
-        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
-        .card.prio-vermelho * { color: #ffffff !important; }
+        .card.prio-vermelho { 
+            background-color: #ef5350 !important; 
+            border: none; 
+        }
 
-        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
-        .card.prio-laranja * { color: #ffffff !important; }
+        .card.prio-vermelho * { 
+            color: #ffffff !important; 
+        }
 
-        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
-        .card.prio-amarelo * { color: #222222 !important; }
+        .card.prio-laranja { 
+            background-color: #ff9800 !important; 
+            border: none; 
+        }
 
-        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
-        .card.prio-normal .card-ref { color: var(--text-main) !important; }
-        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
-        .card.prio-normal .card-comment { color: var(--prf-blue-dark) !important; }
+        .card.prio-laranja * { 
+            color: #ffffff !important; 
+        }
+
+        .card.prio-amarelo { 
+            background-color: #ffeb3b !important; 
+            border: none; 
+        }
+
+        .card.prio-amarelo * { 
+            color: #222222 !important; 
+        }
+
+        .card.prio-normal { 
+            background-color: var(--bg-card) !important; 
+            border: 1px solid var(--border-color); 
+        }
+
+        .card.prio-normal .card-ref { 
+            color: var(--text-main) !important; 
+        }
+
+        .card.prio-normal .card-info, 
+        .card.prio-normal .btn-card { 
+            color: var(--text-secondary) !important; 
+        }
+
+        .card.prio-normal .card-comment { 
+            color: var(--prf-blue-dark) !important; 
+        }
 
         .obra-badge {
             display: inline-block; 
@@ -501,15 +542,48 @@
             color: white !important;
         }
 
-        .card-ref { font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
-        .card-info { font-size: 10px; margin-top: 3px; }
-        .card-comment { font-size: 10px; font-style: italic; margin-top: 4px; padding: 3px 5px; border-radius: 3px; background: rgba(255,255,255,0.2); }
-        .card-actions { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(128,128,128,0.3); }
-        .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
+        .card-ref { 
+            font-weight: bold; 
+            font-size: 11px; 
+            line-height: 1.2; 
+            margin-bottom: 4px; 
+            word-break: break-word; 
+        }
 
-        /* --------------------------------------
+        .card-info { 
+            font-size: 10px; 
+            margin-top: 3px; 
+        }
+
+        .card-comment { 
+            font-size: 10px; 
+            font-style: italic; 
+            margin-top: 4px; 
+            padding: 3px 5px; 
+            border-radius: 3px; 
+            background: rgba(255,255,255,0.2); 
+        }
+
+        .card-actions { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 6px; 
+            padding-top: 4px; 
+            border-top: 1px solid rgba(128,128,128,0.3); 
+        }
+
+        .btn-card { 
+            background: none !important; 
+            border: none !important; 
+            cursor: pointer !important; 
+            font-size: 11px !important; 
+            padding: 0 !important; 
+            font-weight: bold; 
+        }
+
+        /* =========================================
            MODAIS DE AVISOS E EDIÇÃO
-           -------------------------------------- */
+           ========================================= */
         .modal-overlay {
             display: none; 
             position: fixed; 
@@ -541,12 +615,21 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
-        .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
+        .modal h3 { 
+            margin: 0; 
+            color: var(--prf-blue-light); 
+            font-size: 18px; 
+        }
 
-        /* --------------------------------------
+        .modal label { 
+            font-size: 12px; 
+            color: var(--text-secondary); 
+            margin-bottom: -6px; 
+        }
+
+        /* =========================================
            KPIS GRID
-           -------------------------------------- */
+           ========================================= */
         .kpi-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
@@ -583,9 +666,9 @@
             margin-left: 5px; 
         }
 
-        /* --------------------------------------
+        /* =========================================
            ITENS DE CONSULTA
-           -------------------------------------- */
+           ========================================= */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -700,7 +783,7 @@
                 <div class="column-content" data-fase="Desenho"></div>
             </div>
             
-            <!-- MATERIAL (COLUNA SIMPLES) -->
+            <!-- MATERIAL -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-fase="Material" data-operador="Camila"></div>
@@ -981,7 +1064,6 @@
                 <option value="Amarelo">🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
-                <!-- NOVA OPÇÃO DE RETRABALHO -->
                 <option value="Retrabalho">⚪ Retrabalho</option>
             </select>
 
@@ -1016,7 +1098,9 @@
     </div>
 
     <script>
-        // Função utilitária para prevenir injeção de HTML
+        // =====================================================
+        // FUNÇÃO UTILITÁRIA: PREVINE CÓDIGOS E INJEÇÕES HTML
+        // =====================================================
         function escapeHTML(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -1057,16 +1141,14 @@
         // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES
         // -----------------------------------------------------
         document.addEventListener('dragover', function(e) {
-            const edgeSize = 150; // Margem aumentada para ser mais fácil de ativar
-            const speed = 25; // Velocidade de deslize rápida
+            const edgeSize = 150; 
+            const speed = 25; 
             
             if(!boardKanban) return;
             
-            // Rato encostado à direita
             if (e.clientX > window.innerWidth - edgeSize) {
                 boardKanban.scrollBy({ left: speed, behavior: 'auto' });
             } 
-            // Rato encostado à esquerda
             else if (e.clientX < edgeSize) {
                 boardKanban.scrollBy({ left: -speed, behavior: 'auto' });
             }
@@ -1234,7 +1316,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL INTELIGENTE (DETEÇÃO CHECKPOINT MEGA-ROBUSTA)
+        // IMPORTAR EXCEL INTELIGENTE 
         // -----------------------------------------------------
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
@@ -1257,11 +1339,9 @@
                     const refsSet = new Set();
                     let totalLidas = 0, ignoradas = 0;
 
-                    // Deteção super-robusta (Lê Checkpoints novos e antigos)
+                    // Deteção inteligente de formato
                     const headers = rows[0] || [];
                     const headerStr = JSON.stringify(headers).toLowerCase();
-                    
-                    // Se tiver a palavra Obra e Fase, é Checkpoint garantido
                     const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
 
                     if (isCheckpoint) {
@@ -1580,7 +1660,7 @@
         }
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (NOVA ARQUITETURA BLINDADA CONTRA BUGS)
+        // RENDER CARTÃO (NOVA ARQUITETURA BLINDADA CONTRA BUGS DE EDIÇÃO)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -1613,6 +1693,7 @@
                     el.draggable = true; 
                     el.id = c.id;
                     
+                    // Tratamento seguro de strings para exibição
                     const safeObra = escapeHTML(c.obra_ref);
                     const safeRef = escapeHTML(c.referencia);
                     const safeCom = escapeHTML(c.comentarios);
@@ -1636,7 +1717,7 @@
                         </div>
                     `;
                     
-                    // Adiciona os Eventos JS diretamente (Blindagem)
+                    // Adiciona os Eventos JS diretamente (Blindagem Máxima)
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios);
                     });
@@ -1658,12 +1739,12 @@
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
             document.getElementById('edit-id').value = id; 
-            document.getElementById('edit-obra').value = obra; 
-            document.getElementById('edit-ref').value = ref;
+            document.getElementById('edit-obra').value = obra || ''; 
+            document.getElementById('edit-ref').value = ref || '';
             
-            document.getElementById('edit-kg').value = kg; 
-            document.getElementById('edit-pol').value = pol;
-            document.getElementById('edit-prio').value = prio; 
+            document.getElementById('edit-kg').value = kg || 0; 
+            document.getElementById('edit-pol').value = pol || 0;
+            document.getElementById('edit-prio').value = prio || 'Normal'; 
             document.getElementById('edit-comments').value = comentarios || '';
             
             document.getElementById('edit-modal').classList.add('active');
@@ -1734,7 +1815,7 @@
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
-                // Contabiliza total de retrabalhos da fábrica
+                // Contabiliza total de retrabalhos da fábrica (cinza)
                 if (o.prioridade === 'Retrabalho') {
                     totalRetrabalhos++;
                 }
@@ -1753,14 +1834,14 @@
                     kgConcluido += peso;
                     pecasConcluido++;
                     
-                    // Retrabalhos que já chegaram ao Concluído Final
+                    // Se estiver no Concluído Final E for Cinza (Retrabalho)
                     if (o.prioridade === 'Retrabalho') {
                         retrabalhosConcluidos++;
                     }
                 }
             });
             
-            // Taxa real de peças retrabalhadas no Concluído Final
+            // Calcula a percentagem real de peças cinzentas na caixa de Concluídos Finais
             let taxaRetrabalho = 0;
             if (pecasConcluido > 0) {
                 taxaRetrabalho = ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1);
@@ -1769,7 +1850,7 @@
             // Atualiza KPI Retrabalhos
             document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% de todas as concluídas)</span>`;
 
-            // Atualiza Histórico Puro
+            // Atualiza Histórico Geral
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             
             // Atualiza Tempo Real (Em Execução, Pendentes, Concluído Final)
@@ -1811,7 +1892,7 @@
             todasAsObras = allData;
             document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
             renderizarKanbanComFiltro();
-            calcularKPIs(); 
+            calcularKPIs(); // Força o calculo imediato ao carregar
         }
 
         window.onload = carregarTudo;
