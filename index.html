@@ -433,9 +433,9 @@
             background: #2e7d32; 
         }
 
-        /* =========================================
+        /* --------------------------------------
            CORES TOTAIS DOS CARTÕES E BLINDAGEM
-           ========================================= */
+           -------------------------------------- */
         .card {
             border-radius: 5px; 
             padding: 9px; 
@@ -459,7 +459,7 @@
             pointer-events: auto; 
         }
 
-        /* NOVA COR: RETRABALHO (CINZA) */
+        /* COR: RETRABALHO (CINZA) */
         .card.prio-retrabalho { 
             background-color: #94a3b8 !important; 
             border: none; 
@@ -507,9 +507,9 @@
         .card-actions { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(128,128,128,0.3); }
         .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
 
-        /* =========================================
+        /* --------------------------------------
            MODAIS DE AVISOS E EDIÇÃO
-           ========================================= */
+           -------------------------------------- */
         .modal-overlay {
             display: none; 
             position: fixed; 
@@ -544,9 +544,9 @@
         .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
         .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
-        /* =========================================
+        /* --------------------------------------
            KPIS GRID
-           ========================================= */
+           -------------------------------------- */
         .kpi-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
@@ -583,9 +583,9 @@
             margin-left: 5px; 
         }
 
-        /* =========================================
+        /* --------------------------------------
            ITENS DE CONSULTA
-           ========================================= */
+           -------------------------------------- */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -981,6 +981,7 @@
                 <option value="Amarelo">🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
+                <!-- NOVA OPÇÃO DE RETRABALHO -->
                 <option value="Retrabalho">⚪ Retrabalho</option>
             </select>
 
@@ -1015,6 +1016,17 @@
     </div>
 
     <script>
+        // Função utilitária para prevenir injeção de HTML
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -1042,7 +1054,7 @@
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
         // -----------------------------------------------------
-        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES (MELHORADO)
+        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES
         // -----------------------------------------------------
         document.addEventListener('dragover', function(e) {
             const edgeSize = 150; // Margem aumentada para ser mais fácil de ativar
@@ -1362,6 +1374,7 @@
                     for (let i = 0; i < obrasParaInserir.length; i += 500) {
                         let lote = obrasParaInserir.slice(i, i + 500);
                         
+                        // Primeira tentativa de Inserir
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
                         // SE FALHAR (coluna nova não existe), Ativa o Plano B Silencioso
@@ -1442,11 +1455,11 @@
                 return `
                 <div class="consult-item">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="font-size: 14px;"><span style="color:var(--prf-blue-light);">[${o.obra_ref || 'GERAL'}]</span> ${o.referencia}</strong>
-                        <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${o.fase}</span>
+                        <strong style="font-size: 14px;"><span style="color:var(--prf-blue-light);">[${escapeHTML(o.obra_ref || 'GERAL')}]</span> ${escapeHTML(o.referencia)}</strong>
+                        <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${escapeHTML(o.fase)}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
-                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${o.trabalhador || 'Não Atribuído'}</b> | 🏷️ Prioridade: <b>${o.prioridade || 'Normal'}</b>
+                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${escapeHTML(o.trabalhador || 'Não Atribuído')}</b> | 🏷️ Prioridade: <b>${escapeHTML(o.prioridade || 'Normal')}</b>
                     </div>
                 </div>
                 `;
@@ -1454,7 +1467,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP BLINDADO (Proteção contra arrastar texto do cartão)
+        // DRAG AND DROP BLINDADO CONTRA TEXTOS
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1511,7 +1524,7 @@
         });
 
         // -----------------------------------------------------
-        // ADICIONAR E EDITAR (COM LEITURA FORÇADA NUMÉRICA)
+        // ADICIONAR MANUAL (BLINDADO CONTRA FALHAS DE BD)
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1567,7 +1580,7 @@
         }
 
         // -----------------------------------------------------
-        // RENDER CARTÃO 
+        // RENDER CARTÃO (NOVA ARQUITETURA BLINDADA CONTRA BUGS)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -1600,27 +1613,37 @@
                     el.draggable = true; 
                     el.id = c.id;
                     
-                    const cmt = c.comentarios ? `<div class="card-comment">💬 ${String(c.comentarios)}</div>` : '';
-                    const bdg = c.obra_ref ? `<div class="obra-badge">${String(c.obra_ref)}</div>` : '';
-                    
-                    const oS = String(c.obra_ref || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
-                    const rS = String(c.referencia || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                    const pS = String(c.prioridade || 'Normal').replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
-                    const cS = String(c.comentarios || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
+                    const safeObra = escapeHTML(c.obra_ref);
+                    const safeRef = escapeHTML(c.referencia);
+                    const safeCom = escapeHTML(c.comentarios);
+                    const safeTrab = escapeHTML(t);
+
+                    const cmt = c.comentarios ? `<div class="card-comment">💬 ${safeCom}</div>` : '';
+                    const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
                     
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
+                    // O botão deixa de usar strings dentro do HTML, resolvendo o bug do 'Unicode escape sequence'
                     el.innerHTML = `
                         ${bdg}
-                        <div class="card-ref">${c.referencia||''}</div>
-                        <div class="card-info">⚖️ ${vKg} Kg | 📏 ${vPol}" <br> 👷 ${t}</div>
+                        <div class="card-ref">${safeRef || 'Sem Referência'}</div>
+                        <div class="card-info">⚖️ ${vKg} Kg | 📏 ${vPol}" <br> 👷 ${safeTrab}</div>
                         ${cmt}
                         <div class="card-actions">
-                            <button class="btn-card" onclick="abrirModalEdicao('${c.id}', '${oS}', '${rS}', ${vKg}, ${vPol}, '${pS}', '${cS}')">✏️ Editar</button>
-                            <button class="btn-card" onclick="apagarCartao('${c.id}')">🗑️ Apagar</button>
+                            <button class="btn-card btn-editar">✏️ Editar</button>
+                            <button class="btn-card btn-apagar">🗑️ Apagar</button>
                         </div>
                     `;
+                    
+                    // Adiciona os Eventos JS diretamente (Blindagem)
+                    el.querySelector('.btn-editar').addEventListener('click', () => {
+                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios);
+                    });
+
+                    el.querySelector('.btn-apagar').addEventListener('click', () => {
+                        apagarCartao(c.id);
+                    });
                     
                     el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
                     z.appendChild(el);
@@ -1630,6 +1653,9 @@
             }
         }
 
+        // -----------------------------------------------------
+        // EDIÇÃO E GRAVAÇÃO
+        // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra; 
@@ -1638,7 +1664,7 @@
             document.getElementById('edit-kg').value = kg; 
             document.getElementById('edit-pol').value = pol;
             document.getElementById('edit-prio').value = prio; 
-            document.getElementById('edit-comments').value = comentarios.replace(/\\n/g, '\n');
+            document.getElementById('edit-comments').value = comentarios || '';
             
             document.getElementById('edit-modal').classList.add('active');
         }
@@ -1656,7 +1682,7 @@
                 obra_ref: document.getElementById('edit-obra').value.trim(), 
                 referencia: document.getElementById('edit-ref').value.trim(),
                 kg: vKg, 
-                toneladas: vKg, 
+                toneladas: vKg, // Guarda nas duas para não haver falhas
                 polegadas: vPol, 
                 prioridade: document.getElementById('edit-prio').value, 
                 comentarios: document.getElementById('edit-comments').value.trim()
@@ -1664,6 +1690,7 @@
 
             let res = await supabaseClient.from('cartoes_kanban').update(updateData).eq('id', id);
 
+            // PLANO B (Caso a tabela careça das colunas atualizadas)
             if (res.error) {
                 const fallbackData = { ...updateData };
                 delete fallbackData.kg;
@@ -1690,7 +1717,7 @@
         }
 
         // -----------------------------------------------------
-        // CÁLCULO DOS NOVOS KPIS (RETRABALHO INCLUIDO - CORREÇÃO ABSOLUTA)
+        // CÁLCULO DOS NOVOS KPIS
         // -----------------------------------------------------
         function calcularKPIs() {
             let totalKgAno = 0;
@@ -1707,6 +1734,7 @@
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
+                // Contabiliza total de retrabalhos da fábrica
                 if (o.prioridade === 'Retrabalho') {
                     totalRetrabalhos++;
                 }
@@ -1725,22 +1753,23 @@
                     kgConcluido += peso;
                     pecasConcluido++;
                     
+                    // Retrabalhos que já chegaram ao Concluído Final
                     if (o.prioridade === 'Retrabalho') {
                         retrabalhosConcluidos++;
                     }
                 }
             });
             
-            // Taxa real de peças retrabalhadas vs peças perfeitas no Concluído Final
+            // Taxa real de peças retrabalhadas no Concluído Final
             let taxaRetrabalho = 0;
             if (pecasConcluido > 0) {
                 taxaRetrabalho = ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1);
             }
 
-            // Atualiza KPI Retrabalhos Absoluto e Percentagem
+            // Atualiza KPI Retrabalhos
             document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% de todas as concluídas)</span>`;
 
-            // Atualiza Histórico Puro (Sem cálculos de simulação)
+            // Atualiza Histórico Puro
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             
             // Atualiza Tempo Real (Em Execução, Pendentes, Concluído Final)
@@ -1782,7 +1811,7 @@
             todasAsObras = allData;
             document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
             renderizarKanbanComFiltro();
-            calcularKPIs(); // Força o calculo imediato ao carregar
+            calcularKPIs(); 
         }
 
         window.onload = carregarTudo;
