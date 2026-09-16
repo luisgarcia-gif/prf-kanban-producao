@@ -463,69 +463,47 @@
             pointer-events: auto; 
         }
 
-        /* NOVA COR: RETRABALHO (CINZA) */
+        /* COR: SEM COR (BRANCO/TRACEJADO) */
+        .card.prio-sem-cor { 
+            background-color: var(--bg-card) !important; 
+            border: 1px dashed var(--border-color); 
+        }
+        .card.prio-sem-cor * { 
+            color: var(--text-main) !important; 
+        }
+        .card.prio-sem-cor .card-info, .card.prio-sem-cor .btn-card { 
+            color: var(--text-secondary) !important; 
+        }
+        .card.prio-sem-cor .obra-badge { 
+            background: #cbd5e1 !important; 
+            color: #1e293b !important; 
+        }
+
+        /* COR: RETRABALHO (CINZA) */
         .card.prio-retrabalho { 
             background-color: #94a3b8 !important; 
             border: none; 
         }
-
         .card.prio-retrabalho * { 
             color: #ffffff !important; 
         }
 
-        .card.prio-raio-x { 
-            background-color: #9c27b0 !important; 
-            border: none; 
-        }
-
-        .card.prio-raio-x * { 
-            color: #ffffff !important; 
-        }
+        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
+        .card.prio-raio-x * { color: #ffffff !important; }
         
-        .card.prio-vermelho { 
-            background-color: #ef5350 !important; 
-            border: none; 
-        }
+        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
+        .card.prio-vermelho * { color: #ffffff !important; }
 
-        .card.prio-vermelho * { 
-            color: #ffffff !important; 
-        }
+        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
+        .card.prio-laranja * { color: #ffffff !important; }
 
-        .card.prio-laranja { 
-            background-color: #ff9800 !important; 
-            border: none; 
-        }
+        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
+        .card.prio-amarelo * { color: #222222 !important; }
 
-        .card.prio-laranja * { 
-            color: #ffffff !important; 
-        }
-
-        .card.prio-amarelo { 
-            background-color: #ffeb3b !important; 
-            border: none; 
-        }
-
-        .card.prio-amarelo * { 
-            color: #222222 !important; 
-        }
-
-        .card.prio-normal { 
-            background-color: var(--bg-card) !important; 
-            border: 1px solid var(--border-color); 
-        }
-
-        .card.prio-normal .card-ref { 
-            color: var(--text-main) !important; 
-        }
-
-        .card.prio-normal .card-info, 
-        .card.prio-normal .btn-card { 
-            color: var(--text-secondary) !important; 
-        }
-
-        .card.prio-normal .card-comment { 
-            color: var(--prf-blue-dark) !important; 
-        }
+        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
+        .card.prio-normal .card-ref { color: var(--text-main) !important; }
+        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
+        .card.prio-normal .card-comment { color: var(--prf-blue-dark) !important; }
 
         .obra-badge {
             display: inline-block; 
@@ -542,44 +520,11 @@
             color: white !important;
         }
 
-        .card-ref { 
-            font-weight: bold; 
-            font-size: 11px; 
-            line-height: 1.2; 
-            margin-bottom: 4px; 
-            word-break: break-word; 
-        }
-
-        .card-info { 
-            font-size: 10px; 
-            margin-top: 3px; 
-        }
-
-        .card-comment { 
-            font-size: 10px; 
-            font-style: italic; 
-            margin-top: 4px; 
-            padding: 3px 5px; 
-            border-radius: 3px; 
-            background: rgba(255,255,255,0.2); 
-        }
-
-        .card-actions { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-top: 6px; 
-            padding-top: 4px; 
-            border-top: 1px solid rgba(128,128,128,0.3); 
-        }
-
-        .btn-card { 
-            background: none !important; 
-            border: none !important; 
-            cursor: pointer !important; 
-            font-size: 11px !important; 
-            padding: 0 !important; 
-            font-weight: bold; 
-        }
+        .card-ref { font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
+        .card-info { font-size: 10px; margin-top: 3px; }
+        .card-comment { font-size: 10px; font-style: italic; margin-top: 4px; padding: 3px 5px; border-radius: 3px; background: rgba(255,255,255,0.2); }
+        .card-actions { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(128,128,128,0.3); }
+        .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
 
         /* =========================================
            MODAIS DE AVISOS E EDIÇÃO
@@ -615,17 +560,8 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .modal h3 { 
-            margin: 0; 
-            color: var(--prf-blue-light); 
-            font-size: 18px; 
-        }
-
-        .modal label { 
-            font-size: 12px; 
-            color: var(--text-secondary); 
-            margin-bottom: -6px; 
-        }
+        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
+        .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
 
         /* =========================================
            KPIS GRID
@@ -750,12 +686,13 @@
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
             <input type="number" id="new-pol" placeholder="Pol ('')" step="any" style="width: 70px;">
             <select id="new-prio">
+                <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
                 <option value="Vermelho">🔴 Máxima</option>
                 <option value="Laranja">🟠 Média</option>
-                <option value="Amarelo" selected>🟡 Baixa</option>
-                <option value="Normal">🔵 Normal</option>
+                <option value="Amarelo">🟡 Baixa</option>
+                <option value="Normal" selected>🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
-                <option value="Retrabalho">⚪ Retrabalho</option>
+                <option value="Retrabalho">🔘 Retrabalho</option>
             </select>
             <button class="btn-action" onclick="adicionarObra()">+ Adicionar Manual</button>
             
@@ -783,13 +720,11 @@
                 <div class="column-content" data-fase="Desenho"></div>
             </div>
             
-            <!-- MATERIAL -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-fase="Material" data-operador="Camila"></div>
             </div>
 
-            <!-- LASER -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Laser</div>
                 <div class="column-content" data-fase="Laser"></div>
@@ -800,7 +735,6 @@
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
                     
-                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="sub-sector-grid">
@@ -825,7 +759,6 @@
                         </div>
                     </div>
                     
-                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
@@ -857,7 +790,6 @@
                         </div>
                     </div>
                     
-                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="sub-sector-grid">
@@ -903,7 +835,6 @@
                         </div>
                     </div>
                     
-                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="sub-sector-grid">
@@ -924,7 +855,6 @@
                 </div>
             </div>
 
-            <!-- QUALIDADE E TRATAMENTO -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
@@ -1059,12 +989,13 @@
 
             <label>Categoria / Prioridade:</label>
             <select id="edit-prio">
+                <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
                 <option value="Vermelho">🔴 Prioridade Máxima</option>
                 <option value="Laranja">🟠 Prioridade Média</option>
                 <option value="Amarelo">🟡 Prioridade Baixa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
-                <option value="Retrabalho">⚪ Retrabalho</option>
+                <option value="Retrabalho">🔘 Retrabalho</option>
             </select>
 
             <label>Comentários / Observações:</label>
@@ -1099,8 +1030,19 @@
 
     <script>
         // =====================================================
-        // FUNÇÃO UTILITÁRIA: PREVINE CÓDIGOS E INJEÇÕES HTML
+        // FUNÇÃO DE SEGURANÇA MÁXIMA PARA A BASE DE DADOS (NOVA)
+        // Remove caracteres de controlo invisíveis e códigos 
+        // nulos (\0000) que o Excel tenta injetar.
         // =====================================================
+        function sanitizeForDB(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove caracteres nulos e de controlo invisíveis
+                .replace(/\\/g, "/") // Transforma barras invertidas em normais para o DB não confundir com códigos
+                .trim();
+        }
+
+        // Previne injeção de HTML no ecrã
         function escapeHTML(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -1316,12 +1258,13 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL INTELIGENTE 
+        // IMPORTAR EXCEL INTELIGENTE (LEITURA EM CASCATA)
+        // Lê as Obras Mães e aplica às peças órfãs por baixo.
         // -----------------------------------------------------
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
             if (!file) return; 
-            mostrarAlerta('A processar ficheiro Excel...');
+            mostrarAlerta('A processar ficheiro Excel e a aplicar filtro de limpeza...');
 
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -1339,7 +1282,6 @@
                     const refsSet = new Set();
                     let totalLidas = 0, ignoradas = 0;
 
-                    // Deteção inteligente de formato
                     const headers = rows[0] || [];
                     const headerStr = JSON.stringify(headers).toLowerCase();
                     const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
@@ -1376,22 +1318,25 @@
                                 const vKg = colKg !== -1 ? (parseFloat(String(row[colKg] || '0').replace(',', '.')) || 0) : 0;
                                 const vPol = colPol !== -1 ? (parseFloat(String(row[colPol] || '0').replace(',', '.')) || 0) : 0;
 
+                                // Os textos são todos passados pelo sanitizeForDB para matar caracteres nulos
                                 obrasParaInserir.push({ 
-                                    obra_ref: refE || 'MANUAL', 
-                                    referencia: desig || 'Sem Referência', 
+                                    obra_ref: sanitizeForDB(refE || 'MANUAL'), 
+                                    referencia: sanitizeForDB(desig || 'Sem Referência'), 
                                     kg: vKg, 
                                     toneladas: vKg,
                                     polegadas: vPol, 
-                                    prioridade: colPrio !== -1 ? String(row[colPrio] || 'Normal') : 'Normal', 
-                                    fase: colFase !== -1 ? String(row[colFase] || 'Projeto') : 'Projeto', 
-                                    setor: colSetor !== -1 ? String(row[colSetor] || 'Geral') : 'Geral',
-                                    trabalhador: colTrab !== -1 ? String(row[colTrab] || 'Não Atribuído') : 'Não Atribuído',
-                                    comentarios: colObs !== -1 ? String(row[colObs] || '') : '' 
+                                    prioridade: sanitizeForDB(String(row[colPrio] || 'Normal')), 
+                                    fase: sanitizeForDB(String(row[colFase] || 'Projeto')), 
+                                    setor: colSetor !== -1 ? sanitizeForDB(String(row[colSetor] || 'Geral')) : 'Geral',
+                                    trabalhador: colTrab !== -1 ? sanitizeForDB(String(row[colTrab] || 'Não Atribuído')) : 'Não Atribuído',
+                                    comentarios: sanitizeForDB(String(row[colObs] || '')) 
                                 });
                             }
                         }
                     } else {
-                        // MODO: Extração de Ficheiro Original de Engenharia
+                        // MODO: Extração Avançada de Ficheiro Original de Engenharia
+                        let lastSeenRef = 'MANUAL'; // Memória da última Obra Mestre encontrada
+
                         for (let i = 0; i < rows.length; i++) {
                             const row = rows[i]; 
                             if (!row || row.length === 0) continue;
@@ -1399,14 +1344,50 @@
                             let refE = null, desig = null, trab = 'Não Atribuído';
                             const linhaStr = row.map(c => String(c || '')).join(' | ');
 
+                            let foundCodeThisRow = false;
+
+                            // 1. Procura o Código da Obra (Mestre) na linha atual
                             for (let j = 0; j < row.length; j++) {
-                                const match = String(row[j] || '').trim().match(/([A-Za-z]{2}\d{5})[ _\-]*(.*?)(?:\.pdf|$)/i);
-                                if (match) { 
-                                    refE = match[1].toUpperCase(); 
-                                    desig = match[2].replace(/^-/, '').trim() || 'Conjunto Principal'; 
+                                const cellText = String(row[j] || '').trim();
+                                
+                                const matchCode = cellText.match(/([A-Za-z]{2}\d{4,5})/i);
+                                if (matchCode) { 
+                                    refE = matchCode[1].toUpperCase(); 
+                                    lastSeenRef = refE; // Guarda na memória
+                                    foundCodeThisRow = true;
+                                    
+                                    // Verifica se a designação está "colada" na mesma célula
+                                    const matchFull = cellText.match(/([A-Za-z]{2}\d{4,5})[ _\-]*(.*?)(?:\.pdf|$)/i);
+                                    if (matchFull && matchFull[2] && matchFull[2].length > 1) {
+                                        desig = matchFull[2].replace(/^-/, '').trim();
+                                    } else {
+                                        // Se não estiver, procura na próxima célula da direita
+                                        for (let k = j + 1; k < row.length; k++) {
+                                            const nextCell = String(row[k] || '').trim();
+                                            if (nextCell && nextCell.length > 2) {
+                                                desig = nextCell.replace(/\.pdf$/i, '').replace(/^-/, '').trim();
+                                                break;
+                                            }
+                                        }
+                                    }
                                     break; 
                                 }
                             }
+
+                            // 2. Se a linha não tem código mestre (Ex: 0879 - Chapa), usa a memória da linha de cima
+                            if (!foundCodeThisRow) {
+                                refE = lastSeenRef;
+                                for (let j = 0; j < row.length; j++) {
+                                    const cellText = String(row[j] || '').trim();
+                                    if (cellText && cellText.length > 2) {
+                                        desig = cellText.replace(/\.pdf$/i, '').replace(/^-/, '').trim();
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Se a linha não tiver designação válida, salta
+                            if (!desig) continue;
 
                             if (refE) {
                                 totalLidas++; 
@@ -1429,23 +1410,24 @@
                                     }
                                 }
                                 
+                                // Tudo é lavado com sanitizeForDB antes de ir para o sistema
                                 obrasParaInserir.push({ 
-                                    obra_ref: refE, 
-                                    referencia: desig, 
+                                    obra_ref: sanitizeForDB(refE), 
+                                    referencia: sanitizeForDB(desig), 
                                     kg: 0, 
                                     toneladas: 0, 
                                     polegadas: 0, 
                                     prioridade: 'Normal', 
                                     fase: 'Projeto', 
                                     setor: 'Geral',
-                                    trabalhador: trab 
+                                    trabalhador: sanitizeForDB(trab) 
                                 });
                             }
                         }
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        return mostrarAlerta(`Lidas ${totalLidas} peças. Todas já existem na BD (ignoradas ${ignoradas}). Nenhuma nova obra adicionada.`);
+                        return mostrarAlerta(`Análise terminada: Lemos ${totalLidas} peças agrupadas. Todas já existem na BD (ignoradas ${ignoradas}).`);
                     }
                     
                     let inseridos = 0;
@@ -1454,10 +1436,8 @@
                     for (let i = 0; i < obrasParaInserir.length; i += 500) {
                         let lote = obrasParaInserir.slice(i, i + 500);
                         
-                        // Primeira tentativa de Inserir
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
-                        // SE FALHAR (coluna nova não existe), Ativa o Plano B Silencioso
                         if (res.error) {
                             dbFailsOnNewColumns = true;
                             const loteSeguro = lote.map(o => {
@@ -1479,7 +1459,7 @@
                     if (dbFailsOnNewColumns) {
                         mostrarAlerta(`Aviso: O Supabase rejeitou as colunas novas, mas as ${inseridos} obras foram inseridas em modo de segurança.`);
                     } else {
-                        mostrarAlerta(`Sucesso! Encontramos ${totalLidas} peças. Ignoradas ${ignoradas} antigas. Adicionamos ${inseridos} NOVAS obras.`); 
+                        mostrarAlerta(`Limpeza Concluída! Lemos ${totalLidas} peças. Ignoradas ${ignoradas} que já existiam. Inseridas ${inseridos} NOVAS obras.`); 
                     }
                     
                     carregarTudo();
@@ -1547,7 +1527,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP BLINDADO CONTRA TEXTOS
+        // DRAG AND DROP BLINDADO
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1566,7 +1546,6 @@
                 const cardId = e.dataTransfer.getData('text/plain'); 
                 const cartao = document.getElementById(cardId);
                 
-                // Procura a zona de conteúdo caso o rato solte o cartão em cima de algo escondido
                 let target = e.target;
                 while (target && !target.classList.contains('column-content')) { 
                     target = target.parentElement; 
@@ -1582,7 +1561,6 @@
                 
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
-                // Lógica Inteligente para caixas "Concluído Setor" manterem o nome de quem fez
                 if (!novoOperador || novoOperador === 'Qualquer') {
                     novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
                 }
@@ -1604,7 +1582,7 @@
         });
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL (BLINDADO CONTRA FALHAS DE BD)
+        // ADICIONAR E EDITAR (COM SANITIZAÇÃO DE ERROS DE DB)
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1627,18 +1605,17 @@
 
             const insertData = { 
                 obra_ref: 'MANUAL', 
-                referencia: ref, 
+                referencia: sanitizeForDB(ref), 
                 kg: vKg, 
-                toneladas: vKg, // Guarda na coluna antiga também para segurança
+                toneladas: vKg, 
                 polegadas: vPol, 
-                prioridade: prio, 
+                prioridade: sanitizeForDB(prio), 
                 fase: 'Projeto', 
                 trabalhador: 'Não Atribuído' 
             };
 
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
-            // PLANO B (Caso as colunas não existam no Supabase)
             if (res.error) {
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
@@ -1660,10 +1637,11 @@
         }
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (NOVA ARQUITETURA BLINDADA CONTRA BUGS DE EDIÇÃO)
+        // RENDER CARTÃO (SISTEMA DE LISTENERS DIRETOS PARA EVITAR BUGS INLINE)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
+                // p resolve a cor final
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 const f = String(c.fase || 'Projeto').replace(/"/g, ''); 
                 const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, ''); 
@@ -1693,7 +1671,6 @@
                     el.draggable = true; 
                     el.id = c.id;
                     
-                    // Tratamento seguro de strings para exibição
                     const safeObra = escapeHTML(c.obra_ref);
                     const safeRef = escapeHTML(c.referencia);
                     const safeCom = escapeHTML(c.comentarios);
@@ -1705,7 +1682,7 @@
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
-                    // O botão deixa de usar strings dentro do HTML, resolvendo o bug do 'Unicode escape sequence'
+                    // O HTML do botão já não tem a informação injetada no texto! Apenas estrutura limpa.
                     el.innerHTML = `
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
@@ -1717,7 +1694,7 @@
                         </div>
                     `;
                     
-                    // Adiciona os Eventos JS diretamente (Blindagem Máxima)
+                    // Adicionamos as ações aos botões de forma blindada, sem misturar strings com código
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios);
                     });
@@ -1734,9 +1711,6 @@
             }
         }
 
-        // -----------------------------------------------------
-        // EDIÇÃO E GRAVAÇÃO
-        // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra || ''; 
@@ -1744,6 +1718,7 @@
             
             document.getElementById('edit-kg').value = kg || 0; 
             document.getElementById('edit-pol').value = pol || 0;
+            // O valor default caso seja vazio é 'Normal'
             document.getElementById('edit-prio').value = prio || 'Normal'; 
             document.getElementById('edit-comments').value = comentarios || '';
             
@@ -1759,19 +1734,19 @@
             const vKg = parseNumeroSeguro('edit-kg');
             const vPol = parseNumeroSeguro('edit-pol');
 
+            // Sanitize limpa e protege os dados antes de gravar (remove os \ invisíveis do Excel)
             const updateData = {
-                obra_ref: document.getElementById('edit-obra').value.trim(), 
-                referencia: document.getElementById('edit-ref').value.trim(),
+                obra_ref: sanitizeForDB(document.getElementById('edit-obra').value), 
+                referencia: sanitizeForDB(document.getElementById('edit-ref').value),
                 kg: vKg, 
-                toneladas: vKg, // Guarda nas duas para não haver falhas
+                toneladas: vKg, 
                 polegadas: vPol, 
-                prioridade: document.getElementById('edit-prio').value, 
-                comentarios: document.getElementById('edit-comments').value.trim()
+                prioridade: sanitizeForDB(document.getElementById('edit-prio').value), 
+                comentarios: sanitizeForDB(document.getElementById('edit-comments').value)
             };
 
             let res = await supabaseClient.from('cartoes_kanban').update(updateData).eq('id', id);
 
-            // PLANO B (Caso a tabela careça das colunas atualizadas)
             if (res.error) {
                 const fallbackData = { ...updateData };
                 delete fallbackData.kg;
@@ -1802,12 +1777,9 @@
         // -----------------------------------------------------
         function calcularKPIs() {
             let totalKgAno = 0;
-            let kgEmExecucao = 0; 
-            let pecasEmExecucao = 0;
-            let kgPendente = 0; 
-            let pecasPendente = 0;
-            let kgConcluido = 0; 
-            let pecasConcluido = 0;
+            let kgEmExecucao = 0; let pecasEmExecucao = 0;
+            let kgPendente = 0; let pecasPendente = 0;
+            let kgConcluido = 0; let pecasConcluido = 0;
 
             let totalRetrabalhos = 0;
             let retrabalhosConcluidos = 0;
@@ -1815,7 +1787,6 @@
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
-                // Contabiliza total de retrabalhos da fábrica (cinza)
                 if (o.prioridade === 'Retrabalho') {
                     totalRetrabalhos++;
                 }
@@ -1834,26 +1805,19 @@
                     kgConcluido += peso;
                     pecasConcluido++;
                     
-                    // Se estiver no Concluído Final E for Cinza (Retrabalho)
                     if (o.prioridade === 'Retrabalho') {
                         retrabalhosConcluidos++;
                     }
                 }
             });
             
-            // Calcula a percentagem real de peças cinzentas na caixa de Concluídos Finais
             let taxaRetrabalho = 0;
             if (pecasConcluido > 0) {
                 taxaRetrabalho = ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1);
             }
 
-            // Atualiza KPI Retrabalhos
             document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% de todas as concluídas)</span>`;
-
-            // Atualiza Histórico Geral
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
-            
-            // Atualiza Tempo Real (Em Execução, Pendentes, Concluído Final)
             document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmExecucao + " unid)</span>";
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
@@ -1892,7 +1856,7 @@
             todasAsObras = allData;
             document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
             renderizarKanbanComFiltro();
-            calcularKPIs(); // Força o calculo imediato ao carregar
+            calcularKPIs(); 
         }
 
         window.onload = carregarTudo;
