@@ -484,6 +484,7 @@
             background-color: #94a3b8 !important; 
             border: none; 
         }
+
         .card.prio-retrabalho * { 
             color: #ffffff !important; 
         }
@@ -689,8 +690,8 @@
                 <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
                 <option value="Vermelho">🔴 Máxima</option>
                 <option value="Laranja">🟠 Média</option>
-                <option value="Amarelo">🟡 Baixa</option>
-                <option value="Normal" selected>🔵 Normal</option>
+                <option value="Amarelo" selected>🟡 Baixa</option>
+                <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
                 <option value="Retrabalho">🔘 Retrabalho</option>
             </select>
@@ -720,11 +721,13 @@
                 <div class="column-content" data-fase="Desenho"></div>
             </div>
             
+            <!-- MATERIAL (COLUNA SIMPLES) -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-fase="Material" data-operador="Camila"></div>
             </div>
 
+            <!-- LASER -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Laser</div>
                 <div class="column-content" data-fase="Laser"></div>
@@ -735,6 +738,7 @@
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
                     
+                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="sub-sector-grid">
@@ -742,6 +746,8 @@
                                 <div class="worker-title">Suellen</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Tubistas" data-operador="Suellen"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Tubistas" data-operador="Suellen"></div>
                             </div>
@@ -749,6 +755,8 @@
                                 <div class="worker-title">José</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Tubistas" data-operador="José"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Tubistas" data-operador="José"></div>
                             </div>
@@ -759,6 +767,7 @@
                         </div>
                     </div>
                     
+                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
@@ -766,6 +775,8 @@
                                 <div class="worker-title">Jenifer</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Serralheiros" data-operador="Jenifer"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Jenifer"></div>
                             </div>
@@ -773,6 +784,8 @@
                                 <div class="worker-title">Douglas</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Douglas"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Serralheiros" data-operador="Douglas"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Douglas"></div>
                             </div>
@@ -780,6 +793,8 @@
                                 <div class="worker-title">Neto</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Serralheiros" data-operador="Neto"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Neto"></div>
                             </div>
@@ -790,6 +805,7 @@
                         </div>
                     </div>
                     
+                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="sub-sector-grid">
@@ -797,6 +813,8 @@
                                 <div class="worker-title">Alexandre</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Soldadores" data-operador="Alexandre"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Alexandre"></div>
                             </div>
@@ -804,6 +822,8 @@
                                 <div class="worker-title">Jorge</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Soldadores" data-operador="Jorge"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Jorge"></div>
                             </div>
@@ -811,6 +831,8 @@
                                 <div class="worker-title">Diogo</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Soldadores" data-operador="Diogo"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Diogo"></div>
                             </div>
@@ -818,6 +840,8 @@
                                 <div class="worker-title">Yaroslav</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Soldadores" data-operador="Yaroslav"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Yaroslav"></div>
                             </div>
@@ -825,6 +849,8 @@
                                 <div class="worker-title">Luís</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Luís"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Soldadores" data-operador="Luís"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Luís"></div>
                             </div>
@@ -835,6 +861,7 @@
                         </div>
                     </div>
                     
+                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="sub-sector-grid">
@@ -842,6 +869,8 @@
                                 <div class="worker-title">Oleh</div>
                                 <div class="zone-title">A Decorrer</div>
                                 <div class="column-content" data-fase="Produção" data-setor="Orbital" data-operador="Oleh"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                                <div class="column-content" data-fase="Em Espera" data-setor="Orbital" data-operador="Oleh"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-fase="Pendente" data-setor="Orbital" data-operador="Oleh"></div>
                             </div>
@@ -855,14 +884,29 @@
                 </div>
             </div>
 
+            <!-- QUALIDADE E TRATAMENTO -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
-                <div class="column-content" data-fase="Qualidade" data-operador="Ismael"></div>
+                <div class="worker-lane" style="margin: 6px; flex-grow: 1; border:none; background:transparent;">
+                    <div class="zone-title">A Decorrer</div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Qualidade" data-operador="Ismael"></div>
+                    <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Em Espera" data-setor="Qualidade" data-operador="Ismael"></div>
+                    <div class="zone-title">Pendente</div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-fase="Pendente" data-setor="Qualidade" data-operador="Ismael"></div>
+                </div>
             </div>
             
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Tratamento (Igor)</div>
-                <div class="column-content" data-fase="Tratamento" data-operador="Igor"></div>
+                <div class="worker-lane" style="margin: 6px; flex-grow: 1; border:none; background:transparent;">
+                    <div class="zone-title">A Decorrer</div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Tratamento" data-operador="Igor"></div>
+                    <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Espera</div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Em Espera" data-setor="Tratamento" data-operador="Igor"></div>
+                    <div class="zone-title">Pendente</div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-fase="Pendente" data-setor="Tratamento" data-operador="Igor"></div>
+                </div>
             </div>
 
             <div class="column" style="min-width: 200px; width: 200px;">
@@ -894,6 +938,10 @@
             <div class="kpi-card" style="border-left-color: #0288d1; background: #e1f5fe;">
                 <div class="kpi-title" style="color: #01579b;">Em Execução (Produção)</div>
                 <div class="kpi-value" id="kpi-em-execucao">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #8e24aa; background: #f3e5f5;">
+                <div class="kpi-title" style="color: #4a148c;">Em Espera (Preparação)</div>
+                <div class="kpi-value" id="kpi-em-espera">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
             <div class="kpi-card" style="border-left-color: #fbc02d; background: #fffde7;">
                 <div class="kpi-title" style="color: #f57f17;">Pendentes (Produção)</div>
@@ -1030,15 +1078,13 @@
 
     <script>
         // =====================================================
-        // FUNÇÃO DE SEGURANÇA MÁXIMA PARA A BASE DE DADOS (NOVA)
-        // Remove caracteres de controlo invisíveis e códigos 
-        // nulos (\0000) que o Excel tenta injetar.
+        // FUNÇÃO DE SEGURANÇA MÁXIMA PARA A BASE DE DADOS
         // =====================================================
         function sanitizeForDB(str) {
             if (!str) return '';
             return String(str)
-                .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove caracteres nulos e de controlo invisíveis
-                .replace(/\\/g, "/") // Transforma barras invertidas em normais para o DB não confundir com códigos
+                .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") 
+                .replace(/\\/g, "/") 
                 .trim();
         }
 
@@ -1258,8 +1304,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL INTELIGENTE (LEITURA EM CASCATA)
-        // Lê as Obras Mães e aplica às peças órfãs por baixo.
+        // IMPORTAR EXCEL INTELIGENTE 
         // -----------------------------------------------------
         async function importarExcelInteligente(event) {
             const file = event.target.files[0]; 
@@ -1287,7 +1332,6 @@
                     const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
 
                     if (isCheckpoint) {
-                        // MODO: Restauro por Checkpoint Excel
                         const colObra = headers.findIndex(h => String(h).toLowerCase().includes("obra"));
                         const colDesig = headers.findIndex(h => String(h).toLowerCase().includes("designa") || String(h).toLowerCase().includes("peça"));
                         const colFase = headers.findIndex(h => String(h).toLowerCase().includes("fase"));
@@ -1318,7 +1362,6 @@
                                 const vKg = colKg !== -1 ? (parseFloat(String(row[colKg] || '0').replace(',', '.')) || 0) : 0;
                                 const vPol = colPol !== -1 ? (parseFloat(String(row[colPol] || '0').replace(',', '.')) || 0) : 0;
 
-                                // Os textos são todos passados pelo sanitizeForDB para matar caracteres nulos
                                 obrasParaInserir.push({ 
                                     obra_ref: sanitizeForDB(refE || 'MANUAL'), 
                                     referencia: sanitizeForDB(desig || 'Sem Referência'), 
@@ -1334,8 +1377,7 @@
                             }
                         }
                     } else {
-                        // MODO: Extração Avançada de Ficheiro Original de Engenharia
-                        let lastSeenRef = 'MANUAL'; // Memória da última Obra Mestre encontrada
+                        let lastSeenRef = 'MANUAL';
 
                         for (let i = 0; i < rows.length; i++) {
                             const row = rows[i]; 
@@ -1346,22 +1388,19 @@
 
                             let foundCodeThisRow = false;
 
-                            // 1. Procura o Código da Obra (Mestre) na linha atual
                             for (let j = 0; j < row.length; j++) {
                                 const cellText = String(row[j] || '').trim();
                                 
                                 const matchCode = cellText.match(/([A-Za-z]{2}\d{4,5})/i);
                                 if (matchCode) { 
                                     refE = matchCode[1].toUpperCase(); 
-                                    lastSeenRef = refE; // Guarda na memória
+                                    lastSeenRef = refE;
                                     foundCodeThisRow = true;
                                     
-                                    // Verifica se a designação está "colada" na mesma célula
                                     const matchFull = cellText.match(/([A-Za-z]{2}\d{4,5})[ _\-]*(.*?)(?:\.pdf|$)/i);
                                     if (matchFull && matchFull[2] && matchFull[2].length > 1) {
                                         desig = matchFull[2].replace(/^-/, '').trim();
                                     } else {
-                                        // Se não estiver, procura na próxima célula da direita
                                         for (let k = j + 1; k < row.length; k++) {
                                             const nextCell = String(row[k] || '').trim();
                                             if (nextCell && nextCell.length > 2) {
@@ -1374,7 +1413,6 @@
                                 }
                             }
 
-                            // 2. Se a linha não tem código mestre (Ex: 0879 - Chapa), usa a memória da linha de cima
                             if (!foundCodeThisRow) {
                                 refE = lastSeenRef;
                                 for (let j = 0; j < row.length; j++) {
@@ -1386,7 +1424,6 @@
                                 }
                             }
 
-                            // Se a linha não tiver designação válida, salta
                             if (!desig) continue;
 
                             if (refE) {
@@ -1410,7 +1447,6 @@
                                     }
                                 }
                                 
-                                // Tudo é lavado com sanitizeForDB antes de ir para o sistema
                                 obrasParaInserir.push({ 
                                     obra_ref: sanitizeForDB(refE), 
                                     referencia: sanitizeForDB(desig), 
@@ -1582,7 +1618,7 @@
         });
 
         // -----------------------------------------------------
-        // ADICIONAR E EDITAR (COM SANITIZAÇÃO DE ERROS DE DB)
+        // ADICIONAR MANUAL 
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1637,11 +1673,10 @@
         }
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (SISTEMA DE LISTENERS DIRETOS PARA EVITAR BUGS INLINE)
+        // RENDER CARTÃO (BLINDADO)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
-                // p resolve a cor final
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 const f = String(c.fase || 'Projeto').replace(/"/g, ''); 
                 const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, ''); 
@@ -1652,15 +1687,12 @@
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
-                
                 if (!z && f === 'Concluído Setor' && s) {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-setor="${s}"]`);
                 }
-                
                 if (!z) {
                     z = document.querySelector(`.column-content[data-fase="${f}"]`);
                 }
-                
                 if (!z) {
                     z = document.querySelector(`.column-content[data-fase="Projeto"]`);
                 }
@@ -1682,7 +1714,6 @@
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
-                    // O HTML do botão já não tem a informação injetada no texto! Apenas estrutura limpa.
                     el.innerHTML = `
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
@@ -1694,7 +1725,6 @@
                         </div>
                     `;
                     
-                    // Adicionamos as ações aos botões de forma blindada, sem misturar strings com código
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios);
                     });
@@ -1718,7 +1748,6 @@
             
             document.getElementById('edit-kg').value = kg || 0; 
             document.getElementById('edit-pol').value = pol || 0;
-            // O valor default caso seja vazio é 'Normal'
             document.getElementById('edit-prio').value = prio || 'Normal'; 
             document.getElementById('edit-comments').value = comentarios || '';
             
@@ -1734,7 +1763,6 @@
             const vKg = parseNumeroSeguro('edit-kg');
             const vPol = parseNumeroSeguro('edit-pol');
 
-            // Sanitize limpa e protege os dados antes de gravar (remove os \ invisíveis do Excel)
             const updateData = {
                 obra_ref: sanitizeForDB(document.getElementById('edit-obra').value), 
                 referencia: sanitizeForDB(document.getElementById('edit-ref').value),
@@ -1778,6 +1806,7 @@
         function calcularKPIs() {
             let totalKgAno = 0;
             let kgEmExecucao = 0; let pecasEmExecucao = 0;
+            let kgEmEspera = 0; let pecasEmEspera = 0;
             let kgPendente = 0; let pecasPendente = 0;
             let kgConcluido = 0; let pecasConcluido = 0;
 
@@ -1798,6 +1827,9 @@
                 if (o.fase === 'Produção') {
                     kgEmExecucao += peso;
                     pecasEmExecucao++;
+                } else if (o.fase === 'Em Espera') {
+                    kgEmEspera += peso;
+                    pecasEmEspera++;
                 } else if (o.fase === 'Pendente') {
                     kgPendente += peso;
                     pecasPendente++;
@@ -1819,6 +1851,7 @@
             document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% de todas as concluídas)</span>`;
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmExecucao + " unid)</span>";
+            document.getElementById('kpi-em-espera').innerHTML = kgEmEspera.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmEspera + " unid)</span>";
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
         }
