@@ -448,7 +448,7 @@
             cursor: grab; 
             user-select: none; 
             transition: transform 0.1s;
-            position: relative;
+            position: relative; /* Para a data se posicionar no canto */
         }
 
         .card:active { 
@@ -575,16 +575,16 @@
             line-height: 1.2; 
             margin-bottom: 4px; 
             word-break: break-word; 
-            padding-right: 45px; 
+            padding-right: 45px; /* Evita sobreposição com a data no canto */
         }
-
+        
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
         }
-        
+
         /* =========================================
-           COMENTÁRIOS E RASTREIO (CORRIGIDO PARA HORIZONTAL)
+           COMENTÁRIOS
            ========================================= */
         .card-comment { 
             font-size: 10px; 
@@ -604,39 +604,15 @@
             margin-bottom: 2px; 
         }
 
-        /* O Rastreio agora preenche a linha toda e faz wrap se necessário */
-        .card-rastreio { 
-            font-size: 9px; 
-            margin-top: 4px; 
-            color: #1e293b; 
-            background: rgba(0,0,0,0.08); 
-            padding: 4px 6px; 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: flex-start;
-            justify-content: space-between;
-        }
-
-        .card.prio-normal .card-rastreio { 
-            background: #f1f5f9; 
-        }
-
-        .card-rastreio span {
-            flex-grow: 1;
-            word-break: break-word;
-            line-height: 1.4;
-            padding-right: 5px;
-        }
-
         .btn-rastreio-del { 
-            flex-shrink: 0;
             cursor: pointer; 
             color: #ef5350; 
             font-weight: bold; 
             background: none; 
             border: none; 
-            font-size: 11px; 
+            font-size: 12px; 
             padding: 0 4px; 
+            flex-shrink: 0;
         }
 
         .btn-rastreio-del:hover { 
@@ -1212,12 +1188,19 @@
                     <input type="date" id="edit-date" style="width:100%;">
                 </div>
                 <div style="flex:1;">
-                    <label>Rastreio Manual (Usa ' // ' para separar nomes):</label>
-                    <input type="text" id="edit-rastreio" placeholder="Ex: Suellen // Igor // Jenifer" style="width:100%;">
+                    <!-- NOME ALTERADO: Agora a caixa funciona como um Adicionador Automático -->
+                    <label>Adicionar Pessoa/Fase ao Rastreio:</label>
+                    <input type="text" id="edit-rastreio-add" placeholder="Ex: Manuel (Será anexado com //)" style="width:100%;">
+                    
+                    <!-- Campo escondido para guardar o rastreio antigo e somar ao novo -->
+                    <input type="hidden" id="edit-rastreio-current">
                 </div>
             </div>
+            
+            <!-- Mostra o estado atual do rastreio em baixo da caixa -->
+            <div id="current-rastreio-display" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; text-align: right;"></div>
 
-            <label>Comentários / Observações (Use 'Enter' para criar Bullets):</label>
+            <label style="margin-top:10px;">Comentários / Observações (Use 'Enter' para criar Bullets):</label>
             <textarea id="edit-comments" rows="3" placeholder="Escreva observações sobre o progresso..."></textarea>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
@@ -1256,8 +1239,6 @@
             if (!str) {
                 return '';
             }
-            // AQUI RESOLVEMOS O BUG DOS ENTERS NOS COMENTÁRIOS:
-            // Removemos os códigos invisíveis, mas mantemos o 'Enter' (\n) intacto.
             return String(str)
                 .replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "") 
                 .replace(/\\/g, "/") 
@@ -1402,7 +1383,7 @@
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT 
+        // CHECKPOINT (AGORA GUARDA DATA E RASTREIO NO EXCEL)
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1576,7 +1557,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL 
+        // ADICIONAR MANUAL (COM DATA SELECIONADA E ALERTA DE ERRO)
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1626,11 +1607,9 @@
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
                 res = fallbackRes;
                 
-                mostrarAlerta('Aviso Crítico (BUG #4): A coluna "rastreio" ou "data" não foi criada no Supabase! Execute o comando SQL no seu painel.');
-            }
-
-            if (res.error) {
-                return mostrarAlerta('Erro ao adicionar obra: ' + res.error.message);
+                mostrarAlerta('Aviso Crítico: A coluna "rastreio" não foi criada no Supabase! Execute o comando SQL no seu painel.');
+            } else if (res.error) {
+                return mostrarAlerta('Erro crítico ao adicionar obra: ' + res.error.message);
             }
 
             if (res.data && res.data.length > 0) {
@@ -1642,7 +1621,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL
+        // IMPORTAR EXCEL (COM DATA E LEITURA EM CASCATA)
         // -----------------------------------------------------
         let excelFilePendente = null;
 
@@ -1845,6 +1824,7 @@
                         let lote = obrasParaInserir.slice(i, i + 500);
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
+                        // PLANO B
                         if (res.error) {
                             dbFailsOnNewColumns = true;
                             const loteSeguro = lote.map(o => {
@@ -1944,7 +1924,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP (A LÓGICA DE RASTREIO ESTÁ AQUI)
+        // DRAG AND DROP COM GERAÇÃO INTELIGENTE DE RASTREIO
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1991,7 +1971,10 @@
                         novoOperador = todasAsObras[idx].trabalhador;
                     }
 
-                    // A LÓGICA DO RASTREIO - Regista as pessoas na horizontal com " // "
+                    // ============================================
+                    // A LÓGICA DO RASTREIO INTELIGENTE (RESOLVIDO)
+                    // ============================================
+                    // Sempre que o cartão salta de mãos, anotamos a pessoa ou a fase
                     let trackLabel = '';
                     if (novoOperador && novoOperador !== 'Não Atribuído') {
                         trackLabel = novoOperador;
@@ -2000,9 +1983,18 @@
                     }
                     
                     let currentRastreio = todasAsObras[idx].rastreio || '';
+                    
+                    // Se o cartão foi importado do excel, o rastreio está vazio mas ele tem dono (ex: Suellen)
+                    // Temos de agarrar esse dono inicial antes de colar o dono novo!
+                    if (!currentRastreio && todasAsObras[idx].trabalhador && todasAsObras[idx].trabalhador !== 'Não Atribuído') {
+                        currentRastreio = todasAsObras[idx].trabalhador;
+                    }
+                    
                     let elements = currentRastreio.split('//').map(e => e.trim()).filter(e => e !== '');
                     let lastElement = elements.length > 0 ? elements[elements.length - 1] : '';
 
+                    // Só anota no rastreio se mudar o interveniente (impede Suellen // Suellen) 
+                    // e ignora as caixas de 'Concluído'
                     if (trackLabel && lastElement !== trackLabel && !novaFase.includes('Concluído')) {
                         if (!currentRastreio) {
                             currentRastreio = trackLabel;
@@ -2038,7 +2030,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (COM RASTREIO EXPANDIDO NA HORIZONTAL)
+        // RENDER CARTÃO 
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -2076,7 +2068,7 @@
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
 
-                    // Formatação Inteligente de Comentários para Bullets 
+                    // Formatação Inteligente de Comentários
                     let cmt = '';
                     if (c.comentarios && c.comentarios.trim() !== '') {
                         const bulletsHTML = c.comentarios.split('\n')
@@ -2098,24 +2090,30 @@
                     const vPol = c.polegadas || 0;
                     const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
                     
-                    // RASTREIO: A caixa agora cresce na horizontal e flui naturalmente.
-                    let rastreioHtml = '';
-                    if (c.rastreio && String(c.rastreio).trim() !== '') {
-                        rastreioHtml = `
-                            <div class="card-rastreio">
-                                <span>🛤️ ${escapeHTML(c.rastreio)}</span>
-                                <button class="btn-rastreio-del" title="Limpar Rastreio">✖</button>
-                            </div>
-                        `;
-                    }
+                    // ============================================
+                    // RASTREIO NO CARTÃO (HORIZONTAL PERFEITO)
+                    // ============================================
+                    // Decide o que vai aparecer no ícone do capacete. Se tiver rastreio, mostra-o todo. Se não, mostra só o trabalhador atual.
+                    let workerDisplay = c.rastreio ? escapeHTML(c.rastreio) : safeTrab;
+                    let removeBtnHtml = c.rastreio ? `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>` : '';
 
                     el.innerHTML = `
                         ${dataHtml}
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
-                        <div class="card-info">⚖️ ${vKg} Kg | 📏 ${vPol}" <br> 👷 ${safeTrab}</div>
+                        
+                        <div class="card-info" style="margin-top:4px;">
+                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}"</div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; background:rgba(0,0,0,0.04); padding:3px; border-radius:4px;">
+                                <span style="font-weight:bold; color:var(--prf-blue-dark); word-break:break-word; line-height:1.4;">
+                                    👷 ${workerDisplay}
+                                </span>
+                                ${removeBtnHtml}
+                            </div>
+                        </div>
+
                         ${cmt}
-                        ${rastreioHtml}
+                        
                         <div class="card-actions">
                             <button class="btn-card btn-editar">✏️ Editar</button>
                             <button class="btn-card btn-apagar">🗑️ Apagar</button>
@@ -2130,6 +2128,7 @@
                         apagarCartao(c.id); 
                     });
                     
+                    // Listener da Cruz para apagar o histórico e voltar a mostrar apenas a pessoa atual
                     const btnRastreioDel = el.querySelector('.btn-rastreio-del');
                     if (btnRastreioDel) {
                         btnRastreioDel.addEventListener('click', () => {
@@ -2160,7 +2159,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL (A TUA EDIÇÃO FICA AQUI)
+        // EDIÇÃO NO MODAL (A SOLUÇÃO DO 'ADICIONAR MANUAL')
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio) {
             document.getElementById('edit-id').value = id; 
@@ -2169,7 +2168,6 @@
             document.getElementById('edit-kg').value = kg || 0; 
             document.getElementById('edit-pol').value = pol || 0;
             document.getElementById('edit-prio').value = prio || 'Normal'; 
-            
             document.getElementById('edit-comments').value = comentarios || '';
             
             let dateVal = '';
@@ -2178,7 +2176,19 @@
             }
             document.getElementById('edit-date').value = dateVal;
             
-            document.getElementById('edit-rastreio').value = rastreio || '';
+            // Aqui carregamos a string secreta de rastreio atual para não a perdermos
+            document.getElementById('edit-rastreio-current').value = rastreio || '';
+            
+            // Limpamos a caixa de adicionar pessoa
+            document.getElementById('edit-rastreio-add').value = '';
+            
+            // Mostramos o estado atual ao utilizador
+            let disp = document.getElementById('current-rastreio-display');
+            if (rastreio) {
+                disp.innerHTML = `Rastreio atual: <b>${escapeHTML(rastreio)}</b>`;
+            } else {
+                disp.innerHTML = `Sem rastreio ativo.`;
+            }
             
             document.getElementById('edit-modal').classList.add('active');
         }
@@ -2192,6 +2202,19 @@
             const vKg = parseNumeroSeguro('edit-kg');
             const vPol = parseNumeroSeguro('edit-pol');
 
+            // Magia das Barras Automáticas para quando adicionas nomes à mão no Modal
+            let oldRastreio = document.getElementById('edit-rastreio-current').value.trim();
+            let toAdd = document.getElementById('edit-rastreio-add').value.trim();
+            let finalRastreio = oldRastreio;
+            
+            if (toAdd) {
+                if (finalRastreio) {
+                    finalRastreio += ' // ' + toAdd;
+                } else {
+                    finalRastreio = toAdd;
+                }
+            }
+
             const updateData = {
                 obra_ref: sanitizeForDB(document.getElementById('edit-obra').value), 
                 referencia: sanitizeForDB(document.getElementById('edit-ref').value),
@@ -2201,7 +2224,7 @@
                 prioridade: sanitizeForDB(document.getElementById('edit-prio').value), 
                 comentarios: sanitizeForDB(document.getElementById('edit-comments').value),
                 data_criacao: sanitizeForDB(document.getElementById('edit-date').value),
-                rastreio: sanitizeForDB(document.getElementById('edit-rastreio').value)
+                rastreio: sanitizeForDB(finalRastreio)
             };
 
             let res = await supabaseClient.from('cartoes_kanban').update(updateData).eq('id', id);
@@ -2216,7 +2239,7 @@
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
                 
-                mostrarAlerta('O Rastreio não foi gravado porque a coluna "rastreio" não existe na tua Base de Dados. Executa o código SQL no Supabase para a criar e resolver este erro.');
+                mostrarAlerta('O Rastreio não foi gravado porque a coluna "rastreio" não existe na tua Base de Dados. Executa o código SQL no Supabase para resolver.');
                 return;
             }
 
