@@ -575,17 +575,14 @@
             line-height: 1.2; 
             margin-bottom: 4px; 
             word-break: break-word; 
-            padding-right: 45px; /* Evita sobreposição com a data no canto */
+            padding-right: 45px; 
         }
-        
+
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
         }
-
-        /* =========================================
-           COMENTÁRIOS
-           ========================================= */
+        
         .card-comment { 
             font-size: 10px; 
             font-style: italic; 
@@ -1153,6 +1150,7 @@
         <div class="modal">
             <h3>✏️ Editar Componente</h3>
             <input type="hidden" id="edit-id">
+            <input type="hidden" id="edit-trabalhador-atual">
             
             <label>Código da Obra Mãe (ex: HY25003):</label>
             <input type="text" id="edit-obra">
@@ -1188,17 +1186,15 @@
                     <input type="date" id="edit-date" style="width:100%;">
                 </div>
                 <div style="flex:1;">
-                    <!-- NOME ALTERADO: Agora a caixa funciona como um Adicionador Automático -->
                     <label>Adicionar Pessoa/Fase ao Rastreio:</label>
-                    <input type="text" id="edit-rastreio-add" placeholder="Ex: Manuel (Será anexado com //)" style="width:100%;">
-                    
-                    <!-- Campo escondido para guardar o rastreio antigo e somar ao novo -->
+                    <!-- Campo escondido com o rastreio base para podermos somar em vez de substituir -->
                     <input type="hidden" id="edit-rastreio-current">
+                    <input type="text" id="edit-rastreio-add" placeholder="Ex: Igor (Será adicionado ao fim)" style="width:100%;">
                 </div>
             </div>
             
-            <!-- Mostra o estado atual do rastreio em baixo da caixa -->
-            <div id="current-rastreio-display" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; text-align: right;"></div>
+            <!-- Mostra ao utilizador como está a história do rastreio antes dele adicionar mais alguém -->
+            <div id="current-rastreio-display" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; text-align: right; min-height: 12px;"></div>
 
             <label style="margin-top:10px;">Comentários / Observações (Use 'Enter' para criar Bullets):</label>
             <textarea id="edit-comments" rows="3" placeholder="Escreva observações sobre o progresso..."></textarea>
@@ -1383,7 +1379,7 @@
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT (AGORA GUARDA DATA E RASTREIO NO EXCEL)
+        // CHECKPOINT 
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1557,7 +1553,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL (COM DATA SELECIONADA E ALERTA DE ERRO)
+        // ADICIONAR MANUAL 
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1606,10 +1602,10 @@
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
                 res = fallbackRes;
-                
-                mostrarAlerta('Aviso Crítico: A coluna "rastreio" não foi criada no Supabase! Execute o comando SQL no seu painel.');
-            } else if (res.error) {
-                return mostrarAlerta('Erro crítico ao adicionar obra: ' + res.error.message);
+            }
+
+            if (res.error) {
+                return mostrarAlerta('Erro crítico ao adicionar obra. Verifique SQL: ' + res.error.message);
             }
 
             if (res.data && res.data.length > 0) {
@@ -1621,7 +1617,7 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL (COM DATA E LEITURA EM CASCATA)
+        // IMPORTAR EXCEL
         // -----------------------------------------------------
         let excelFilePendente = null;
 
@@ -1846,7 +1842,7 @@
                     }
                     
                     if (dbFailsOnNewColumns) {
-                        mostrarAlerta(`Aviso Crítico: O Supabase não tem a atualização de colunas. As ${inseridos} obras foram inseridas em modo de segurança.`);
+                        mostrarAlerta(`Aviso: O Supabase não tem a atualização de colunas. As ${inseridos} obras foram inseridas em modo de segurança.`);
                     } else {
                         mostrarAlerta(`Limpeza Concluída! Lemos ${totalLidas} peças. Ignoradas ${ignoradas} antigas. Inseridas ${inseridos} NOVAS obras.`); 
                     }
@@ -1972,9 +1968,8 @@
                     }
 
                     // ============================================
-                    // A LÓGICA DO RASTREIO INTELIGENTE (RESOLVIDO)
+                    // A LÓGICA DO RASTREIO AUTOMÁTICO (CORRIGIDA)
                     // ============================================
-                    // Sempre que o cartão salta de mãos, anotamos a pessoa ou a fase
                     let trackLabel = '';
                     if (novoOperador && novoOperador !== 'Não Atribuído') {
                         trackLabel = novoOperador;
@@ -1984,8 +1979,7 @@
                     
                     let currentRastreio = todasAsObras[idx].rastreio || '';
                     
-                    // Se o cartão foi importado do excel, o rastreio está vazio mas ele tem dono (ex: Suellen)
-                    // Temos de agarrar esse dono inicial antes de colar o dono novo!
+                    // Se o cartão nunca teve rastreio, temos de memorizar o ponto de partida!
                     if (!currentRastreio && todasAsObras[idx].trabalhador && todasAsObras[idx].trabalhador !== 'Não Atribuído') {
                         currentRastreio = todasAsObras[idx].trabalhador;
                     }
@@ -1993,8 +1987,6 @@
                     let elements = currentRastreio.split('//').map(e => e.trim()).filter(e => e !== '');
                     let lastElement = elements.length > 0 ? elements[elements.length - 1] : '';
 
-                    // Só anota no rastreio se mudar o interveniente (impede Suellen // Suellen) 
-                    // e ignora as caixas de 'Concluído'
                     if (trackLabel && lastElement !== trackLabel && !novaFase.includes('Concluído')) {
                         if (!currentRastreio) {
                             currentRastreio = trackLabel;
@@ -2015,7 +2007,6 @@
                         rastreio: todasAsObras[idx].rastreio
                     }).eq('id', cardId);
                     
-                    // Fallback se a coluna rastreio não existir na Base de Dados
                     if (res.error && res.error.message.includes('does not exist')) {
                         await supabaseClient.from('cartoes_kanban').update({ 
                             fase: novaFase, 
@@ -2030,7 +2021,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO 
+        // RENDER CARTÃO (COM LAYOUT UNIFICADO E CRUZ ALINHADA)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -2044,7 +2035,6 @@
                 }
 
                 let z = null;
-                
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
@@ -2068,7 +2058,6 @@
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
 
-                    // Formatação Inteligente de Comentários
                     let cmt = '';
                     if (c.comentarios && c.comentarios.trim() !== '') {
                         const bulletsHTML = c.comentarios.split('\n')
@@ -2091,11 +2080,15 @@
                     const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
                     
                     // ============================================
-                    // RASTREIO NO CARTÃO (HORIZONTAL PERFEITO)
+                    // RASTREIO NO CARTÃO (HORIZONTAL E UNIDO)
                     // ============================================
-                    // Decide o que vai aparecer no ícone do capacete. Se tiver rastreio, mostra-o todo. Se não, mostra só o trabalhador atual.
                     let workerDisplay = c.rastreio ? escapeHTML(c.rastreio) : safeTrab;
-                    let removeBtnHtml = c.rastreio ? `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>` : '';
+                    let removeBtnHtml = '';
+                    
+                    // Apenas desenhamos a cruz de apagar se houver realmente rasto acumulado (contiver a barra dupla)
+                    if (c.rastreio && c.rastreio.includes('//')) {
+                        removeBtnHtml = `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>`;
+                    }
 
                     el.innerHTML = `
                         ${dataHtml}
@@ -2120,15 +2113,15 @@
                         </div>
                     `;
                     
+                    // Passamos também a pessoa atual (t) para o modal saber de onde partir
                     el.querySelector('.btn-editar').addEventListener('click', () => {
-                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio);
+                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t);
                     });
 
                     el.querySelector('.btn-apagar').addEventListener('click', () => { 
                         apagarCartao(c.id); 
                     });
                     
-                    // Listener da Cruz para apagar o histórico e voltar a mostrar apenas a pessoa atual
                     const btnRastreioDel = el.querySelector('.btn-rastreio-del');
                     if (btnRastreioDel) {
                         btnRastreioDel.addEventListener('click', () => {
@@ -2159,9 +2152,9 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL (A SOLUÇÃO DO 'ADICIONAR MANUAL')
+        // EDIÇÃO NO MODAL (AGORA COM LÓGICA DE SOMA " // ")
         // -----------------------------------------------------
-        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio) {
+        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra || ''; 
             document.getElementById('edit-ref').value = ref || '';
@@ -2176,18 +2169,20 @@
             }
             document.getElementById('edit-date').value = dateVal;
             
-            // Aqui carregamos a string secreta de rastreio atual para não a perdermos
-            document.getElementById('edit-rastreio-current').value = rastreio || '';
+            // Lógica do Modal para a soma de rastreio
+            let currentRast = rastreio || '';
+            if (!currentRast && trabalhadorAtual && trabalhadorAtual !== 'Não Atribuído') {
+                currentRast = trabalhadorAtual;
+            }
             
-            // Limpamos a caixa de adicionar pessoa
+            document.getElementById('edit-rastreio-current').value = currentRast;
             document.getElementById('edit-rastreio-add').value = '';
             
-            // Mostramos o estado atual ao utilizador
             let disp = document.getElementById('current-rastreio-display');
-            if (rastreio) {
-                disp.innerHTML = `Rastreio atual: <b>${escapeHTML(rastreio)}</b>`;
+            if (currentRast) {
+                disp.innerHTML = `Histórico Atual: <b style="color:var(--prf-blue);">${escapeHTML(currentRast)}</b>`;
             } else {
-                disp.innerHTML = `Sem rastreio ativo.`;
+                disp.innerHTML = `Nenhum histórico ativo.`;
             }
             
             document.getElementById('edit-modal').classList.add('active');
@@ -2202,7 +2197,7 @@
             const vKg = parseNumeroSeguro('edit-kg');
             const vPol = parseNumeroSeguro('edit-pol');
 
-            // Magia das Barras Automáticas para quando adicionas nomes à mão no Modal
+            // Magia: Junta o que lá estava com o novo nome que escreveste
             let oldRastreio = document.getElementById('edit-rastreio-current').value.trim();
             let toAdd = document.getElementById('edit-rastreio-add').value.trim();
             let finalRastreio = oldRastreio;
@@ -2238,9 +2233,6 @@
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
-                
-                mostrarAlerta('O Rastreio não foi gravado porque a coluna "rastreio" não existe na tua Base de Dados. Executa o código SQL no Supabase para resolver.');
-                return;
             }
 
             if (res.error) {
