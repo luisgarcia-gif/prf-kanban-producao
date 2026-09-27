@@ -448,7 +448,7 @@
             cursor: grab; 
             user-select: none; 
             transition: transform 0.1s;
-            position: relative;
+            position: relative; /* Essencial para a data ficar no canto superior direito */
         }
 
         .card:active { 
@@ -575,15 +575,17 @@
             line-height: 1.2; 
             margin-bottom: 4px; 
             word-break: break-word; 
-            padding-right: 45px; 
+            padding-right: 45px; /* Evita sobreposição com a data */
         }
-        
+
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
         }
-        
-        /* Comentários e Rastreio */
+
+        /* =========================================
+           COMENTÁRIOS E RASTREIO
+           ========================================= */
         .card-comment { 
             font-size: 10px; 
             font-style: italic; 
@@ -705,7 +707,7 @@
         }
 
         /* =========================================
-           KPIS GRID E CONSULTAS
+           KPIS GRID
            ========================================= */
         .kpi-grid { 
             display: grid; 
@@ -743,6 +745,9 @@
             margin-left: 5px; 
         }
 
+        /* =========================================
+           ITENS DE CONSULTA
+           ========================================= */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -1145,7 +1150,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DATA (PARA CRIAÇÃO DE CARTÕES E EXCEL) -->
+    <!-- MODAL DE DATA -->
     <div id="date-modal" class="modal-overlay">
         <div class="modal">
             <h3>📅 Data de Início da Obra</h3>
@@ -1161,7 +1166,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO AVANÇADA (AGORA COM EDIÇÃO DE DATA E RASTREIO) -->
+    <!-- MODAL DE EDIÇÃO AVANÇADA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
             <h3>✏️ Editar Componente</h3>
@@ -1236,7 +1241,6 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL -->
     <script>
         // =====================================================
         // FUNÇÕES DE SEGURANÇA E FORMATAÇÃO
@@ -1246,8 +1250,12 @@
             if (!str) {
                 return '';
             }
+            // CORREÇÃO MÁXIMA AQUI:
+            // Removemos apenas os caracteres problemáticos (0-8, 11-12, 14-31).
+            // Desta forma o \n (newline, código 10) e o \r (carriage return, código 13) 
+            // ficam INTACTOS para que os teus "Enters" (Parágrafos) sejam gravados.
             return String(str)
-                .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") 
+                .replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "") 
                 .replace(/\\/g, "/") 
                 .trim();
         }
@@ -1269,12 +1277,14 @@
             const yyyy = today.getFullYear();
             let mm = today.getMonth() + 1; 
             let dd = today.getDate();
+            
             if (dd < 10) {
                 dd = '0' + dd;
             }
             if (mm < 10) {
                 mm = '0' + mm;
             }
+            
             return yyyy + '-' + mm + '-' + dd;
         }
 
@@ -1282,6 +1292,9 @@
             if (!dataStr) {
                 return '';
             }
+            
+            // O Supabase às vezes devolve as horas agarradas à data. 
+            // O "split('T')[0]" corta as horas fora garantindo que vemos só a data.
             const datePart = String(dataStr).split('T')[0].split(' ')[0];
             const partes = datePart.split('-');
             
@@ -1353,6 +1366,7 @@
         function mostrarConfirmacao(mensagem, callbackSim) { 
             document.getElementById('custom-confirm-msg').innerText = mensagem; 
             document.getElementById('custom-confirm').classList.add('active'); 
+            
             const btnSim = document.getElementById('btn-confirm-yes');
             btnSim.onclick = function() { 
                 fecharConfirmacao(); 
@@ -1403,6 +1417,7 @@
             
             const dadosExcel = todasAsObras.map(o => {
                 const pesoFinal = o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0);
+                
                 return {
                     "Código Obra": o.obra_ref || "MANUAL", 
                     "Designação": o.referencia, 
@@ -1421,6 +1436,7 @@
             const ws = XLSX.utils.json_to_sheet(dadosExcel); 
             const wb = XLSX.utils.book_new(); 
             XLSX.utils.book_append_sheet(wb, ws, "Estado Fabrica");
+            
             const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-'); 
             XLSX.writeFile(wb, `Checkpoint_PRF_${dataHoje}.xlsx`);
         }
@@ -1429,12 +1445,15 @@
             fecharMenuBackup(); 
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(todasAsObras));
             const downloadAnchorNode = document.createElement('a'); 
+            
             downloadAnchorNode.setAttribute("href", dataStr);
             const dataHoje = new Date().toLocaleDateString('pt-PT').replace(/\//g, '-'); 
             downloadAnchorNode.setAttribute("download", `Backup_Sistema_PRF_${dataHoje}.json`);
+            
             document.body.appendChild(downloadAnchorNode); 
             downloadAnchorNode.click(); 
             downloadAnchorNode.remove();
+            
             mostrarAlerta("Backup descarregado para o computador!");
         }
 
@@ -1447,11 +1466,13 @@
 
             mostrarConfirmacao("⚠️ O restauro apaga o quadro atual e repõe as informações do ficheiro. Confirma?", async function() {
                 mostrarAlerta('A restaurar a Base de Dados...'); 
+                
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     try {
                         const backupData = JSON.parse(e.target.result);
                         await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'ZZZ');
+                        
                         const lotesParaInserir = backupData.map(o => { 
                             delete o.id; 
                             return o; 
@@ -1561,11 +1582,14 @@
             if (!el) {
                 return 0;
             }
+            
             let val = el.value.toString().trim().replace(',', '.'); 
             let num = parseFloat(val);
+            
             if (isNaN(num)) {
                 return 0;
             }
+            
             return num;
         }
 
@@ -1598,6 +1622,7 @@
                 delete fallbackData.polegadas;
                 delete fallbackData.data_criacao;
                 delete fallbackData.rastreio;
+                
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
                 res = fallbackRes;
             }
@@ -1624,6 +1649,7 @@
             if (!file) {
                 return;
             }
+            
             excelFilePendente = file;
             event.target.value = null; 
             
@@ -1634,6 +1660,7 @@
             if (!excelFilePendente) {
                 return;
             }
+            
             mostrarAlerta('A processar ficheiro Excel e a aplicar filtro de limpeza e segurança...');
 
             const reader = new FileReader();
@@ -1650,6 +1677,7 @@
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
                     const obrasParaInserir = []; 
                     const refsSet = new Set();
+                    
                     let totalLidas = 0;
                     let ignoradas = 0;
 
@@ -1731,6 +1759,7 @@
                             for (let j = 0; j < row.length; j++) {
                                 const cellText = String(row[j] || '').trim();
                                 const matchCode = cellText.match(/([A-Za-z]{2}\d{4,5})/i);
+                                
                                 if (matchCode) { 
                                     refE = matchCode[1].toUpperCase(); 
                                     lastSeenRef = refE; 
@@ -1770,6 +1799,7 @@
                             if (refE) {
                                 totalLidas++; 
                                 const idUnico = String(refE + desig).trim().toLowerCase().replace(/\s+/g, '');
+                                
                                 if (chavesExistentesBD.has(idUnico) || refsSet.has(idUnico)) { 
                                     ignoradas++; 
                                     continue; 
@@ -1914,7 +1944,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP (AGORA COM GERAÇÃO DE RASTREIO)
+        // DRAG AND DROP (AGORA COM GERAÇÃO INTELIGENTE DE RASTREIO)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1950,41 +1980,53 @@
                 
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
-                if (!novoOperador || novoOperador === 'Qualquer') {
-                    novoOperador = idx !== -1 ? todasAsObras[idx].trabalhador : 'Não Atribuído';
-                }
-                
                 if (idx !== -1) { 
-                    todasAsObras[idx].fase = novaFase; 
-                    todasAsObras[idx].setor = novoSetor; 
-                    
-                    // Se o operador mudar e não for para "Não Atribuído", regista no Rastreio
-                    if (novoOperador !== 'Não Atribuído' && todasAsObras[idx].trabalhador !== novoOperador) {
-                        let currentRastreio = todasAsObras[idx].rastreio || '';
-                        
-                        if (!currentRastreio) {
-                            if (todasAsObras[idx].trabalhador && todasAsObras[idx].trabalhador !== 'Não Atribuído') {
-                                currentRastreio = todasAsObras[idx].trabalhador + ' ➔ ' + novoOperador;
-                            } else {
-                                currentRastreio = novoOperador;
-                            }
+                    // Se a coluna não tem operador definido e não é uma caixa de conclusão, limpa o nome.
+                    if (!novoOperador) {
+                        if (novaFase === 'Concluído Setor' || novaFase === 'Concluído') {
+                            novoOperador = todasAsObras[idx].trabalhador;
                         } else {
-                            if (!currentRastreio.endsWith(novoOperador)) {
-                                currentRastreio += ' ➔ ' + novoOperador;
-                            }
+                            novoOperador = 'Não Atribuído';
+                        }
+                    } else if (novoOperador === 'Qualquer') {
+                        novoOperador = todasAsObras[idx].trabalhador;
+                    }
+
+                    // A Lógica Magistral do Rastreio: 
+                    // Identifica para onde o cartão está a ir (A Pessoa, ou A Fase se for Projeto/Laser)
+                    let trackLabel = '';
+                    if (novoOperador && novoOperador !== 'Não Atribuído') {
+                        trackLabel = novoOperador;
+                    } else {
+                        trackLabel = novaFase;
+                    }
+                    
+                    let currentRastreio = todasAsObras[idx].rastreio || '';
+                    let elements = currentRastreio.split(' ➔ ').map(e => e.trim()).filter(e => e !== '');
+                    let lastElement = elements.length > 0 ? elements[elements.length - 1] : '';
+
+                    // Só anota no rastreio se mudar o interveniente, e ignora anotações de "Concluído"
+                    if (trackLabel && lastElement !== trackLabel && !novaFase.includes('Concluído')) {
+                        if (!currentRastreio) {
+                            currentRastreio = trackLabel;
+                        } else {
+                            currentRastreio += ' ➔ ' + trackLabel;
                         }
                         todasAsObras[idx].rastreio = currentRastreio;
                     }
                     
+                    todasAsObras[idx].fase = novaFase; 
+                    todasAsObras[idx].setor = novoSetor; 
                     todasAsObras[idx].trabalhador = novoOperador; 
 
                     let res = await supabaseClient.from('cartoes_kanban').update({ 
                         fase: novaFase, 
                         setor: novoSetor, 
-                        trabalhador: novoOperador, 
+                        trabalhador: novoOperador,
                         rastreio: todasAsObras[idx].rastreio
                     }).eq('id', cardId);
                     
+                    // Fallback se a coluna rastreio não existir na Base de Dados
                     if (res.error && res.error.message.includes('does not exist')) {
                         await supabaseClient.from('cartoes_kanban').update({ 
                             fase: novaFase, 
@@ -1999,7 +2041,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (COM BULLETS, DATAS E RASTREIO)
+        // RENDER CARTÃO (COM BULLETS, DATAS E RASTREIO SEGUROS)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -2036,13 +2078,14 @@
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
 
-                    // Formatação de Comentários em Bullets
+                    // Formatação Inteligente de Comentários para Bullets (Resolveu-se o problema do Enter!)
                     let cmt = '';
                     if (c.comentarios && c.comentarios.trim() !== '') {
                         const bulletsHTML = c.comentarios.split('\n')
                             .filter(line => line.trim() !== '')
                             .map(line => `<li>${escapeHTML(line.trim())}</li>`)
                             .join('');
+                        
                         cmt = `
                             <div class="card-comment">
                                 <ul class="card-comment-list">
@@ -2056,7 +2099,7 @@
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
-                    // Data e Rastreio
+                    // Formatação da Data (Apenas DD/MM/YYYY) e do Rastreio
                     const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
                     
                     let rastreioHtml = '';
@@ -2082,7 +2125,7 @@
                         </div>
                     `;
                     
-                    // Listeners de Ações
+                    // Listeners de Ações aplicados internamente sem colidir com HTML injection
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio);
                     });
@@ -2100,7 +2143,10 @@
                         });
                     }
 
-                    el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
+                    el.addEventListener('dragstart', e => {
+                        e.dataTransfer.setData('text/plain', c.id);
+                    });
+                    
                     z.appendChild(el);
                 }
             } catch (err) { 
@@ -2118,7 +2164,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL (AGORA COM CAMPOS DATA E RASTREIO)
+        // EDIÇÃO NO MODAL (COM CAMPOS DATA E RASTREIO MANUAL)
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio) {
             document.getElementById('edit-id').value = id; 
@@ -2130,7 +2176,7 @@
             
             document.getElementById('edit-comments').value = comentarios || '';
             
-            // Tratamento da data para carregar no input tipo 'date'
+            // Tratamento da data para extrair apenas "YYYY-MM-DD" e carregar no input tipo 'date'
             let dateVal = '';
             if (dataCriacao) {
                 dateVal = String(dataCriacao).split('T')[0].split(' ')[0];
