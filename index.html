@@ -52,7 +52,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Permite que o ecrã cresça para baixo livremente */
+            overflow-y: auto; 
         }
 
         /* =========================================
@@ -448,6 +448,7 @@
             cursor: grab; 
             user-select: none; 
             transition: transform 0.1s;
+            position: relative; /* Essencial para a data ficar no canto superior direito */
         }
 
         .card:active { 
@@ -459,7 +460,8 @@
             pointer-events: none; 
         }
         
-        .card-actions button { 
+        .card-actions button, 
+        .btn-rastreio-del { 
             pointer-events: auto; 
         }
 
@@ -468,12 +470,16 @@
             background-color: var(--bg-card) !important; 
             border: 1px dashed var(--border-color); 
         }
+        
         .card.prio-sem-cor * { 
             color: var(--text-main) !important; 
         }
-        .card.prio-sem-cor .card-info, .card.prio-sem-cor .btn-card { 
+        
+        .card.prio-sem-cor .card-info, 
+        .card.prio-sem-cor .btn-card { 
             color: var(--text-secondary) !important; 
         }
+        
         .card.prio-sem-cor .obra-badge { 
             background: #cbd5e1 !important; 
             color: #1e293b !important; 
@@ -489,22 +495,64 @@
             color: #ffffff !important; 
         }
 
-        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
-        .card.prio-raio-x * { color: #ffffff !important; }
+        /* COR: RAIO X (ROXO) */
+        .card.prio-raio-x { 
+            background-color: #9c27b0 !important; 
+            border: none; 
+        }
+
+        .card.prio-raio-x * { 
+            color: #ffffff !important; 
+        }
         
-        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
-        .card.prio-vermelho * { color: #ffffff !important; }
+        /* COR: MÁXIMA (VERMELHO) */
+        .card.prio-vermelho { 
+            background-color: #ef5350 !important; 
+            border: none; 
+        }
 
-        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
-        .card.prio-laranja * { color: #ffffff !important; }
+        .card.prio-vermelho * { 
+            color: #ffffff !important; 
+        }
 
-        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
-        .card.prio-amarelo * { color: #222222 !important; }
+        /* COR: MÉDIA (LARANJA) */
+        .card.prio-laranja { 
+            background-color: #ff9800 !important; 
+            border: none; 
+        }
 
-        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
-        .card.prio-normal .card-ref { color: var(--text-main) !important; }
-        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
-        .card.prio-normal .card-comment { color: var(--prf-blue-dark) !important; }
+        .card.prio-laranja * { 
+            color: #ffffff !important; 
+        }
+
+        /* COR: BAIXA (AMARELO) */
+        .card.prio-amarelo { 
+            background-color: #ffeb3b !important; 
+            border: none; 
+        }
+
+        .card.prio-amarelo * { 
+            color: #222222 !important; 
+        }
+
+        /* COR: NORMAL (AZUL CLARO / FUNDO PADRÃO) */
+        .card.prio-normal { 
+            background-color: var(--bg-card) !important; 
+            border: 1px solid var(--border-color); 
+        }
+
+        .card.prio-normal .card-ref { 
+            color: var(--text-main) !important; 
+        }
+
+        .card.prio-normal .card-info, 
+        .card.prio-normal .btn-card { 
+            color: var(--text-secondary) !important; 
+        }
+
+        .card.prio-normal .card-comment { 
+            color: var(--prf-blue-dark) !important; 
+        }
 
         .obra-badge {
             display: inline-block; 
@@ -521,11 +569,96 @@
             color: white !important;
         }
 
-        .card-ref { font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
-        .card-info { font-size: 10px; margin-top: 3px; }
-        .card-comment { font-size: 10px; font-style: italic; margin-top: 4px; padding: 3px 5px; border-radius: 3px; background: rgba(255,255,255,0.2); }
-        .card-actions { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(128,128,128,0.3); }
-        .btn-card { background: none !important; border: none !important; cursor: pointer !important; font-size: 11px !important; padding: 0 !important; font-weight: bold; }
+        .card-ref { 
+            font-weight: bold; 
+            font-size: 11px; 
+            line-height: 1.2; 
+            margin-bottom: 4px; 
+            word-break: break-word; 
+            padding-right: 40px; /* Evita sobreposição com a data */
+        }
+
+        .card-info { 
+            font-size: 10px; 
+            margin-top: 3px; 
+        }
+
+        /* =========================================
+           COMENTÁRIOS E RASTREIO
+           ========================================= */
+        .card-comment { 
+            font-size: 10px; 
+            font-style: italic; 
+            margin-top: 4px; 
+            padding: 3px 5px; 
+            border-radius: 3px; 
+            background: rgba(255,255,255,0.2); 
+        }
+
+        .card-comment-list { 
+            padding-left: 15px; 
+            margin: 2px 0; 
+        }
+
+        .card-comment-list li { 
+            margin-bottom: 2px; 
+        }
+
+        .card-rastreio { 
+            font-size: 9px; 
+            margin-top: 4px; 
+            color: #1e293b; 
+            background: rgba(0,0,0,0.1); 
+            padding: 2px 4px; 
+            border-radius: 3px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        .card.prio-normal .card-rastreio { 
+            background: #f1f5f9; 
+        }
+
+        .btn-rastreio-del { 
+            cursor: pointer; 
+            color: #ef5350; 
+            font-weight: bold; 
+            background: none; 
+            border: none; 
+            font-size: 10px; 
+            padding: 0 4px; 
+        }
+
+        .btn-rastreio-del:hover { 
+            color: #b91c1c; 
+        }
+
+        .card-date { 
+            position: absolute; 
+            top: 8px; 
+            right: 8px; 
+            font-size: 9px; 
+            font-weight: bold; 
+            opacity: 0.7; 
+        }
+
+        .card-actions { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 6px; 
+            padding-top: 4px; 
+            border-top: 1px solid rgba(128,128,128,0.3); 
+        }
+
+        .btn-card { 
+            background: none !important; 
+            border: none !important; 
+            cursor: pointer !important; 
+            font-size: 11px !important; 
+            padding: 0 !important; 
+            font-weight: bold; 
+        }
 
         /* =========================================
            MODAIS DE AVISOS E EDIÇÃO
@@ -561,8 +694,17 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .modal h3 { margin: 0; color: var(--prf-blue-light); font-size: 18px; }
-        .modal label { font-size: 12px; color: var(--text-secondary); margin-bottom: -6px; }
+        .modal h3 { 
+            margin: 0; 
+            color: var(--prf-blue-light); 
+            font-size: 18px; 
+        }
+
+        .modal label { 
+            font-size: 12px; 
+            color: var(--text-secondary); 
+            margin-bottom: -6px; 
+        }
 
         /* =========================================
            KPIS GRID
@@ -695,11 +837,11 @@
                 <option value="Raio X">🟣 Raio X</option>
                 <option value="Retrabalho">🔘 Retrabalho</option>
             </select>
-            <button class="btn-action" onclick="adicionarObra()">+ Adicionar Manual</button>
+            <button class="btn-action" onclick="adicionarObraModalData()">+ Adicionar Manual</button>
             
             <label class="btn-action" style="cursor:pointer; background-color: #374151 !important; margin-left: auto;">
                 📂 Importar do Excel
-                <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcelInteligente(event)" style="display:none;">
+                <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="importarExcelInteligenteModal(event)" style="display:none;">
             </label>
         </div>
 
@@ -721,7 +863,7 @@
                 <div class="column-content" data-fase="Desenho"></div>
             </div>
             
-            <!-- MATERIAL (COLUNA SIMPLES) -->
+            <!-- MATERIAL -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-fase="Material" data-operador="Camila"></div>
@@ -1012,6 +1154,22 @@
         </div>
     </div>
 
+    <!-- MODAL DE DATA (NOVA FUNCIONALIDADE PARA CRIAÇÃO DE CARTÕES) -->
+    <div id="date-modal" class="modal-overlay">
+        <div class="modal">
+            <h3>📅 Data de Início da Obra</h3>
+            <p style="font-size: 13px; margin-top: 0; color: var(--text-secondary);">Defina a data de criação deste cartão / importação.</p>
+            
+            <label>Data:</label>
+            <input type="date" id="date-input-criacao">
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+                <button class="btn-card" style="padding: 6px 12px !important; background: #475569 !important; color: white !important; border-radius: 4px !important;" onclick="confirmarDataCriacao(true)">Usar Data de Hoje</button>
+                <button class="btn-action" onclick="confirmarDataCriacao(false)">Confirmar Data Selecionada</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE EDIÇÃO AVANÇADA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
@@ -1046,7 +1204,7 @@
                 <option value="Retrabalho">🔘 Retrabalho</option>
             </select>
 
-            <label>Comentários / Observações:</label>
+            <label>Comentários / Observações (Use 'Enter' para criar Bullets):</label>
             <textarea id="edit-comments" rows="3" placeholder="Escreva observações sobre o progresso..."></textarea>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
@@ -1078,8 +1236,10 @@
 
     <script>
         // =====================================================
-        // FUNÇÃO DE SEGURANÇA MÁXIMA PARA A BASE DE DADOS
+        // VARIÁVEIS GLOBAIS E FUNÇÕES DE SEGURANÇA
         // =====================================================
+        
+        // Remove caracteres de controlo invisíveis e barras para não bloquear DB
         function sanitizeForDB(str) {
             if (!str) return '';
             return String(str)
@@ -1088,7 +1248,7 @@
                 .trim();
         }
 
-        // Previne injeção de HTML no ecrã
+        // Previne injeção de HTML
         function escapeHTML(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -1099,11 +1259,31 @@
                 .replace(/'/g, "&#039;");
         }
 
+        // Obtém a data de hoje para o input do calendário
+        function dataHojeStr() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            let mm = today.getMonth() + 1; 
+            let dd = today.getDate();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            return yyyy + '-' + mm + '-' + dd;
+        }
+
+        // Formata a data para exibir bonito no cartão
+        function formatarDataVisivel(dataStr) {
+            if (!dataStr) return '';
+            const partes = dataStr.split('-');
+            if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            return dataStr;
+        }
+
         const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         let todasAsObras = [];
+        let operacaoPendenteData = null; // Memória para saber o que fazer a seguir ao modal da data
 
         // -----------------------------------------------------
         // LIGAÇÃO DA BARRA DE SCROLL DE CIMA AO KANBAN
@@ -1185,7 +1365,7 @@
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT E BACKUPS
+        // CHECKPOINT E BACKUPS (AGORA GUARDA DATA E RASTREIO)
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1210,7 +1390,9 @@
                     "Peso (Kg)": pesoFinal, 
                     "Polegadas": o.polegadas || 0, 
                     "Prioridade": o.prioridade || 'Normal', 
-                    "Comentários": o.comentarios || ''
+                    "Comentários": o.comentarios || '',
+                    "Data Criacao": o.data_criacao || '',
+                    "Rastreio": o.rastreio || ''
                 };
             });
             
@@ -1304,12 +1486,119 @@
         }
 
         // -----------------------------------------------------
-        // IMPORTAR EXCEL INTELIGENTE (CASCATA)
+        // SISTEMA DE DATAS - MODAL PARA CRIAÇÃO DE CARTÕES
         // -----------------------------------------------------
-        async function importarExcelInteligente(event) {
+        function abrirModalData(operacaoStr) {
+            operacaoPendenteData = operacaoStr;
+            const dataInput = document.getElementById('date-input-criacao');
+            dataInput.value = dataHojeStr(); 
+            document.getElementById('date-modal').classList.add('active');
+        }
+
+        function confirmarDataCriacao(usarHoje) {
+            let dataEscolhida = '';
+            
+            if (usarHoje) {
+                dataEscolhida = dataHojeStr();
+            } else {
+                dataEscolhida = document.getElementById('date-input-criacao').value;
+                if (!dataEscolhida) {
+                    mostrarAlerta("Selecione uma data no calendário ou clique em 'Usar Data de Hoje'.");
+                    return;
+                }
+            }
+
+            document.getElementById('date-modal').classList.remove('active');
+
+            if (operacaoPendenteData === 'manual') {
+                executarAdicionarObra(dataEscolhida);
+            } else if (operacaoPendenteData === 'excel') {
+                executarImportacaoExcel(dataEscolhida);
+            }
+        }
+
+        function adicionarObraModalData() {
+            const ref = document.getElementById('new-ref').value.trim(); 
+            if (!ref) {
+                mostrarAlerta('Digite a referência do componente antes de adicionar!');
+                return;
+            }
+            abrirModalData('manual');
+        }
+
+        // -----------------------------------------------------
+        // ADICIONAR MANUAL (COM DATA SELECIONADA E PROTEÇÃO DE BD)
+        // -----------------------------------------------------
+        function parseNumeroSeguro(elementId) {
+            let el = document.getElementById(elementId);
+            if (!el) return 0;
+            let val = el.value.toString().trim().replace(',', '.'); 
+            let num = parseFloat(val);
+            return isNaN(num) ? 0 : num;
+        }
+
+        async function executarAdicionarObra(dataCriacaoStr) {
+            const ref = document.getElementById('new-ref').value.trim(); 
+            const prio = document.getElementById('new-prio').value;
+            
+            const vKg = parseNumeroSeguro('new-kg');
+            const vPol = parseNumeroSeguro('new-pol');
+
+            const insertData = { 
+                obra_ref: 'MANUAL', 
+                referencia: sanitizeForDB(ref), 
+                kg: vKg, 
+                toneladas: vKg, 
+                polegadas: vPol, 
+                prioridade: sanitizeForDB(prio), 
+                fase: 'Projeto', 
+                trabalhador: 'Não Atribuído',
+                data_criacao: dataCriacaoStr,
+                rastreio: ''
+            };
+
+            let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
+
+            if (res.error) {
+                // FALLBACK MÁXIMO: Se as novas colunas de Rastreio ou Data não existirem no Supabase do user
+                const fallbackData = { ...insertData };
+                delete fallbackData.kg;
+                delete fallbackData.polegadas;
+                delete fallbackData.data_criacao;
+                delete fallbackData.rastreio;
+                const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
+                res = fallbackRes;
+            }
+
+            if (res.error) {
+                return mostrarAlerta('Erro crítico ao adicionar obra. Verifique SQL: ' + res.error.message);
+            }
+
+            if (res.data && res.data.length > 0) {
+                document.getElementById('new-ref').value = ''; 
+                document.getElementById('new-kg').value = ''; 
+                document.getElementById('new-pol').value = '';
+                carregarTudo(); 
+            }
+        }
+
+        // -----------------------------------------------------
+        // IMPORTAR EXCEL (COM DATA E LEITURA EM CASCATA)
+        // -----------------------------------------------------
+        let excelFilePendente = null;
+
+        function importarExcelInteligenteModal(event) {
             const file = event.target.files[0]; 
             if (!file) return; 
-            mostrarAlerta('A processar ficheiro Excel e a aplicar filtro de limpeza...');
+            excelFilePendente = file;
+            event.target.value = null; 
+            
+            abrirModalData('excel');
+        }
+
+        async function executarImportacaoExcel(dataCriacaoStr) {
+            if (!excelFilePendente) return;
+            mostrarAlerta('A processar ficheiro Excel e a aplicar filtro de limpeza e segurança...');
 
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -1342,6 +1631,8 @@
                         const colPol = headers.findIndex(h => String(h).toLowerCase().includes("pol"));
                         const colPrio = headers.findIndex(h => String(h).toLowerCase().includes("prio"));
                         const colObs = headers.findIndex(h => String(h).toLowerCase().includes("coment") || String(h).toLowerCase().includes("obs"));
+                        const colData = headers.findIndex(h => String(h).toLowerCase().includes("data"));
+                        const colRastreio = headers.findIndex(h => String(h).toLowerCase().includes("rastreio"));
 
                         for (let i = 1; i < rows.length; i++) {
                             const row = rows[i];
@@ -1362,6 +1653,9 @@
 
                                 const vKg = colKg !== -1 ? (parseFloat(String(row[colKg] || '0').replace(',', '.')) || 0) : 0;
                                 const vPol = colPol !== -1 ? (parseFloat(String(row[colPol] || '0').replace(',', '.')) || 0) : 0;
+                                
+                                const dataExcel = colData !== -1 ? String(row[colData] || '') : '';
+                                const rastreioExcel = colRastreio !== -1 ? String(row[colRastreio] || '') : '';
 
                                 obrasParaInserir.push({ 
                                     obra_ref: sanitizeForDB(refE || 'MANUAL'), 
@@ -1373,7 +1667,9 @@
                                     fase: sanitizeForDB(String(row[colFase] || 'Projeto')), 
                                     setor: colSetor !== -1 ? sanitizeForDB(String(row[colSetor] || 'Geral')) : 'Geral',
                                     trabalhador: colTrab !== -1 ? sanitizeForDB(String(row[colTrab] || 'Não Atribuído')) : 'Não Atribuído',
-                                    comentarios: sanitizeForDB(String(row[colObs] || '')) 
+                                    comentarios: sanitizeForDB(String(row[colObs] || '')),
+                                    data_criacao: sanitizeForDB(dataExcel || dataCriacaoStr),
+                                    rastreio: sanitizeForDB(rastreioExcel)
                                 });
                             }
                         }
@@ -1458,14 +1754,16 @@
                                     prioridade: 'Normal', 
                                     fase: 'Projeto', 
                                     setor: 'Geral',
-                                    trabalhador: sanitizeForDB(trab) 
+                                    trabalhador: sanitizeForDB(trab),
+                                    data_criacao: dataCriacaoStr,
+                                    rastreio: ''
                                 });
                             }
                         }
                     }
 
                     if (obrasParaInserir.length === 0) {
-                        return mostrarAlerta(`Análise terminada: Lemos ${totalLidas} peças agrupadas. Todas já existem na BD (ignoradas ${ignoradas}).`);
+                        return mostrarAlerta(`Análise terminada: Lemos ${totalLidas} peças. Todas já existem na BD (ignoradas ${ignoradas}).`);
                     }
                     
                     let inseridos = 0;
@@ -1482,6 +1780,8 @@
                                 const copy = {...o};
                                 delete copy.kg;
                                 delete copy.polegadas;
+                                delete copy.data_criacao;
+                                delete copy.rastreio;
                                 return copy;
                             });
                             const fallbackRes = await supabaseClient.from('cartoes_kanban').insert(loteSeguro).select();
@@ -1495,7 +1795,7 @@
                     }
                     
                     if (dbFailsOnNewColumns) {
-                        mostrarAlerta(`Aviso: O Supabase rejeitou as colunas novas, mas as ${inseridos} obras foram inseridas em modo de segurança.`);
+                        mostrarAlerta(`Aviso: O Supabase não tem a atualização (data_criacao / rastreio), mas as ${inseridos} obras foram inseridas em modo de segurança.`);
                     } else {
                         mostrarAlerta(`Limpeza Concluída! Lemos ${totalLidas} peças. Ignoradas ${ignoradas} que já existiam. Inseridas ${inseridos} NOVAS obras.`); 
                     }
@@ -1505,7 +1805,7 @@
                     mostrarAlerta('Erro geral no Excel: ' + err.message); 
                 }
             }; 
-            reader.readAsArrayBuffer(file);
+            reader.readAsArrayBuffer(excelFilePendente);
         }
 
         // -----------------------------------------------------
@@ -1550,6 +1850,8 @@
 
             container.innerHTML = resultados.map(o => {
                 const pesoHistorico = o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0);
+                const dataShow = o.data_criacao ? ` | 📅 ${formatarDataVisivel(o.data_criacao)}` : '';
+                
                 return `
                 <div class="consult-item">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1557,7 +1859,7 @@
                         <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${escapeHTML(o.fase)}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
-                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${escapeHTML(o.trabalhador || 'Não Atribuído')}</b> | 🏷️ Prioridade: <b>${escapeHTML(o.prioridade || 'Normal')}</b>
+                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${escapeHTML(o.trabalhador || 'Não Atribuído')}</b> | 🏷️ Prioridade: <b>${escapeHTML(o.prioridade || 'Normal')}</b> ${dataShow}
                     </div>
                 </div>
                 `;
@@ -1565,7 +1867,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP BLINDADO
+        // DRAG AND DROP BLINDADO (COM REGISTO DE RASTREIO)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1606,86 +1908,58 @@
                 if (idx !== -1) { 
                     todasAsObras[idx].fase = novaFase; 
                     todasAsObras[idx].setor = novoSetor; 
+                    
+                    // Rastreio de Movimentos: regista o caminho dos trabalhadores
+                    if (novoOperador !== 'Não Atribuído' && todasAsObras[idx].trabalhador !== novoOperador) {
+                        let currentRastreio = todasAsObras[idx].rastreio || '';
+                        
+                        if (!currentRastreio) {
+                            if (todasAsObras[idx].trabalhador && todasAsObras[idx].trabalhador !== 'Não Atribuído') {
+                                currentRastreio = todasAsObras[idx].trabalhador + ' ➔ ' + novoOperador;
+                            } else {
+                                currentRastreio = novoOperador;
+                            }
+                        } else {
+                            if (!currentRastreio.endsWith(novoOperador)) {
+                                currentRastreio += ' ➔ ' + novoOperador;
+                            }
+                        }
+                        todasAsObras[idx].rastreio = currentRastreio;
+                    }
+                    
                     todasAsObras[idx].trabalhador = novoOperador; 
-                }
 
-                await supabaseClient.from('cartoes_kanban').update({ 
-                    fase: novaFase, 
-                    setor: novoSetor, 
-                    trabalhador: novoOperador 
-                }).eq('id', cardId);
+                    let res = await supabaseClient.from('cartoes_kanban').update({ 
+                        fase: novaFase, 
+                        setor: novoSetor, 
+                        trabalhador: novoOperador,
+                        rastreio: todasAsObras[idx].rastreio
+                    }).eq('id', cardId);
+                    
+                    // Fallback se a coluna rastreio não existir
+                    if (res.error && res.error.message.includes('does not exist')) {
+                        await supabaseClient.from('cartoes_kanban').update({ 
+                            fase: novaFase, 
+                            setor: novoSetor, 
+                            trabalhador: novoOperador 
+                        }).eq('id', cardId);
+                    }
+                }
                 
                 setTimeout(atualizarTamanhoScrollTopo, 100);
             });
         });
 
         // -----------------------------------------------------
-        // ADICIONAR E EDITAR (COM SANITIZAÇÃO DE ERROS DE DB)
-        // -----------------------------------------------------
-        function parseNumeroSeguro(elementId) {
-            let el = document.getElementById(elementId);
-            if (!el) return 0;
-            let val = el.value.toString().trim().replace(',', '.'); 
-            let num = parseFloat(val);
-            return isNaN(num) ? 0 : num;
-        }
-
-        async function adicionarObra() {
-            const ref = document.getElementById('new-ref').value.trim(); 
-            const prio = document.getElementById('new-prio').value;
-            
-            const vKg = parseNumeroSeguro('new-kg');
-            const vPol = parseNumeroSeguro('new-pol');
-
-            if (!ref) {
-                return mostrarAlerta('Digite a referência do componente!');
-            }
-
-            const insertData = { 
-                obra_ref: 'MANUAL', 
-                referencia: sanitizeForDB(ref), 
-                kg: vKg, 
-                toneladas: vKg, 
-                polegadas: vPol, 
-                prioridade: sanitizeForDB(prio), 
-                fase: 'Projeto', 
-                trabalhador: 'Não Atribuído' 
-            };
-
-            let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
-
-            if (res.error) {
-                const fallbackData = { ...insertData };
-                delete fallbackData.kg;
-                delete fallbackData.polegadas;
-                const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
-                res = fallbackRes;
-            }
-
-            if (res.error) {
-                return mostrarAlerta('Erro ao adicionar obra: ' + res.error.message);
-            }
-
-            if (res.data && res.data.length > 0) {
-                document.getElementById('new-ref').value = ''; 
-                document.getElementById('new-kg').value = ''; 
-                document.getElementById('new-pol').value = '';
-                carregarTudo(); 
-            }
-        }
-
-        // -----------------------------------------------------
-        // RENDER CARTÃO (SISTEMA DE LISTENERS DIRETOS E CONVERSÃO EM FILA)
+        // RENDER CARTÃO (COM BULLETS E RASTREIO BLINDADO)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
-                // p resolve a cor final
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 let f = String(c.fase || 'Projeto').replace(/"/g, ''); 
                 const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, ''); 
                 const s = String(c.setor || '').replace(/"/g, '');
                 
-                // Mapeia cartas antigas 'Em Espera' para o novo layout 'Em Fila'
                 if (f === 'Em Espera') f = 'Em Fila';
 
                 let z = null;
@@ -1693,15 +1967,12 @@
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
-                
                 if (!z && f === 'Concluído Setor' && s) {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-setor="${s}"]`);
                 }
-                
                 if (!z) {
                     z = document.querySelector(`.column-content[data-fase="${f}"]`);
                 }
-                
                 if (!z) {
                     z = document.querySelector(`.column-content[data-fase="Projeto"]`);
                 }
@@ -1714,34 +1985,74 @@
                     
                     const safeObra = escapeHTML(c.obra_ref);
                     const safeRef = escapeHTML(c.referencia);
-                    const safeCom = escapeHTML(c.comentarios);
                     const safeTrab = escapeHTML(t);
 
-                    const cmt = c.comentarios ? `<div class="card-comment">💬 ${safeCom}</div>` : '';
+                    // Formatação de Comentários em Bullets Múltiplos
+                    let cmt = '';
+                    if (c.comentarios && c.comentarios.trim() !== '') {
+                        const bulletsHTML = c.comentarios.split('\n')
+                            .filter(line => line.trim() !== '')
+                            .map(line => `<li>${escapeHTML(line.trim())}</li>`)
+                            .join('');
+                        cmt = `
+                            <div class="card-comment">
+                                <ul class="card-comment-list">
+                                    ${bulletsHTML}
+                                </ul>
+                            </div>
+                        `;
+                    }
+
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
                     
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
+                    // Formatação da Data e do Rastreio
+                    const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
+                    
+                    let rastreioHtml = '';
+                    if (c.rastreio && c.rastreio.includes('➔')) {
+                        rastreioHtml = `
+                            <div class="card-rastreio">
+                                <span>🛤️ ${escapeHTML(c.rastreio)}</span>
+                                <button class="btn-rastreio-del" title="Limpar Rastreio">✖</button>
+                            </div>
+                        `;
+                    }
+
                     el.innerHTML = `
+                        ${dataHtml}
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
                         <div class="card-info">⚖️ ${vKg} Kg | 📏 ${vPol}" <br> 👷 ${safeTrab}</div>
                         ${cmt}
+                        ${rastreioHtml}
                         <div class="card-actions">
                             <button class="btn-card btn-editar">✏️ Editar</button>
                             <button class="btn-card btn-apagar">🗑️ Apagar</button>
                         </div>
                     `;
                     
+                    // Listeners de Ações
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios);
                     });
 
-                    el.querySelector('.btn-apagar').addEventListener('click', () => {
-                        apagarCartao(c.id);
+                    el.querySelector('.btn-apagar').addEventListener('click', () => { 
+                        apagarCartao(c.id); 
                     });
                     
+                    // Listener da Cruz para apagar rastreio
+                    const btnRastreioDel = el.querySelector('.btn-rastreio-del');
+                    if (btnRastreioDel) {
+                        btnRastreioDel.addEventListener('click', () => {
+                            mostrarConfirmacao("Tem a certeza que deseja limpar o caminho de rastreio de colaboradores deste cartão?", () => {
+                                limparRastreioCartao(c.id);
+                            });
+                        });
+                    }
+
                     el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
                     z.appendChild(el);
                 }
@@ -1750,6 +2061,18 @@
             }
         }
 
+        async function limparRastreioCartao(id) {
+            const idx = todasAsObras.findIndex(o => o.id === id);
+            if (idx !== -1) {
+                todasAsObras[idx].rastreio = '';
+                await supabaseClient.from('cartoes_kanban').update({ rastreio: '' }).eq('id', id);
+                renderizarKanbanComFiltro();
+            }
+        }
+
+        // -----------------------------------------------------
+        // EDIÇÃO E GRAVAÇÃO
+        // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra || ''; 
@@ -1758,6 +2081,8 @@
             document.getElementById('edit-kg').value = kg || 0; 
             document.getElementById('edit-pol').value = pol || 0;
             document.getElementById('edit-prio').value = prio || 'Normal'; 
+            
+            // Reverte os Enters para poder editar a caixa de texto
             document.getElementById('edit-comments').value = comentarios || '';
             
             document.getElementById('edit-modal').classList.add('active');
@@ -1814,10 +2139,14 @@
         // -----------------------------------------------------
         function calcularKPIs() {
             let totalKgAno = 0;
-            let kgEmExecucao = 0; let pecasEmExecucao = 0;
-            let kgEmFila = 0; let pecasEmFila = 0;
-            let kgPendente = 0; let pecasPendente = 0;
-            let kgConcluido = 0; let pecasConcluido = 0;
+            let kgEmExecucao = 0; 
+            let pecasEmExecucao = 0;
+            let kgEmFila = 0; 
+            let pecasEmFila = 0;
+            let kgPendente = 0; 
+            let pecasPendente = 0;
+            let kgConcluido = 0; 
+            let pecasConcluido = 0;
 
             let totalRetrabalhos = 0;
             let retrabalhosConcluidos = 0;
