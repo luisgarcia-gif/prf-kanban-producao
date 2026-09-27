@@ -448,7 +448,7 @@
             cursor: grab; 
             user-select: none; 
             transition: transform 0.1s;
-            position: relative;
+            position: relative; /* Para a data se posicionar no canto */
         }
 
         .card:active { 
@@ -575,9 +575,9 @@
             line-height: 1.2; 
             margin-bottom: 4px; 
             word-break: break-word; 
-            padding-right: 60px; /* Evita sobreposição com a data no canto */
+            padding-right: 45px; /* Evita sobreposição com a data no canto */
         }
-        
+
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
@@ -875,7 +875,6 @@
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
                     
-                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="sub-sector-grid">
@@ -904,7 +903,6 @@
                         </div>
                     </div>
                     
-                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
@@ -942,7 +940,6 @@
                         </div>
                     </div>
                     
-                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="sub-sector-grid">
@@ -998,7 +995,6 @@
                         </div>
                     </div>
                     
-                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="sub-sector-grid">
@@ -1149,7 +1145,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DATA (PARA CRIAÇÃO DE CARTÕES E EXCEL) -->
+    <!-- MODAL DE DATA -->
     <div id="date-modal" class="modal-overlay">
         <div class="modal">
             <h3>📅 Data de Início da Obra</h3>
@@ -1249,7 +1245,8 @@
             if (!str) {
                 return '';
             }
-            // Permite caracteres de quebra de linha (\n) para que os bullets funcionem
+            // AQUI RESOLVEMOS O BUG DO ENTER:
+            // Remove caracteres invisíveis MAS mantem a quebra de linha normal (\n).
             return String(str)
                 .replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "") 
                 .replace(/\\/g, "/") 
@@ -1568,7 +1565,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL 
+        // ADICIONAR MANUAL (COM DATA SELECIONADA E ALERTA DE ERRO)
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1609,6 +1606,7 @@
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
             if (res.error) {
+                // FALLBACK: O Rastreio não deve ter sido criado no Supabase
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
                 delete fallbackData.polegadas;
@@ -1617,10 +1615,11 @@
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
                 res = fallbackRes;
-            }
-
-            if (res.error) {
-                return mostrarAlerta('Erro crítico ao adicionar obra. Verifique SQL: ' + res.error.message);
+                
+                // O Bug do Igor vem daqui! Mostramos alerta para o utilizador saber o que se passa
+                mostrarAlerta('O Rastreio não vai ser guardado porque a coluna "rastreio" não existe no Supabase. Corra o comando SQL.');
+            } else if (res.error) {
+                return mostrarAlerta('Erro crítico ao adicionar obra: ' + res.error.message);
             }
 
             if (res.data && res.data.length > 0) {
@@ -1857,7 +1856,7 @@
                     }
                     
                     if (dbFailsOnNewColumns) {
-                        mostrarAlerta(`Aviso: Base de Dados não tem as colunas atualizadas. As ${inseridos} obras foram inseridas em modo de segurança.`);
+                        mostrarAlerta(`Aviso: O Supabase não tem o rastreio criado. As ${inseridos} obras foram inseridas em modo de segurança.`);
                     } else {
                         mostrarAlerta(`Limpeza Concluída! Lemos ${totalLidas} peças. Ignoradas ${ignoradas} antigas. Inseridas ${inseridos} NOVAS obras.`); 
                     }
@@ -1871,7 +1870,7 @@
         }
 
         // -----------------------------------------------------
-        // PESQUISA GLOBAL
+        // PESQUISA E RENDERIZAÇÃO
         // -----------------------------------------------------
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
@@ -1935,7 +1934,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP (AGORA COM GERAÇÃO INTELIGENTE DE RASTREIO)
+        // DRAG AND DROP (MOTOR DE RASTREIO APERFEIÇOADO)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1995,7 +1994,7 @@
                     let elements = currentRastreio.split(' ➔ ').map(e => e.trim()).filter(e => e !== '');
                     let lastElement = elements.length > 0 ? elements[elements.length - 1] : '';
 
-                    // Só anota no rastreio se mudar o interveniente, e ignora anotações de "Concluído"
+                    // Só anota no rastreio se mudar de mão ou passar por zonas principais, ignorando "Concluídos"
                     if (trackLabel && lastElement !== trackLabel && !novaFase.includes('Concluído')) {
                         if (!currentRastreio) {
                             currentRastreio = trackLabel;
@@ -2016,6 +2015,7 @@
                         rastreio: todasAsObras[idx].rastreio
                     }).eq('id', cardId);
                     
+                    // Fallback se a coluna rastreio não existir na Base de Dados
                     if (res.error && res.error.message.includes('does not exist')) {
                         await supabaseClient.from('cartoes_kanban').update({ 
                             fase: novaFase, 
@@ -2030,7 +2030,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (COM BULLETS, DATAS E RASTREIO SEGUROS)
+        // RENDER CARTÃO (COM BULLETS E QUALQUER TIPO DE RASTREIO)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -2044,7 +2044,6 @@
                 }
 
                 let z = null;
-                
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
@@ -2068,7 +2067,7 @@
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
 
-                    // Formatação Inteligente de Comentários para Bullets (Enters Resolvidos)
+                    // Formatação Inteligente de Comentários para Bullets (Resolve o problema do Enter!)
                     let cmt = '';
                     if (c.comentarios && c.comentarios.trim() !== '') {
                         const bulletsHTML = c.comentarios.split('\n')
@@ -2086,13 +2085,13 @@
                     }
 
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
-                    
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
+                    // Formatação da Data (Apenas DD/MM/YYYY)
                     const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
                     
-                    // RASTREIO BLINDADO: Apenas exige que haja texto (já não precisa de setas para aparecer)
+                    // RASTREIO BLINDADO: Apenas exige que haja texto (já não precisa de ter setas)
                     let rastreioHtml = '';
                     if (c.rastreio && String(c.rastreio).trim() !== '') {
                         rastreioHtml = `
@@ -2116,7 +2115,7 @@
                         </div>
                     `;
                     
-                    // Listeners de Ações aplicados internamente
+                    // Listeners de Ações
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio);
                     });
@@ -2155,7 +2154,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL
+        // EDIÇÃO NO MODAL (C/ ALERTA DE FALLBACK PARA RASTREIO)
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio) {
             document.getElementById('edit-id').value = id; 
@@ -2210,6 +2209,10 @@
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
+                
+                // Aviso de que o Rastreio se perdeu no Supabase (O Bug do Igor!)
+                mostrarAlerta('O Rastreio não foi gravado porque a coluna "rastreio" não existe na tua Base de Dados. Executa o código SQL no Supabase para a criar.');
+                return;
             }
 
             if (res.error) {
