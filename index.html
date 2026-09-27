@@ -448,7 +448,7 @@
             cursor: grab; 
             user-select: none; 
             transition: transform 0.1s;
-            position: relative; /* Essencial para a data ficar no canto superior direito */
+            position: relative;
         }
 
         .card:active { 
@@ -575,17 +575,15 @@
             line-height: 1.2; 
             margin-bottom: 4px; 
             word-break: break-word; 
-            padding-right: 40px; /* Evita sobreposição com a data */
+            padding-right: 45px; 
         }
-
+        
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
         }
-
-        /* =========================================
-           COMENTÁRIOS E RASTREIO
-           ========================================= */
+        
+        /* Comentários e Rastreio */
         .card-comment { 
             font-size: 10px; 
             font-style: italic; 
@@ -707,7 +705,7 @@
         }
 
         /* =========================================
-           KPIS GRID
+           KPIS GRID E CONSULTAS
            ========================================= */
         .kpi-grid { 
             display: grid; 
@@ -745,9 +743,6 @@
             margin-left: 5px; 
         }
 
-        /* =========================================
-           ITENS DE CONSULTA
-           ========================================= */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -880,7 +875,6 @@
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
                     
-                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="sub-sector-grid">
@@ -909,7 +903,6 @@
                         </div>
                     </div>
                     
-                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
@@ -947,7 +940,6 @@
                         </div>
                     </div>
                     
-                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="sub-sector-grid">
@@ -1003,7 +995,6 @@
                         </div>
                     </div>
                     
-                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="sub-sector-grid">
@@ -1154,7 +1145,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DATA (NOVA FUNCIONALIDADE PARA CRIAÇÃO DE CARTÕES) -->
+    <!-- MODAL DE DATA (PARA CRIAÇÃO DE CARTÕES E EXCEL) -->
     <div id="date-modal" class="modal-overlay">
         <div class="modal">
             <h3>📅 Data de Início da Obra</h3>
@@ -1170,7 +1161,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO AVANÇADA -->
+    <!-- MODAL DE EDIÇÃO AVANÇADA (AGORA COM EDIÇÃO DE DATA E RASTREIO) -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
             <h3>✏️ Editar Componente</h3>
@@ -1204,6 +1195,17 @@
                 <option value="Retrabalho">🔘 Retrabalho</option>
             </select>
 
+            <div style="display:flex; gap:10px; margin-top: 5px;">
+                <div style="flex:1;">
+                    <label>Data da Obra:</label>
+                    <input type="date" id="edit-date" style="width:100%;">
+                </div>
+                <div style="flex:1;">
+                    <label>Rastreio Manual:</label>
+                    <input type="text" id="edit-rastreio" placeholder="Ex: Suellen ➔ Igor" style="width:100%;">
+                </div>
+            </div>
+
             <label>Comentários / Observações (Use 'Enter' para criar Bullets):</label>
             <textarea id="edit-comments" rows="3" placeholder="Escreva observações sobre o progresso..."></textarea>
 
@@ -1234,23 +1236,26 @@
         </div>
     </div>
 
+    <!-- SCRIPT PRINCIPAL -->
     <script>
         // =====================================================
-        // VARIÁVEIS GLOBAIS E FUNÇÕES DE SEGURANÇA
+        // FUNÇÕES DE SEGURANÇA E FORMATAÇÃO
         // =====================================================
         
-        // Remove caracteres de controlo invisíveis e barras para não bloquear DB
         function sanitizeForDB(str) {
-            if (!str) return '';
+            if (!str) {
+                return '';
+            }
             return String(str)
                 .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") 
                 .replace(/\\/g, "/") 
                 .trim();
         }
 
-        // Previne injeção de HTML
         function escapeHTML(str) {
-            if (str === null || str === undefined) return '';
+            if (str === null || str === undefined) {
+                return '';
+            }
             return String(str)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -1259,34 +1264,46 @@
                 .replace(/'/g, "&#039;");
         }
 
-        // Obtém a data de hoje para o input do calendário
         function dataHojeStr() {
             const today = new Date();
             const yyyy = today.getFullYear();
             let mm = today.getMonth() + 1; 
             let dd = today.getDate();
-            if (dd < 10) dd = '0' + dd;
-            if (mm < 10) mm = '0' + mm;
+            if (dd < 10) {
+                dd = '0' + dd;
+            }
+            if (mm < 10) {
+                mm = '0' + mm;
+            }
             return yyyy + '-' + mm + '-' + dd;
         }
 
-        // Formata a data para exibir bonito no cartão
         function formatarDataVisivel(dataStr) {
-            if (!dataStr) return '';
-            const partes = dataStr.split('-');
-            if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            if (!dataStr) {
+                return '';
+            }
+            const datePart = String(dataStr).split('T')[0].split(' ')[0];
+            const partes = datePart.split('-');
+            
+            if (partes.length === 3) {
+                return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+            
             return dataStr;
         }
 
+        // =====================================================
+        // LIGAÇÃO SUPABASE
+        // =====================================================
         const supabaseUrl = 'https://hybquplraoiarwfwxiwn.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5YnF1cGxyYW9pYXJ3Znd4aXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDYwMDgsImV4cCI6MjEwNDg4MjAwOH0.1EFqdshaIQJU96rMr8ep9ED6HAkAmmrfz_dTxGN4Hi8';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         let todasAsObras = [];
-        let operacaoPendenteData = null; // Memória para saber o que fazer a seguir ao modal da data
+        let operacaoPendenteData = null; 
 
         // -----------------------------------------------------
-        // LIGAÇÃO DA BARRA DE SCROLL DE CIMA AO KANBAN
+        // SCROLL SINCRONIZADO E MÁGICO
         // -----------------------------------------------------
         const topScrollWrapper = document.getElementById('topScrollWrapper');
         const boardKanban = document.getElementById('boardKanban');
@@ -1305,14 +1322,13 @@
         
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
-        // -----------------------------------------------------
-        // AUTO-SCROLL MÁGICO AO ARRASTAR CARTÕES
-        // -----------------------------------------------------
         document.addEventListener('dragover', function(e) {
             const edgeSize = 150; 
             const speed = 25; 
             
-            if(!boardKanban) return;
+            if (!boardKanban) {
+                return;
+            }
             
             if (e.clientX > window.innerWidth - edgeSize) {
                 boardKanban.scrollBy({ left: speed, behavior: 'auto' });
@@ -1323,7 +1339,7 @@
         });
 
         // -----------------------------------------------------
-        // FUNÇÕES DE AVISO E NAVEGAÇÃO
+        // ALERTAS E NAVEGAÇÃO
         // -----------------------------------------------------
         function mostrarAlerta(mensagem) { 
             document.getElementById('custom-alert-msg').innerText = mensagem; 
@@ -1358,14 +1374,20 @@
         }
         
         function navesPara(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+            });
             document.getElementById(pageId).classList.add('active');
-            if (pageId === 'page-kpis') calcularKPIs();
+            
+            if (pageId === 'page-kpis') {
+                calcularKPIs();
+            }
+            
             setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT E BACKUPS (AGORA GUARDA DATA E RASTREIO)
+        // CHECKPOINT (AGORA GUARDA DATA E RASTREIO NO EXCEL)
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1419,7 +1441,9 @@
         function restaurarBackupJSON(event) {
             fecharMenuBackup(); 
             const file = event.target.files[0]; 
-            if (!file) return;
+            if (!file) {
+                return;
+            }
 
             mostrarConfirmacao("⚠️ O restauro apaga o quadro atual e repõe as informações do ficheiro. Confirma?", async function() {
                 mostrarAlerta('A restaurar a Base de Dados...'); 
@@ -1428,7 +1452,10 @@
                     try {
                         const backupData = JSON.parse(e.target.result);
                         await supabaseClient.from('cartoes_kanban').delete().neq('fase', 'ZZZ');
-                        const lotesParaInserir = backupData.map(o => { delete o.id; return o; });
+                        const lotesParaInserir = backupData.map(o => { 
+                            delete o.id; 
+                            return o; 
+                        });
                         
                         for (let i = 0; i < lotesParaInserir.length; i += 500) { 
                             await supabaseClient.from('cartoes_kanban').insert(lotesParaInserir.slice(i, i + 500)); 
@@ -1445,7 +1472,7 @@
         }
 
         // -----------------------------------------------------
-        // LIMPEZAS EM LOTE
+        // LIMPEZAS GERAIS
         // -----------------------------------------------------
         function limparProjetos() { 
             mostrarConfirmacao("Deseja LIMPAR os projetos não iniciados?", async function() { 
@@ -1486,7 +1513,7 @@
         }
 
         // -----------------------------------------------------
-        // SISTEMA DE DATAS - MODAL PARA CRIAÇÃO DE CARTÕES
+        // SISTEMA DE DATAS (MODAIS E CONFIRMAÇÃO)
         // -----------------------------------------------------
         function abrirModalData(operacaoStr) {
             operacaoPendenteData = operacaoStr;
@@ -1531,10 +1558,15 @@
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
-            if (!el) return 0;
+            if (!el) {
+                return 0;
+            }
             let val = el.value.toString().trim().replace(',', '.'); 
             let num = parseFloat(val);
-            return isNaN(num) ? 0 : num;
+            if (isNaN(num)) {
+                return 0;
+            }
+            return num;
         }
 
         async function executarAdicionarObra(dataCriacaoStr) {
@@ -1560,7 +1592,7 @@
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
             if (res.error) {
-                // FALLBACK MÁXIMO: Se as novas colunas de Rastreio ou Data não existirem no Supabase do user
+                // FALLBACK MÁXIMO: Se as novas colunas não existirem
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
                 delete fallbackData.polegadas;
@@ -1589,7 +1621,9 @@
 
         function importarExcelInteligenteModal(event) {
             const file = event.target.files[0]; 
-            if (!file) return; 
+            if (!file) {
+                return;
+            }
             excelFilePendente = file;
             event.target.value = null; 
             
@@ -1597,7 +1631,9 @@
         }
 
         async function executarImportacaoExcel(dataCriacaoStr) {
-            if (!excelFilePendente) return;
+            if (!excelFilePendente) {
+                return;
+            }
             mostrarAlerta('A processar ficheiro Excel e a aplicar filtro de limpeza e segurança...');
 
             const reader = new FileReader();
@@ -1614,14 +1650,15 @@
                     const chavesExistentesBD = new Set(todasAsObras.map(o => String((o.obra_ref || '') + (o.referencia || '')).trim().toLowerCase().replace(/\s+/g, '')));
                     const obrasParaInserir = []; 
                     const refsSet = new Set();
-                    let totalLidas = 0, ignoradas = 0;
+                    let totalLidas = 0;
+                    let ignoradas = 0;
 
                     const headers = rows[0] || [];
                     const headerStr = JSON.stringify(headers).toLowerCase();
                     const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
 
                     if (isCheckpoint) {
-                        // MODO: Restauro por Checkpoint Excel
+                        // MODO CHECKPOINT
                         const colObra = headers.findIndex(h => String(h).toLowerCase().includes("obra"));
                         const colDesig = headers.findIndex(h => String(h).toLowerCase().includes("designa") || String(h).toLowerCase().includes("peça"));
                         const colFase = headers.findIndex(h => String(h).toLowerCase().includes("fase"));
@@ -1636,7 +1673,9 @@
 
                         for (let i = 1; i < rows.length; i++) {
                             const row = rows[i];
-                            if (!row || row.length === 0) continue;
+                            if (!row || row.length === 0) {
+                                continue;
+                            }
 
                             const refE = colObra !== -1 ? String(row[colObra] || '').trim() : 'MANUAL';
                             const desig = colDesig !== -1 ? String(row[colDesig] || '').trim() : 'Sem Referência';
@@ -1661,7 +1700,7 @@
                                     obra_ref: sanitizeForDB(refE || 'MANUAL'), 
                                     referencia: sanitizeForDB(desig || 'Sem Referência'), 
                                     kg: vKg, 
-                                    toneladas: vKg,
+                                    toneladas: vKg, 
                                     polegadas: vPol, 
                                     prioridade: sanitizeForDB(String(row[colPrio] || 'Normal')), 
                                     fase: sanitizeForDB(String(row[colFase] || 'Projeto')), 
@@ -1674,21 +1713,23 @@
                             }
                         }
                     } else {
-                        // MODO: Extração Avançada de Ficheiro Original de Engenharia (CASCATA)
+                        // MODO ENGENHARIA CASCATA
                         let lastSeenRef = 'MANUAL'; 
 
                         for (let i = 0; i < rows.length; i++) {
                             const row = rows[i]; 
-                            if (!row || row.length === 0) continue;
+                            if (!row || row.length === 0) {
+                                continue;
+                            }
                             
-                            let refE = null, desig = null, trab = 'Não Atribuído';
+                            let refE = null;
+                            let desig = null;
+                            let trab = 'Não Atribuído';
                             const linhaStr = row.map(c => String(c || '')).join(' | ');
-
                             let foundCodeThisRow = false;
 
                             for (let j = 0; j < row.length; j++) {
                                 const cellText = String(row[j] || '').trim();
-                                
                                 const matchCode = cellText.match(/([A-Za-z]{2}\d{4,5})/i);
                                 if (matchCode) { 
                                     refE = matchCode[1].toUpperCase(); 
@@ -1701,9 +1742,9 @@
                                     } else {
                                         for (let k = j + 1; k < row.length; k++) {
                                             const nextCell = String(row[k] || '').trim();
-                                            if (nextCell && nextCell.length > 2) {
-                                                desig = nextCell.replace(/\.pdf$/i, '').replace(/^-/, '').trim();
-                                                break;
+                                            if (nextCell && nextCell.length > 2) { 
+                                                desig = nextCell.replace(/\.pdf$/i, '').replace(/^-/, '').trim(); 
+                                                break; 
                                             }
                                         }
                                     }
@@ -1715,24 +1756,24 @@
                                 refE = lastSeenRef;
                                 for (let j = 0; j < row.length; j++) {
                                     const cellText = String(row[j] || '').trim();
-                                    if (cellText && cellText.length > 2) {
-                                        desig = cellText.replace(/\.pdf$/i, '').replace(/^-/, '').trim();
-                                        break;
+                                    if (cellText && cellText.length > 2) { 
+                                        desig = cellText.replace(/\.pdf$/i, '').replace(/^-/, '').trim(); 
+                                        break; 
                                     }
                                 }
                             }
 
-                            if (!desig) continue;
+                            if (!desig) {
+                                continue;
+                            }
 
                             if (refE) {
                                 totalLidas++; 
                                 const idUnico = String(refE + desig).trim().toLowerCase().replace(/\s+/g, '');
-                                
                                 if (chavesExistentesBD.has(idUnico) || refsSet.has(idUnico)) { 
                                     ignoradas++; 
                                     continue; 
                                 }
-                                
                                 refsSet.add(idUnico);
 
                                 const equipa = ['suellen', 'josé', 'jose', 'jenifer', 'douglas', 'neto', 'alexandre', 'jorge', 'diogo', 'yaroslav', 'oleh', 'camila', 'ismael', 'igor', 'luís', 'luis'];
@@ -1753,9 +1794,9 @@
                                     polegadas: 0, 
                                     prioridade: 'Normal', 
                                     fase: 'Projeto', 
-                                    setor: 'Geral',
+                                    setor: 'Geral', 
                                     trabalhador: sanitizeForDB(trab),
-                                    data_criacao: dataCriacaoStr,
+                                    data_criacao: dataCriacaoStr, 
                                     rastreio: ''
                                 });
                             }
@@ -1771,17 +1812,17 @@
 
                     for (let i = 0; i < obrasParaInserir.length; i += 500) {
                         let lote = obrasParaInserir.slice(i, i + 500);
-                        
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
+                        // PLANO B
                         if (res.error) {
                             dbFailsOnNewColumns = true;
                             const loteSeguro = lote.map(o => {
-                                const copy = {...o};
-                                delete copy.kg;
-                                delete copy.polegadas;
-                                delete copy.data_criacao;
-                                delete copy.rastreio;
+                                const copy = {...o}; 
+                                delete copy.kg; 
+                                delete copy.polegadas; 
+                                delete copy.data_criacao; 
+                                delete copy.rastreio; 
                                 return copy;
                             });
                             const fallbackRes = await supabaseClient.from('cartoes_kanban').insert(loteSeguro).select();
@@ -1795,9 +1836,9 @@
                     }
                     
                     if (dbFailsOnNewColumns) {
-                        mostrarAlerta(`Aviso: O Supabase não tem a atualização (data_criacao / rastreio), mas as ${inseridos} obras foram inseridas em modo de segurança.`);
+                        mostrarAlerta(`Aviso: Base de Dados não tem as colunas atualizadas. As ${inseridos} obras foram inseridas em modo de segurança.`);
                     } else {
-                        mostrarAlerta(`Limpeza Concluída! Lemos ${totalLidas} peças. Ignoradas ${ignoradas} que já existiam. Inseridas ${inseridos} NOVAS obras.`); 
+                        mostrarAlerta(`Limpeza Concluída! Lemos ${totalLidas} peças. Ignoradas ${ignoradas} antigas. Inseridas ${inseridos} NOVAS obras.`); 
                     }
                     
                     carregarTudo();
@@ -1809,14 +1850,18 @@
         }
 
         // -----------------------------------------------------
-        // PESQUISA GLOBAL
+        // PESQUISA E RENDERIZAÇÃO
         // -----------------------------------------------------
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
-            document.querySelectorAll('.column-content').forEach(z => z.innerHTML = '');
+            document.querySelectorAll('.column-content').forEach(z => {
+                z.innerHTML = '';
+            });
 
             todasAsObras.forEach(o => {
-                if (String(o.fase) === 'Arquivado') return;
+                if (String(o.fase) === 'Arquivado') {
+                    return;
+                }
                 
                 let mostrar = true; 
                 
@@ -1842,7 +1887,10 @@
                 return container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Digite o código da obra para listar as peças.</p>';
             }
 
-            const resultados = todasAsObras.filter(o => `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.fase||''}`.toLowerCase().includes(query));
+            const resultados = todasAsObras.filter(o => {
+                const searchStr = `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.fase||''}`.toLowerCase();
+                return searchStr.includes(query);
+            });
             
             if (resultados.length === 0) {
                 return container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">Nenhuma obra ou peça encontrada.</p>';
@@ -1851,7 +1899,6 @@
             container.innerHTML = resultados.map(o => {
                 const pesoHistorico = o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0);
                 const dataShow = o.data_criacao ? ` | 📅 ${formatarDataVisivel(o.data_criacao)}` : '';
-                
                 return `
                 <div class="consult-item">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1867,7 +1914,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP BLINDADO (COM REGISTO DE RASTREIO)
+        // DRAG AND DROP (AGORA COM GERAÇÃO DE RASTREIO)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1891,7 +1938,9 @@
                     target = target.parentElement; 
                 }
                 
-                if (!target || !cartao) return;
+                if (!target || !cartao) {
+                    return;
+                }
 
                 const novaFase = target.getAttribute('data-fase');
                 const novoSetor = target.getAttribute('data-setor') || 'Geral';
@@ -1909,7 +1958,7 @@
                     todasAsObras[idx].fase = novaFase; 
                     todasAsObras[idx].setor = novoSetor; 
                     
-                    // Rastreio de Movimentos: regista o caminho dos trabalhadores
+                    // Se o operador mudar e não for para "Não Atribuído", regista no Rastreio
                     if (novoOperador !== 'Não Atribuído' && todasAsObras[idx].trabalhador !== novoOperador) {
                         let currentRastreio = todasAsObras[idx].rastreio || '';
                         
@@ -1932,11 +1981,10 @@
                     let res = await supabaseClient.from('cartoes_kanban').update({ 
                         fase: novaFase, 
                         setor: novoSetor, 
-                        trabalhador: novoOperador,
+                        trabalhador: novoOperador, 
                         rastreio: todasAsObras[idx].rastreio
                     }).eq('id', cardId);
                     
-                    // Fallback se a coluna rastreio não existir
                     if (res.error && res.error.message.includes('does not exist')) {
                         await supabaseClient.from('cartoes_kanban').update({ 
                             fase: novaFase, 
@@ -1951,7 +1999,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (COM BULLETS E RASTREIO BLINDADO)
+        // RENDER CARTÃO (COM BULLETS, DATAS E RASTREIO)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -1960,10 +2008,11 @@
                 const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, ''); 
                 const s = String(c.setor || '').replace(/"/g, '');
                 
-                if (f === 'Em Espera') f = 'Em Fila';
+                if (f === 'Em Espera') {
+                    f = 'Em Fila';
+                }
 
                 let z = null;
-                
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
@@ -1987,7 +2036,7 @@
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
 
-                    // Formatação de Comentários em Bullets Múltiplos
+                    // Formatação de Comentários em Bullets
                     let cmt = '';
                     if (c.comentarios && c.comentarios.trim() !== '') {
                         const bulletsHTML = c.comentarios.split('\n')
@@ -2004,11 +2053,10 @@
                     }
 
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
-                    
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
-                    // Formatação da Data e do Rastreio
+                    // Data e Rastreio
                     const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
                     
                     let rastreioHtml = '';
@@ -2036,14 +2084,13 @@
                     
                     // Listeners de Ações
                     el.querySelector('.btn-editar').addEventListener('click', () => {
-                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios);
+                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio);
                     });
 
                     el.querySelector('.btn-apagar').addEventListener('click', () => { 
                         apagarCartao(c.id); 
                     });
                     
-                    // Listener da Cruz para apagar rastreio
                     const btnRastreioDel = el.querySelector('.btn-rastreio-del');
                     if (btnRastreioDel) {
                         btnRastreioDel.addEventListener('click', () => {
@@ -2056,8 +2103,8 @@
                     el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
                     z.appendChild(el);
                 }
-            } catch (err) {
-                console.error("Cartão problemático na renderização:", err);
+            } catch (err) { 
+                console.error("Cartão problemático:", err); 
             }
         }
 
@@ -2071,19 +2118,26 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO E GRAVAÇÃO
+        // EDIÇÃO NO MODAL (AGORA COM CAMPOS DATA E RASTREIO)
         // -----------------------------------------------------
-        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios) {
+        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra || ''; 
             document.getElementById('edit-ref').value = ref || '';
-            
             document.getElementById('edit-kg').value = kg || 0; 
             document.getElementById('edit-pol').value = pol || 0;
             document.getElementById('edit-prio').value = prio || 'Normal'; 
             
-            // Reverte os Enters para poder editar a caixa de texto
             document.getElementById('edit-comments').value = comentarios || '';
+            
+            // Tratamento da data para carregar no input tipo 'date'
+            let dateVal = '';
+            if (dataCriacao) {
+                dateVal = String(dataCriacao).split('T')[0].split(' ')[0];
+            }
+            document.getElementById('edit-date').value = dateVal;
+            
+            document.getElementById('edit-rastreio').value = rastreio || '';
             
             document.getElementById('edit-modal').classList.add('active');
         }
@@ -2104,15 +2158,19 @@
                 toneladas: vKg, 
                 polegadas: vPol, 
                 prioridade: sanitizeForDB(document.getElementById('edit-prio').value), 
-                comentarios: sanitizeForDB(document.getElementById('edit-comments').value)
+                comentarios: sanitizeForDB(document.getElementById('edit-comments').value),
+                data_criacao: sanitizeForDB(document.getElementById('edit-date').value),
+                rastreio: sanitizeForDB(document.getElementById('edit-rastreio').value)
             };
 
             let res = await supabaseClient.from('cartoes_kanban').update(updateData).eq('id', id);
 
             if (res.error) {
-                const fallbackData = { ...updateData };
-                delete fallbackData.kg;
+                const fallbackData = { ...updateData }; 
+                delete fallbackData.kg; 
                 delete fallbackData.polegadas;
+                delete fallbackData.data_criacao; 
+                delete fallbackData.rastreio;
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
