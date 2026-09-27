@@ -448,7 +448,7 @@
             cursor: grab; 
             user-select: none; 
             transition: transform 0.1s;
-            position: relative; /* Essencial para a data ficar no canto superior direito */
+            position: relative;
         }
 
         .card:active { 
@@ -575,17 +575,15 @@
             line-height: 1.2; 
             margin-bottom: 4px; 
             word-break: break-word; 
-            padding-right: 45px; /* Evita sobreposição com a data */
+            padding-right: 60px; /* Evita sobreposição com a data no canto */
         }
-
+        
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
         }
-
-        /* =========================================
-           COMENTÁRIOS E RASTREIO
-           ========================================= */
+        
+        /* Comentários e Rastreio */
         .card-comment { 
             font-size: 10px; 
             font-style: italic; 
@@ -707,7 +705,7 @@
         }
 
         /* =========================================
-           KPIS GRID
+           KPIS GRID E CONSULTAS
            ========================================= */
         .kpi-grid { 
             display: grid; 
@@ -745,9 +743,6 @@
             margin-left: 5px; 
         }
 
-        /* =========================================
-           ITENS DE CONSULTA
-           ========================================= */
         .consult-item { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
@@ -880,6 +875,7 @@
                 <div class="column-header">⚙️ PRODUÇÃO (POR TRABALHADOR)</div>
                 <div class="sub-sectors-container">
                     
+                    <!-- TUBISTAS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">👨‍🏭 TUBISTAS</div>
                         <div class="sub-sector-grid">
@@ -908,6 +904,7 @@
                         </div>
                     </div>
                     
+                    <!-- SERRALHEIROS -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
@@ -945,6 +942,7 @@
                         </div>
                     </div>
                     
+                    <!-- SOLDADORES -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🔥 SOLDADORES</div>
                         <div class="sub-sector-grid">
@@ -1000,6 +998,7 @@
                         </div>
                     </div>
                     
+                    <!-- ORBITAL -->
                     <div class="sub-sector">
                         <div class="sub-sector-title">🤖 ORBITAL</div>
                         <div class="sub-sector-grid">
@@ -1150,7 +1149,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DATA -->
+    <!-- MODAL DE DATA (PARA CRIAÇÃO DE CARTÕES E EXCEL) -->
     <div id="date-modal" class="modal-overlay">
         <div class="modal">
             <h3>📅 Data de Início da Obra</h3>
@@ -1250,10 +1249,7 @@
             if (!str) {
                 return '';
             }
-            // CORREÇÃO MÁXIMA AQUI:
-            // Removemos apenas os caracteres problemáticos (0-8, 11-12, 14-31).
-            // Desta forma o \n (newline, código 10) e o \r (carriage return, código 13) 
-            // ficam INTACTOS para que os teus "Enters" (Parágrafos) sejam gravados.
+            // Permite caracteres de quebra de linha (\n) para que os bullets funcionem
             return String(str)
                 .replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "") 
                 .replace(/\\/g, "/") 
@@ -1292,9 +1288,6 @@
             if (!dataStr) {
                 return '';
             }
-            
-            // O Supabase às vezes devolve as horas agarradas à data. 
-            // O "split('T')[0]" corta as horas fora garantindo que vemos só a data.
             const datePart = String(dataStr).split('T')[0].split(' ')[0];
             const partes = datePart.split('-');
             
@@ -1575,7 +1568,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL (COM DATA SELECIONADA E PROTEÇÃO DE BD)
+        // ADICIONAR MANUAL 
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1616,7 +1609,6 @@
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
             if (res.error) {
-                // FALLBACK MÁXIMO: Se as novas colunas não existirem
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
                 delete fallbackData.polegadas;
@@ -1799,7 +1791,6 @@
                             if (refE) {
                                 totalLidas++; 
                                 const idUnico = String(refE + desig).trim().toLowerCase().replace(/\s+/g, '');
-                                
                                 if (chavesExistentesBD.has(idUnico) || refsSet.has(idUnico)) { 
                                     ignoradas++; 
                                     continue; 
@@ -1880,7 +1871,7 @@
         }
 
         // -----------------------------------------------------
-        // PESQUISA E RENDERIZAÇÃO
+        // PESQUISA GLOBAL
         // -----------------------------------------------------
         function renderizarKanbanComFiltro() {
             const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
@@ -1981,7 +1972,6 @@
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
                 if (idx !== -1) { 
-                    // Se a coluna não tem operador definido e não é uma caixa de conclusão, limpa o nome.
                     if (!novoOperador) {
                         if (novaFase === 'Concluído Setor' || novaFase === 'Concluído') {
                             novoOperador = todasAsObras[idx].trabalhador;
@@ -2026,7 +2016,6 @@
                         rastreio: todasAsObras[idx].rastreio
                     }).eq('id', cardId);
                     
-                    // Fallback se a coluna rastreio não existir na Base de Dados
                     if (res.error && res.error.message.includes('does not exist')) {
                         await supabaseClient.from('cartoes_kanban').update({ 
                             fase: novaFase, 
@@ -2055,6 +2044,7 @@
                 }
 
                 let z = null;
+                
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
@@ -2078,7 +2068,7 @@
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
 
-                    // Formatação Inteligente de Comentários para Bullets (Resolveu-se o problema do Enter!)
+                    // Formatação Inteligente de Comentários para Bullets (Enters Resolvidos)
                     let cmt = '';
                     if (c.comentarios && c.comentarios.trim() !== '') {
                         const bulletsHTML = c.comentarios.split('\n')
@@ -2096,14 +2086,15 @@
                     }
 
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
+                    
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
 
-                    // Formatação da Data (Apenas DD/MM/YYYY) e do Rastreio
                     const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
                     
+                    // RASTREIO BLINDADO: Apenas exige que haja texto (já não precisa de setas para aparecer)
                     let rastreioHtml = '';
-                    if (c.rastreio && c.rastreio.includes('➔')) {
+                    if (c.rastreio && String(c.rastreio).trim() !== '') {
                         rastreioHtml = `
                             <div class="card-rastreio">
                                 <span>🛤️ ${escapeHTML(c.rastreio)}</span>
@@ -2125,7 +2116,7 @@
                         </div>
                     `;
                     
-                    // Listeners de Ações aplicados internamente sem colidir com HTML injection
+                    // Listeners de Ações aplicados internamente
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio);
                     });
@@ -2164,7 +2155,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL (COM CAMPOS DATA E RASTREIO MANUAL)
+        // EDIÇÃO NO MODAL
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio) {
             document.getElementById('edit-id').value = id; 
@@ -2176,7 +2167,6 @@
             
             document.getElementById('edit-comments').value = comentarios || '';
             
-            // Tratamento da data para extrair apenas "YYYY-MM-DD" e carregar no input tipo 'date'
             let dateVal = '';
             if (dataCriacao) {
                 dateVal = String(dataCriacao).split('T')[0].split(' ')[0];
