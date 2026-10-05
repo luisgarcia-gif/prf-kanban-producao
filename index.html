@@ -468,29 +468,90 @@
             pointer-events: auto; 
         }
 
-        .card.prio-sem-cor { background-color: var(--bg-card) !important; border: 1px dashed var(--border-color); }
-        .card.prio-sem-cor * { color: var(--text-main) !important; }
-        .card.prio-sem-cor .card-info, .card.prio-sem-cor .btn-card { color: var(--text-secondary) !important; }
-        .card.prio-sem-cor .obra-badge { background: #cbd5e1 !important; color: #1e293b !important; }
-
-        .card.prio-retrabalho { background-color: #94a3b8 !important; border: none; }
-        .card.prio-retrabalho * { color: #ffffff !important; }
-
-        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
-        .card.prio-raio-x * { color: #ffffff !important; }
+        /* COR: SEM COR (BRANCO/TRACEJADO) */
+        .card.prio-sem-cor { 
+            background-color: var(--bg-card) !important; 
+            border: 1px dashed var(--border-color); 
+        }
         
-        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
-        .card.prio-vermelho * { color: #ffffff !important; }
+        .card.prio-sem-cor * { 
+            color: var(--text-main) !important; 
+        }
+        
+        .card.prio-sem-cor .card-info, 
+        .card.prio-sem-cor .btn-card { 
+            color: var(--text-secondary) !important; 
+        }
+        
+        .card.prio-sem-cor .obra-badge { 
+            background: #cbd5e1 !important; 
+            color: #1e293b !important; 
+        }
 
-        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
-        .card.prio-laranja * { color: #ffffff !important; }
+        /* COR: RETRABALHO (CINZA) */
+        .card.prio-retrabalho { 
+            background-color: #94a3b8 !important; 
+            border: none; 
+        }
 
-        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
-        .card.prio-amarelo * { color: #222222 !important; }
+        .card.prio-retrabalho * { 
+            color: #ffffff !important; 
+        }
 
-        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
-        .card.prio-normal .card-ref { color: var(--text-main) !important; }
-        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
+        /* COR: RAIO X (ROXO) */
+        .card.prio-raio-x { 
+            background-color: #9c27b0 !important; 
+            border: none; 
+        }
+
+        .card.prio-raio-x * { 
+            color: #ffffff !important; 
+        }
+        
+        /* COR: MÁXIMA (VERMELHO) */
+        .card.prio-vermelho { 
+            background-color: #ef5350 !important; 
+            border: none; 
+        }
+
+        .card.prio-vermelho * { 
+            color: #ffffff !important; 
+        }
+
+        /* COR: MÉDIA (LARANJA) */
+        .card.prio-laranja { 
+            background-color: #ff9800 !important; 
+            border: none; 
+        }
+
+        .card.prio-laranja * { 
+            color: #ffffff !important; 
+        }
+
+        /* COR: BAIXA (AMARELO) */
+        .card.prio-amarelo { 
+            background-color: #ffeb3b !important; 
+            border: none; 
+        }
+
+        .card.prio-amarelo * { 
+            color: #222222 !important; 
+        }
+
+        /* COR: NORMAL (AZUL CLARO / FUNDO PADRÃO) */
+        .card.prio-normal { 
+            background-color: var(--bg-card) !important; 
+            border: 1px solid var(--border-color); 
+        }
+
+        .card.prio-normal .card-ref { 
+            color: var(--text-main) !important; 
+        }
+
+        .card.prio-normal .card-info, 
+        .card.prio-normal .btn-card { 
+            color: var(--text-secondary) !important; 
+        }
 
         .obra-badge {
             display: inline-block; 
@@ -519,53 +580,6 @@
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
-        }
-
-        .card-rastreio { 
-            font-size: 9px; 
-            margin-top: 4px; 
-            color: #1e293b; 
-            background: rgba(0,0,0,0.08); 
-            padding: 4px 6px; 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: flex-start;
-            justify-content: space-between;
-        }
-
-        .card.prio-normal .card-rastreio { 
-            background: #f1f5f9; 
-        }
-
-        .card-rastreio span {
-            flex-grow: 1;
-            word-break: break-word;
-            line-height: 1.4;
-            padding-right: 5px;
-        }
-
-        .btn-rastreio-del { 
-            flex-shrink: 0;
-            cursor: pointer; 
-            color: #ef5350; 
-            font-weight: bold; 
-            background: none; 
-            border: none; 
-            font-size: 11px; 
-            padding: 0 4px; 
-        }
-
-        .btn-rastreio-del:hover { 
-            color: #b91c1c; 
-        }
-
-        .card-date { 
-            position: absolute; 
-            top: 8px; 
-            right: 8px; 
-            font-size: 9px; 
-            font-weight: bold; 
-            opacity: 0.7; 
         }
 
         .card-actions { 
@@ -784,11 +798,13 @@
                 <span class="menu-icon">📊</span>
                 <span class="menu-label">Quadro Produção</span>
             </div>
-            <!-- NOVO: MENU DO QUADRO LASER -->
+            
+            <!-- MENU DO QUADRO LASER (UPGRADE 2) -->
             <div class="menu-card" onclick="navesPara('page-laser')" style="border-color: #ef5350;">
                 <span class="menu-icon">🔥</span>
                 <span class="menu-label">Quadro Laser</span>
             </div>
+            
             <div class="menu-card" onclick="navesPara('page-consultas')">
                 <span class="menu-icon">🔍</span>
                 <span class="menu-label">Consultas</span>
@@ -813,9 +829,10 @@
                 <p style="font-size: 12px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
                     * <b>PESQUISA DE PRODUÇÃO:</b> Filtre obras no quadro geral.
                 </p>
-                <span id="db-counter-main" style="font-size: 13px; color: var(--prf-blue); font-weight: bold;">🟢 A carregar dados...</span>
+                <!-- RESOLUÇÃO DO BUG: O ID do contador tem que ser rigorosamente 'db-counter' -->
+                <span id="db-counter" style="font-size: 13px; color: var(--prf-blue); font-weight: bold;">🟢 A carregar dados...</span>
             </div>
-            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador..." onkeyup="renderizarKanbanComFiltro()">
+            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador, Material..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
         <!-- OPERAÇÕES EM LOTE -->
@@ -1480,13 +1497,12 @@
                 calcularKPIs();
             }
             
-            // Quando muda de separador, renderiza apenas os cartões pertencentes a esse quadro
             renderizarKanbanComFiltro();
             setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT (AGORA GUARDA DATA, RASTREIO E MATERIAL)
+        // CHECKPOINT 
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1661,7 +1677,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL (COM CAMPO MATERIAL ADICIONADO)
+        // ADICIONAR MANUAL 
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1712,9 +1728,9 @@
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
                 res = fallbackRes;
-                
-                mostrarAlerta('Aviso Crítico: Falta criar a coluna "material" no Supabase! Execute o comando SQL.');
-            } else if (res.error) {
+            }
+
+            if (res.error) {
                 return mostrarAlerta('Erro crítico ao adicionar obra. Verifique SQL: ' + res.error.message);
             }
 
@@ -1774,7 +1790,6 @@
                     const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
 
                     if (isCheckpoint) {
-                        // MODO CHECKPOINT
                         const colObra = headers.findIndex(h => String(h).toLowerCase().includes("obra"));
                         const colDesig = headers.findIndex(h => String(h).toLowerCase().includes("designa") || String(h).toLowerCase().includes("peça"));
                         const colFase = headers.findIndex(h => String(h).toLowerCase().includes("fase"));
@@ -1832,7 +1847,6 @@
                             }
                         }
                     } else {
-                        // MODO ENGENHARIA CASCATA
                         let lastSeenRef = 'MANUAL'; 
 
                         for (let i = 0; i < rows.length; i++) {
@@ -1979,7 +1993,6 @@
             const queryMain = document.getElementById('kanban-search-input') ? document.getElementById('kanban-search-input').value.trim().toLowerCase() : '';
             const queryLaser = document.getElementById('laser-search-input') ? document.getElementById('laser-search-input').value.trim().toLowerCase() : '';
             
-            // Limpa as colunas ativas para evitar duplicações
             document.querySelectorAll('.column-content').forEach(z => {
                 z.innerHTML = '';
             });
@@ -1989,7 +2002,6 @@
                     return;
                 }
                 
-                // RENDERIZAR QUADRO DE PRODUÇÃO
                 if (activePage === 'page-kanban') {
                     let mostrar = true; 
                     if (queryMain) {
@@ -2002,10 +2014,7 @@
                         renderCartaoMain(o);
                     }
                 }
-                
-                // RENDERIZAR QUADRO DO LASER
                 else if (activePage === 'page-laser') {
-                    // O Quadro do Laser só exibe obras cuja fase seja "Laser"
                     if (o.fase !== 'Laser') {
                         return;
                     }
@@ -2051,7 +2060,7 @@
                         <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${escapeHTML(o.fase)}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
-                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${escapeHTML(o.trabalhador || 'Não Atribuído')}</b> | 🏷️️ Prioridade: <b>${escapeHTML(o.prioridade || 'Normal')}</b> ${dataShow}
+                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${escapeHTML(o.trabalhador || 'Não Atribuído')}</b> | 🏷️ Prioridade: <b>${escapeHTML(o.prioridade || 'Normal')}</b> ${dataShow}
                     </div>
                 </div>
                 `;
@@ -2059,7 +2068,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP (ADAPTADO PARA OS DOIS QUADROS)
+        // DRAG AND DROP COM GERAÇÃO INTELIGENTE DE RASTREIO
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -2097,7 +2106,6 @@
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
                 if (idx !== -1) { 
-                    // Se foi arrastado para a coluna Laser no Quadro Principal, inicializa-o para o Quadro Laser
                     if (boardType === 'main' && novaFase === 'Laser') {
                         novoSetor = 'Aguardar Chapa';
                     }
@@ -2112,7 +2120,6 @@
                         novoOperador = todasAsObras[idx].trabalhador;
                     }
 
-                    // A LÓGICA DO RASTREIO - Diferencia entre Pessoas ou Fases do Laser
                     let trackLabel = '';
                     if (boardType === 'laser') {
                         trackLabel = 'Laser (' + novoSetor + ')';
@@ -2167,7 +2174,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO - MODO QUADRO DE PRODUÇÃO
+        // RENDER CARTÃO MAIN (QUADRO PRODUÇÃO)
         // -----------------------------------------------------
         function renderCartaoMain(c) {
             try {
@@ -2216,7 +2223,6 @@
                         removeBtnHtml = `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>`;
                     }
 
-                    // A MAGIA DO LASER: O Quadro de Produção deteta que o Laser já concluiu a peça e coloca a etiqueta verde.
                     let isReadyForProduction = (f === 'Laser' && s === 'Concluído');
                     let laserReadyBadge = isReadyForProduction ? `<div class="laser-ready-badge">✅ PRONTO P/ PRODUÇÃO</div><br>` : '';
 
@@ -2275,14 +2281,13 @@
         }
 
         // -----------------------------------------------------
-        // RENDER CARTÃO - MODO QUADRO LASER (NOVO UPGRADE)
+        // RENDER CARTÃO LASER
         // -----------------------------------------------------
         function renderCartaoLaser(c) {
             try {
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 const s = String(c.setor || 'Aguardar Chapa').replace(/"/g, '');
                 
-                // Tenta encontrar a coluna correspondente no Laser. Se não achar, atira para "Aguardar Chapa".
                 let z = document.querySelector(`#page-laser .column-content[data-setor="${s}"]`);
                 if (!z) {
                     z = document.querySelector(`#page-laser .column-content[data-setor="Aguardar Chapa"]`);
@@ -2302,7 +2307,6 @@
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
                     
-                    // No Laser não se mostra o trabalhador (pq as fases são as máquinas), mostramos o Material
                     el.innerHTML = `
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
@@ -2317,7 +2321,6 @@
                         <div class="card-actions">
                             <button class="btn-card btn-detalhes" style="color:var(--prf-blue-light) !important;">👁️ Detalhes</button>
                             <button class="btn-card btn-editar">✏️ Editar (Laser)</button>
-                            <!-- NOTE: O Botão Apagar não existe no Quadro Laser por segurança -->
                         </div>
                     `;
                     
@@ -2341,7 +2344,7 @@
         }
 
         // -----------------------------------------------------
-        // POP-UP DETALHES COM MATERIAL
+        // POP-UP DETALHES
         // -----------------------------------------------------
         function abrirModalDetalhes(c) {
             document.getElementById('details-badge').innerText = c.obra_ref || 'GERAL';
@@ -2384,6 +2387,15 @@
 
         function fecharDetalhes() {
             document.getElementById('details-modal').classList.remove('active');
+        }
+
+        async function limparRastreioCartao(id) {
+            const idx = todasAsObras.findIndex(o => o.id === id);
+            if (idx !== -1) {
+                todasAsObras[idx].rastreio = '';
+                await supabaseClient.from('cartoes_kanban').update({ rastreio: '' }).eq('id', id);
+                renderizarKanbanComFiltro();
+            }
         }
 
         // -----------------------------------------------------
@@ -2487,8 +2499,10 @@
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
-                
-                mostrarAlerta('O Material não foi gravado porque a coluna "material" não existe na tua Base de Dados. Executa o código SQL no Supabase para resolver.');
+            }
+
+            if (res.error) {
+                mostrarAlerta('Erro ao guardar as alterações: ' + res.error.message);
                 return;
             }
 
@@ -2567,7 +2581,9 @@
         // PAGINAÇÃO INFINITA AUTOMÁTICA
         // -----------------------------------------------------
         async function carregarTudo() {
-            document.getElementById('db-counter').innerText = `🟢 A carregar obras da BD...`;
+            const counterEl = document.getElementById('db-counter');
+            if(counterEl) counterEl.innerText = `🟢 A carregar obras da BD...`;
+            
             let allData = []; 
             let from = 0; 
             let step = 999; 
@@ -2594,9 +2610,8 @@
             }
             
             todasAsObras = allData;
-            document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
+            if(counterEl) counterEl.innerText = `🟢 ${todasAsObras.length} componentes carregados`;
             
-            // Só renderiza ao ligar a página. A navegação trata do resto.
             renderizarKanbanComFiltro();
             calcularKPIs(); 
         }
