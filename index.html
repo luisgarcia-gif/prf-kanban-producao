@@ -573,58 +573,10 @@
             word-break: break-word; 
             padding-right: 45px; 
         }
-        
+
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
-        }
-
-        /* O Rastreio visível no cartão */
-        .card-rastreio { 
-            font-size: 9px; 
-            margin-top: 4px; 
-            color: #1e293b; 
-            background: rgba(0,0,0,0.08); 
-            padding: 4px 6px; 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: flex-start;
-            justify-content: space-between;
-        }
-
-        .card.prio-normal .card-rastreio { 
-            background: #f1f5f9; 
-        }
-
-        .card-rastreio span {
-            flex-grow: 1;
-            word-break: break-word;
-            line-height: 1.4;
-            padding-right: 5px;
-        }
-
-        .btn-rastreio-del { 
-            flex-shrink: 0;
-            cursor: pointer; 
-            color: #ef5350; 
-            font-weight: bold; 
-            background: none; 
-            border: none; 
-            font-size: 11px; 
-            padding: 0 4px; 
-        }
-
-        .btn-rastreio-del:hover { 
-            color: #b91c1c; 
-        }
-
-        .card-date { 
-            position: absolute; 
-            top: 8px; 
-            right: 8px; 
-            font-size: 9px; 
-            font-weight: bold; 
-            opacity: 0.7; 
         }
 
         .card-actions { 
@@ -676,8 +628,8 @@
             gap: 12px; 
             color: var(--text-main); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            max-height: 90vh; /* Previne que o modal cresça para fora do ecrã */
-            overflow-y: auto; /* Adiciona scroll se for muito grande */
+            max-height: 90vh; 
+            overflow-y: auto; 
         }
 
         .modal h3 { 
@@ -697,6 +649,9 @@
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 10px;
             margin-bottom: 10px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start;
         }
         
         .details-title {
@@ -872,6 +827,8 @@
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
             <input type="number" id="new-pol" placeholder="Pol ('')" step="any" style="width: 70px;">
+            <!-- NOVA CAIXA MATERIAL AQUI -->
+            <input type="text" id="new-material" placeholder="Material (Ex: Inox)" style="width: 120px;">
             <select id="new-prio">
                 <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
                 <option value="Vermelho">🔴 Máxima</option>
@@ -953,7 +910,7 @@
                     </div>
                     
                     <div class="sub-sector">
-                        <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
+                        <div class="sub-sector-title">🛠️️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
                             <div class="worker-lane">
                                 <div class="worker-title">Jenifer</div>
@@ -1210,11 +1167,12 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO AVANÇADA -->
+    <!-- MODAL DE EDIÇÃO AVANÇADA (AGORA COM CAMPO DE MATERIAL) -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
             <h3>✏️ Editar Componente</h3>
             <input type="hidden" id="edit-id">
+            <input type="hidden" id="edit-material-original">
             
             <label>Código da Obra Mãe (ex: HY25003):</label>
             <input type="text" id="edit-obra">
@@ -1231,9 +1189,14 @@
                     <label>Polegadas ("):</label>
                     <input type="number" id="edit-pol" step="any" style="width:100%;">
                 </div>
+                <!-- NOVA CAIXA MATERIAL AQUI -->
+                <div style="flex:1;">
+                    <label>Material:</label>
+                    <input type="text" id="edit-material" placeholder="Ex: Inox" style="width:100%;">
+                </div>
             </div>
 
-            <label>Categoria / Prioridade:</label>
+            <label style="margin-top: 5px;">Categoria / Prioridade:</label>
             <select id="edit-prio">
                 <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
                 <option value="Vermelho">🔴 Prioridade Máxima</option>
@@ -1250,7 +1213,6 @@
                     <input type="date" id="edit-date" style="width:100%;">
                 </div>
                 <div style="flex:1;">
-                    <!-- AQUI FICA O ADICIONADOR DE NOMES. O UTILIZADOR SÓ ESCREVE O NOME. -->
                     <label>Adicionar Pessoa/Fase ao Rastreio:</label>
                     <input type="hidden" id="edit-rastreio-current">
                     <input type="text" id="edit-rastreio-add" placeholder="Ex: Manuel (Será anexado com //)" style="width:100%;">
@@ -1264,12 +1226,12 @@
 
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
                 <button class="btn-card" style="padding: 6px 12px !important; color: white !important; background: #555 !important; border-radius: 4px !important;" onclick="fecharModal()">Cancelar</button>
-                <button class="btn-action" onclick="salvarEdicao()">Guardar Alterações</button>
+                <button class="btn-action" onclick="verificarESalvarEdicao()">Guardar Alterações</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE DETALHES DA PEÇA (NOVO MÓDULO - UPGRADE 1) -->
+    <!-- MODAL DE DETALHES DA PEÇA -->
     <div id="details-modal" class="modal-overlay">
         <div class="modal" style="width: 500px;">
             <div class="details-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -1288,13 +1250,14 @@
                         <div><b>Prioridade:</b> <span id="details-prio">Normal</span></div>
                         <div><b>Peso:</b> <span id="details-kg">0</span> Kg</div>
                         <div><b>Tamanho:</b> <span id="details-pol">0</span>"</div>
+                        <!-- CAMPO NOVO NOS DETALHES -->
+                        <div><b>Material:</b> <span id="details-material">N/A</span></div>
                     </div>
                 </div>
                 
                 <div class="details-section" style="flex: 1; background: #f8fafc;">
                     <div class="details-section-title">📍 Rastreabilidade</div>
                     <div class="details-timeline" id="details-timeline">
-                        <!-- O Rastreio entra aqui -->
                     </div>
                 </div>
             </div>
@@ -1302,7 +1265,6 @@
             <div class="details-section">
                 <div class="details-section-title">💬 Observações e Comentários</div>
                 <ul class="details-comments-list" id="details-comments">
-                    <!-- Os Bullets entram aqui -->
                 </ul>
             </div>
         </div>
@@ -1481,7 +1443,7 @@
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT E BACKUPS
+        // CHECKPOINT (AGORA GUARDA DATA, RASTREIO E MATERIAL)
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1507,6 +1469,7 @@
                     "Peso (Kg)": pesoFinal, 
                     "Polegadas": o.polegadas || 0, 
                     "Prioridade": o.prioridade || 'Normal', 
+                    "Material": o.material || '',
                     "Comentários": o.comentarios || '',
                     "Data Criacao": o.data_criacao || '',
                     "Rastreio": o.rastreio || ''
@@ -1655,7 +1618,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL 
+        // ADICIONAR MANUAL (COM CAMPO MATERIAL ADICIONADO)
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1676,9 +1639,11 @@
         async function executarAdicionarObra(dataCriacaoStr) {
             const ref = document.getElementById('new-ref').value.trim(); 
             const prio = document.getElementById('new-prio').value;
-            
             const vKg = parseNumeroSeguro('new-kg');
             const vPol = parseNumeroSeguro('new-pol');
+            
+            // NOVO: Lê o material que o utilizador escolheu
+            const mat = document.getElementById('new-material').value.trim();
 
             const insertData = { 
                 obra_ref: 'MANUAL', 
@@ -1690,23 +1655,26 @@
                 fase: 'Projeto', 
                 trabalhador: 'Não Atribuído',
                 data_criacao: dataCriacaoStr,
-                rastreio: ''
+                rastreio: '',
+                material: sanitizeForDB(mat)
             };
 
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
             if (res.error) {
+                // FALLBACK MÁXIMO
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
                 delete fallbackData.polegadas;
                 delete fallbackData.data_criacao;
                 delete fallbackData.rastreio;
+                delete fallbackData.material;
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').insert([fallbackData]).select();
                 res = fallbackRes;
-            }
-
-            if (res.error) {
+                
+                mostrarAlerta('Aviso Crítico: Falta criar a coluna "material" no Supabase! Execute o comando SQL.');
+            } else if (res.error) {
                 return mostrarAlerta('Erro crítico ao adicionar obra. Verifique SQL: ' + res.error.message);
             }
 
@@ -1714,6 +1682,7 @@
                 document.getElementById('new-ref').value = ''; 
                 document.getElementById('new-kg').value = ''; 
                 document.getElementById('new-pol').value = '';
+                document.getElementById('new-material').value = ''; 
                 carregarTudo(); 
             }
         }
@@ -1765,6 +1734,7 @@
                     const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
 
                     if (isCheckpoint) {
+                        // MODO CHECKPOINT
                         const colObra = headers.findIndex(h => String(h).toLowerCase().includes("obra"));
                         const colDesig = headers.findIndex(h => String(h).toLowerCase().includes("designa") || String(h).toLowerCase().includes("peça"));
                         const colFase = headers.findIndex(h => String(h).toLowerCase().includes("fase"));
@@ -1776,6 +1746,7 @@
                         const colObs = headers.findIndex(h => String(h).toLowerCase().includes("coment") || String(h).toLowerCase().includes("obs"));
                         const colData = headers.findIndex(h => String(h).toLowerCase().includes("data"));
                         const colRastreio = headers.findIndex(h => String(h).toLowerCase().includes("rastreio"));
+                        const colMaterial = headers.findIndex(h => String(h).toLowerCase().includes("material"));
 
                         for (let i = 1; i < rows.length; i++) {
                             const row = rows[i];
@@ -1801,6 +1772,7 @@
                                 
                                 const dataExcel = colData !== -1 ? String(row[colData] || '') : '';
                                 const rastreioExcel = colRastreio !== -1 ? String(row[colRastreio] || '') : '';
+                                const materialExcel = colMaterial !== -1 ? String(row[colMaterial] || '') : '';
 
                                 obrasParaInserir.push({ 
                                     obra_ref: sanitizeForDB(refE || 'MANUAL'), 
@@ -1814,11 +1786,13 @@
                                     trabalhador: colTrab !== -1 ? sanitizeForDB(String(row[colTrab] || 'Não Atribuído')) : 'Não Atribuído',
                                     comentarios: sanitizeForDB(String(row[colObs] || '')),
                                     data_criacao: sanitizeForDB(dataExcel || dataCriacaoStr),
-                                    rastreio: sanitizeForDB(rastreioExcel)
+                                    rastreio: sanitizeForDB(rastreioExcel),
+                                    material: sanitizeForDB(materialExcel)
                                 });
                             }
                         }
                     } else {
+                        // MODO ENGENHARIA CASCATA
                         let lastSeenRef = 'MANUAL'; 
 
                         for (let i = 0; i < rows.length; i++) {
@@ -1903,7 +1877,8 @@
                                     setor: 'Geral', 
                                     trabalhador: sanitizeForDB(trab),
                                     data_criacao: dataCriacaoStr, 
-                                    rastreio: ''
+                                    rastreio: '',
+                                    material: ''
                                 });
                             }
                         }
@@ -1929,6 +1904,7 @@
                                 delete copy.polegadas; 
                                 delete copy.data_criacao; 
                                 delete copy.rastreio; 
+                                delete copy.material; 
                                 return copy;
                             });
                             const fallbackRes = await supabaseClient.from('cartoes_kanban').insert(loteSeguro).select();
@@ -1972,7 +1948,8 @@
                 let mostrar = true; 
                 
                 if (query) {
-                    const texto = `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.comentarios||''} ${o.prioridade||''}`.toLowerCase();
+                    // Adicionamos a pesquisa pelo material também
+                    const texto = `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.comentarios||''} ${o.prioridade||''} ${o.material||''}`.toLowerCase();
                     if (!texto.includes(query)) {
                         mostrar = false;
                     }
@@ -2020,7 +1997,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP (A LÓGICA DE RASTREIO AUTOMÁTICO COM " // ")
+        // DRAG AND DROP
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -2067,7 +2044,6 @@
                         novoOperador = todasAsObras[idx].trabalhador;
                     }
 
-                    // A LÓGICA DO RASTREIO - Regista na horizontal com " // "
                     let trackLabel = '';
                     if (novoOperador && novoOperador !== 'Não Atribuído') {
                         trackLabel = novoOperador;
@@ -2077,7 +2053,6 @@
                     
                     let currentRastreio = todasAsObras[idx].rastreio || '';
                     
-                    // Memória de Ponto de Partida
                     if (!currentRastreio && todasAsObras[idx].trabalhador && todasAsObras[idx].trabalhador !== 'Não Atribuído') {
                         currentRastreio = todasAsObras[idx].trabalhador;
                     }
@@ -2119,7 +2094,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (MODO CLEAN UI - UPGRADE 1)
+        // RENDER CARTÃO (MODO CLEAN UI COM NOVO PASSAGEM DO MATERIAL)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -2161,9 +2136,6 @@
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
                     
-                    // ============================================
-                    // UI LIMPA: RASTREIO E CRUZ NA MESMA LINHA DO NOME
-                    // ============================================
                     let workerDisplay = c.rastreio ? escapeHTML(c.rastreio) : safeTrab;
                     let removeBtnHtml = '';
                     
@@ -2171,7 +2143,6 @@
                         removeBtnHtml = `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>`;
                     }
 
-                    // NOTA: Os comentários gigantescos desapareceram daqui para ir para a Janela de Detalhes
                     el.innerHTML = `
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
@@ -2193,14 +2164,13 @@
                         </div>
                     `;
                     
-                    // Botão Detalhes (Abre a nova janela limpa)
                     el.querySelector('.btn-detalhes').addEventListener('click', () => {
                         abrirModalDetalhes(c);
                     });
 
-                    // Passamos a pessoa atual (t) para o modal de Edição
+                    // Modificado para passar o Material
                     el.querySelector('.btn-editar').addEventListener('click', () => {
-                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t);
+                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t, c.material);
                     });
 
                     el.querySelector('.btn-apagar').addEventListener('click', () => { 
@@ -2228,7 +2198,7 @@
         }
 
         // -----------------------------------------------------
-        // POP-UP DETALHES (UPGRADE 1 - BILHETE DE IDENTIDADE)
+        // POP-UP DETALHES (COM O NOVO CAMPO MATERIAL)
         // -----------------------------------------------------
         function abrirModalDetalhes(c) {
             document.getElementById('details-badge').innerText = c.obra_ref || 'GERAL';
@@ -2240,8 +2210,10 @@
             const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
             document.getElementById('details-kg').innerText = vKg;
             document.getElementById('details-pol').innerText = c.polegadas || 0;
+            
+            // Coloca o Material na janela de Detalhes
+            document.getElementById('details-material').innerText = c.material || 'N/A';
 
-            // Rastreio em formato lista (Timeline vertical mais legível)
             const timelineDiv = document.getElementById('details-timeline');
             let trackStr = c.rastreio || c.trabalhador || 'Não Atribuído';
             let steps = trackStr.split('//').map(s => s.trim()).filter(s => s !== '');
@@ -2255,7 +2227,6 @@
                 timelineDiv.innerHTML = '<i>Sem movimentações.</i>';
             }
 
-            // Comentários em Bullets
             const commentsUl = document.getElementById('details-comments');
             if (c.comentarios && c.comentarios.trim() !== '') {
                 commentsUl.innerHTML = c.comentarios.split('\n')
@@ -2283,9 +2254,9 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL (A SOLUÇÃO DO 'ADICIONAR MANUAL COM SOMA')
+        // EDIÇÃO NO MODAL COM VALIDAÇÃO DE MATERIAL
         // -----------------------------------------------------
-        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual) {
+        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual, material) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra || ''; 
             document.getElementById('edit-ref').value = ref || '';
@@ -2294,13 +2265,16 @@
             document.getElementById('edit-prio').value = prio || 'Normal'; 
             document.getElementById('edit-comments').value = comentarios || '';
             
+            // Define e guarda a memória do material
+            document.getElementById('edit-material').value = material || '';
+            document.getElementById('edit-material-original').value = material || '';
+            
             let dateVal = '';
             if (dataCriacao) {
                 dateVal = String(dataCriacao).split('T')[0].split(' ')[0];
             }
             document.getElementById('edit-date').value = dateVal;
             
-            // Lógica do Modal para a soma de rastreio
             let currentRast = rastreio || '';
             if (!currentRast && trabalhadorAtual && trabalhadorAtual !== 'Não Atribuído') {
                 currentRast = trabalhadorAtual;
@@ -2323,12 +2297,29 @@
             document.getElementById('edit-modal').classList.remove('active'); 
         }
 
-        async function salvarEdicao() {
+        // NOVO: Função intermédia que valida se o material mudou e pergunta ao utilizador
+        function verificarESalvarEdicao() {
+            const materialOriginal = document.getElementById('edit-material-original').value.trim();
+            const novoMaterial = document.getElementById('edit-material').value.trim();
+
+            if (materialOriginal !== novoMaterial) {
+                mostrarConfirmacao(
+                    `O tipo de material foi alterado de "${materialOriginal || 'Vazio'}" para "${novoMaterial}". Tem a certeza que deseja confirmar esta alteração?`,
+                    function() {
+                        executarSalvarEdicao(novoMaterial);
+                    }
+                );
+            } else {
+                // Se não mudou o material, grava direto sem perguntar
+                executarSalvarEdicao(novoMaterial);
+            }
+        }
+
+        async function executarSalvarEdicao(novoMaterial) {
             const id = document.getElementById('edit-id').value;
             const vKg = parseNumeroSeguro('edit-kg');
             const vPol = parseNumeroSeguro('edit-pol');
 
-            // Magia: Junta o que lá estava com o novo nome que escreveste
             let oldRastreio = document.getElementById('edit-rastreio-current').value.trim();
             let toAdd = document.getElementById('edit-rastreio-add').value.trim();
             let finalRastreio = oldRastreio;
@@ -2350,7 +2341,8 @@
                 prioridade: sanitizeForDB(document.getElementById('edit-prio').value), 
                 comentarios: sanitizeForDB(document.getElementById('edit-comments').value),
                 data_criacao: sanitizeForDB(document.getElementById('edit-date').value),
-                rastreio: sanitizeForDB(finalRastreio)
+                rastreio: sanitizeForDB(finalRastreio),
+                material: sanitizeForDB(novoMaterial)
             };
 
             let res = await supabaseClient.from('cartoes_kanban').update(updateData).eq('id', id);
@@ -2361,13 +2353,12 @@
                 delete fallbackData.polegadas;
                 delete fallbackData.data_criacao; 
                 delete fallbackData.rastreio;
+                delete fallbackData.material;
                 
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
-            }
-
-            if (res.error) {
-                mostrarAlerta('Erro ao guardar as alterações: ' + res.error.message);
+                
+                mostrarAlerta('O Material não foi gravado porque a coluna "material" não existe na tua Base de Dados. Executa o código SQL no Supabase para resolver.');
                 return;
             }
 
