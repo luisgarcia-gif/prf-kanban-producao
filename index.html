@@ -318,7 +318,7 @@
             flex-direction: column; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             border: 1px solid var(--border-color);
-            transform: translateZ(0); /* Aceleração de Hardware para evitar LAG */
+            transform: translateZ(0); 
         }
 
         .column.production-col { 
@@ -785,8 +785,8 @@
             <select id="new-prio">
                 <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
                 <option value="Vermelho">🔴 Máxima</option>
-                <option value="Laranja">🟠 Média</option>
-                <option value="Amarelo" selected>🟡 Baixa</option>
+                <option value="Laranja">🟠 Requisição Interna</option>
+                <option value="Amarelo" selected>🟡 Pintura Externa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
                 <option value="Retrabalho">🔘 Retrabalho</option>
@@ -1230,9 +1230,9 @@
                 <div class="kpi-title">Kg Soldados (Mês)</div>
                 <div class="kpi-value" id="kpi-tons-mes"><span style="font-size:14px; color:#94a3b8;">Requer Registo de Datas</span></div>
             </div>
-            <div class="kpi-card" style="border-left-color: #d32f2f;">
-                <div class="kpi-title">% Peças Rejeitadas</div>
-                <div class="kpi-value">Aguardar Exec.</div>
+            <div class="kpi-card" style="border-left-color: #ff9800;">
+                <div class="kpi-title">Requisições Internas (Laranja)</div>
+                <div class="kpi-value" id="kpi-req-interna">0 Unid</div>
             </div>
             <div class="kpi-card" style="border-left-color: #9c27b0;">
                 <div class="kpi-title">Total de Raio X</div>
@@ -1319,8 +1319,8 @@
             <select id="edit-prio">
                 <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
                 <option value="Vermelho">🔴 Prioridade Máxima</option>
-                <option value="Laranja">🟠 Prioridade Média</option>
-                <option value="Amarelo">🟡 Prioridade Baixa</option>
+                <option value="Laranja">🟠 Requisição Interna</option>
+                <option value="Amarelo">🟡 Pintura Externa</option>
                 <option value="Normal">🔵 Normal</option>
                 <option value="Raio X">🟣 Raio X</option>
                 <option value="Retrabalho">🔘 Retrabalho</option>
@@ -2073,7 +2073,6 @@
             const boardKanban = document.getElementById('boardKanban');
             const boardLaser = document.getElementById('boardLaser');
             
-            // ANTI-LAG: Esconde os quadros durante a montagem para evitar repinturas constantes (Layout Thrashing) no ecrã.
             boardKanban.style.display = 'none';
             boardLaser.style.display = 'none';
 
@@ -2118,7 +2117,6 @@
                 }
             });
             
-            // Retorna os quadros à visibilidade normal
             boardKanban.style.display = 'flex';
             boardLaser.style.display = 'flex';
 
@@ -2160,7 +2158,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP (ADAPTADO AOS DOIS QUADROS)
+        // DRAG AND DROP
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -2270,7 +2268,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO MAIN (QUADRO PRODUÇÃO)
+        // RENDER CARTÃO MAIN
         // -----------------------------------------------------
         function renderCartaoMain(c) {
             try {
@@ -2504,7 +2502,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL COM VALIDAÇÃO DE MATERIAL
+        // EDIÇÃO NO MODAL
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual, material) {
             document.getElementById('edit-id').value = id; 
@@ -2638,12 +2636,16 @@
 
             let totalRetrabalhos = 0;
             let retrabalhosConcluidos = 0;
+            let totalReqInterna = 0;
 
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
                 if (o.prioridade === 'Retrabalho') {
                     totalRetrabalhos++;
+                }
+                if (o.prioridade === 'Laranja') {
+                    totalReqInterna++;
                 }
 
                 if (o.fase !== 'Arquivado') {
@@ -2680,6 +2682,9 @@
             document.getElementById('kpi-em-fila').innerHTML = kgEmFila.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmFila + " unid)</span>";
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
+            
+            const elReqInt = document.getElementById('kpi-req-interna');
+            if (elReqInt) elReqInt.innerHTML = `${totalReqInterna} Unid`;
         }
 
         // -----------------------------------------------------
