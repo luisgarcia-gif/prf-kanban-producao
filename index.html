@@ -448,7 +448,7 @@
             cursor: grab; 
             user-select: none; 
             transition: transform 0.1s;
-            position: relative; /* Para a data se posicionar no canto */
+            position: relative;
         }
 
         .card:active { 
@@ -550,10 +550,6 @@
             color: var(--text-secondary) !important; 
         }
 
-        .card.prio-normal .card-comment { 
-            color: var(--prf-blue-dark) !important; 
-        }
-
         .obra-badge {
             display: inline-block; 
             background: rgba(0,0,0,0.3); 
@@ -577,39 +573,45 @@
             word-break: break-word; 
             padding-right: 45px; 
         }
-
+        
         .card-info { 
             font-size: 10px; 
             margin-top: 3px; 
         }
-        
-        .card-comment { 
-            font-size: 10px; 
-            font-style: italic; 
+
+        /* O Rastreio visível no cartão */
+        .card-rastreio { 
+            font-size: 9px; 
             margin-top: 4px; 
-            padding: 3px 5px; 
-            border-radius: 3px; 
-            background: rgba(255,255,255,0.2); 
+            color: #1e293b; 
+            background: rgba(0,0,0,0.08); 
+            padding: 4px 6px; 
+            border-radius: 4px; 
+            display: flex; 
+            align-items: flex-start;
+            justify-content: space-between;
         }
 
-        .card-comment-list { 
-            padding-left: 15px; 
-            margin: 2px 0; 
+        .card.prio-normal .card-rastreio { 
+            background: #f1f5f9; 
         }
 
-        .card-comment-list li { 
-            margin-bottom: 2px; 
+        .card-rastreio span {
+            flex-grow: 1;
+            word-break: break-word;
+            line-height: 1.4;
+            padding-right: 5px;
         }
 
         .btn-rastreio-del { 
+            flex-shrink: 0;
             cursor: pointer; 
             color: #ef5350; 
             font-weight: bold; 
             background: none; 
             border: none; 
-            font-size: 12px; 
+            font-size: 11px; 
             padding: 0 4px; 
-            flex-shrink: 0;
         }
 
         .btn-rastreio-del:hover { 
@@ -643,7 +645,7 @@
         }
 
         /* =========================================
-           MODAIS DE AVISOS E EDIÇÃO
+           MODAIS DE AVISOS, EDIÇÃO E DETALHES
            ========================================= */
         .modal-overlay {
             display: none; 
@@ -674,6 +676,8 @@
             gap: 12px; 
             color: var(--text-main); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-height: 90vh; /* Previne que o modal cresça para fora do ecrã */
+            overflow-y: auto; /* Adiciona scroll se for muito grande */
         }
 
         .modal h3 { 
@@ -686,6 +690,67 @@
             font-size: 12px; 
             color: var(--text-secondary); 
             margin-bottom: -6px; 
+        }
+
+        /* ESTILOS ESPECÍFICOS PARA O POP-UP DE DETALHES */
+        .details-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .details-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--prf-blue);
+            margin-bottom: 5px;
+        }
+
+        .details-badge {
+            display: inline-block;
+            background: var(--bg-subcard);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .details-section {
+            background: var(--bg-subcard);
+            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .details-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 4px;
+        }
+
+        .details-timeline {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--prf-blue-dark);
+            font-weight: 500;
+        }
+
+        .details-comments-list {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 12px;
+            color: var(--text-main);
+        }
+
+        .details-comments-list li {
+            margin-bottom: 6px;
         }
 
         /* =========================================
@@ -1150,7 +1215,6 @@
         <div class="modal">
             <h3>✏️ Editar Componente</h3>
             <input type="hidden" id="edit-id">
-            <input type="hidden" id="edit-trabalhador-atual">
             
             <label>Código da Obra Mãe (ex: HY25003):</label>
             <input type="text" id="edit-obra">
@@ -1186,14 +1250,13 @@
                     <input type="date" id="edit-date" style="width:100%;">
                 </div>
                 <div style="flex:1;">
+                    <!-- AQUI FICA O ADICIONADOR DE NOMES. O UTILIZADOR SÓ ESCREVE O NOME. -->
                     <label>Adicionar Pessoa/Fase ao Rastreio:</label>
-                    <!-- Campo escondido com o rastreio base para podermos somar em vez de substituir -->
                     <input type="hidden" id="edit-rastreio-current">
-                    <input type="text" id="edit-rastreio-add" placeholder="Ex: Igor (Será adicionado ao fim)" style="width:100%;">
+                    <input type="text" id="edit-rastreio-add" placeholder="Ex: Manuel (Será anexado com //)" style="width:100%;">
                 </div>
             </div>
             
-            <!-- Mostra ao utilizador como está a história do rastreio antes dele adicionar mais alguém -->
             <div id="current-rastreio-display" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; text-align: right; min-height: 12px;"></div>
 
             <label style="margin-top:10px;">Comentários / Observações (Use 'Enter' para criar Bullets):</label>
@@ -1202,6 +1265,45 @@
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
                 <button class="btn-card" style="padding: 6px 12px !important; color: white !important; background: #555 !important; border-radius: 4px !important;" onclick="fecharModal()">Cancelar</button>
                 <button class="btn-action" onclick="salvarEdicao()">Guardar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALHES DA PEÇA (NOVO MÓDULO - UPGRADE 1) -->
+    <div id="details-modal" class="modal-overlay">
+        <div class="modal" style="width: 500px;">
+            <div class="details-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <div class="details-badge" id="details-badge">HY25000</div>
+                    <div class="details-title" id="details-title">Referência da Peça</div>
+                </div>
+                <button class="btn-card" style="font-size: 16px !important; background: #e2e8f0 !important; padding: 4px 8px !important; border-radius: 4px !important;" onclick="fecharDetalhes()">✖</button>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                <div class="details-section" style="flex: 1;">
+                    <div class="details-section-title">📊 Dados de Produção</div>
+                    <div style="font-size: 12px; line-height: 1.6;">
+                        <div><b>Data Criação:</b> <span id="details-date">N/A</span></div>
+                        <div><b>Prioridade:</b> <span id="details-prio">Normal</span></div>
+                        <div><b>Peso:</b> <span id="details-kg">0</span> Kg</div>
+                        <div><b>Tamanho:</b> <span id="details-pol">0</span>"</div>
+                    </div>
+                </div>
+                
+                <div class="details-section" style="flex: 1; background: #f8fafc;">
+                    <div class="details-section-title">📍 Rastreabilidade</div>
+                    <div class="details-timeline" id="details-timeline">
+                        <!-- O Rastreio entra aqui -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <div class="details-section-title">💬 Observações e Comentários</div>
+                <ul class="details-comments-list" id="details-comments">
+                    <!-- Os Bullets entram aqui -->
+                </ul>
             </div>
         </div>
     </div>
@@ -1379,7 +1481,7 @@
         }
 
         // -----------------------------------------------------
-        // CHECKPOINT 
+        // CHECKPOINT E BACKUPS
         // -----------------------------------------------------
         function abrirMenuBackup() { 
             document.getElementById('backup-modal').classList.add('active'); 
@@ -1663,7 +1765,6 @@
                     const isCheckpoint = (headerStr.includes("obra") && headerStr.includes("fase"));
 
                     if (isCheckpoint) {
-                        // MODO CHECKPOINT
                         const colObra = headers.findIndex(h => String(h).toLowerCase().includes("obra"));
                         const colDesig = headers.findIndex(h => String(h).toLowerCase().includes("designa") || String(h).toLowerCase().includes("peça"));
                         const colFase = headers.findIndex(h => String(h).toLowerCase().includes("fase"));
@@ -1718,7 +1819,6 @@
                             }
                         }
                     } else {
-                        // MODO ENGENHARIA CASCATA
                         let lastSeenRef = 'MANUAL'; 
 
                         for (let i = 0; i < rows.length; i++) {
@@ -1920,7 +2020,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP COM GERAÇÃO INTELIGENTE DE RASTREIO
+        // DRAG AND DROP (A LÓGICA DE RASTREIO AUTOMÁTICO COM " // ")
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -1967,9 +2067,7 @@
                         novoOperador = todasAsObras[idx].trabalhador;
                     }
 
-                    // ============================================
-                    // A LÓGICA DO RASTREIO AUTOMÁTICO (CORRIGIDA)
-                    // ============================================
+                    // A LÓGICA DO RASTREIO - Regista na horizontal com " // "
                     let trackLabel = '';
                     if (novoOperador && novoOperador !== 'Não Atribuído') {
                         trackLabel = novoOperador;
@@ -1979,7 +2077,7 @@
                     
                     let currentRastreio = todasAsObras[idx].rastreio || '';
                     
-                    // Se o cartão nunca teve rastreio, temos de memorizar o ponto de partida!
+                    // Memória de Ponto de Partida
                     if (!currentRastreio && todasAsObras[idx].trabalhador && todasAsObras[idx].trabalhador !== 'Não Atribuído') {
                         currentRastreio = todasAsObras[idx].trabalhador;
                     }
@@ -2021,7 +2119,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (COM LAYOUT UNIFICADO E CRUZ ALINHADA)
+        // RENDER CARTÃO (MODO CLEAN UI - UPGRADE 1)
         // -----------------------------------------------------
         function renderCartao(c) {
             try {
@@ -2035,6 +2133,7 @@
                 }
 
                 let z = null;
+                
                 if (f && t && t !== 'Não Atribuído') {
                     z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
@@ -2058,40 +2157,22 @@
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
 
-                    let cmt = '';
-                    if (c.comentarios && c.comentarios.trim() !== '') {
-                        const bulletsHTML = c.comentarios.split('\n')
-                            .filter(line => line.trim() !== '')
-                            .map(line => `<li>${escapeHTML(line.trim())}</li>`)
-                            .join('');
-                        
-                        cmt = `
-                            <div class="card-comment">
-                                <ul class="card-comment-list">
-                                    ${bulletsHTML}
-                                </ul>
-                            </div>
-                        `;
-                    }
-
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
-                    const dataHtml = c.data_criacao ? `<div class="card-date">${formatarDataVisivel(c.data_criacao)}</div>` : '';
                     
                     // ============================================
-                    // RASTREIO NO CARTÃO (HORIZONTAL E UNIDO)
+                    // UI LIMPA: RASTREIO E CRUZ NA MESMA LINHA DO NOME
                     // ============================================
                     let workerDisplay = c.rastreio ? escapeHTML(c.rastreio) : safeTrab;
                     let removeBtnHtml = '';
                     
-                    // Apenas desenhamos a cruz de apagar se houver realmente rasto acumulado (contiver a barra dupla)
                     if (c.rastreio && c.rastreio.includes('//')) {
                         removeBtnHtml = `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>`;
                     }
 
+                    // NOTA: Os comentários gigantescos desapareceram daqui para ir para a Janela de Detalhes
                     el.innerHTML = `
-                        ${dataHtml}
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
                         
@@ -2104,16 +2185,20 @@
                                 ${removeBtnHtml}
                             </div>
                         </div>
-
-                        ${cmt}
                         
                         <div class="card-actions">
+                            <button class="btn-card btn-detalhes" style="color:var(--prf-blue-light) !important;">👁️ Detalhes</button>
                             <button class="btn-card btn-editar">✏️ Editar</button>
                             <button class="btn-card btn-apagar">🗑️ Apagar</button>
                         </div>
                     `;
                     
-                    // Passamos também a pessoa atual (t) para o modal saber de onde partir
+                    // Botão Detalhes (Abre a nova janela limpa)
+                    el.querySelector('.btn-detalhes').addEventListener('click', () => {
+                        abrirModalDetalhes(c);
+                    });
+
+                    // Passamos a pessoa atual (t) para o modal de Edição
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t);
                     });
@@ -2142,6 +2227,52 @@
             }
         }
 
+        // -----------------------------------------------------
+        // POP-UP DETALHES (UPGRADE 1 - BILHETE DE IDENTIDADE)
+        // -----------------------------------------------------
+        function abrirModalDetalhes(c) {
+            document.getElementById('details-badge').innerText = c.obra_ref || 'GERAL';
+            document.getElementById('details-title').innerText = c.referencia || 'Sem Referência';
+            
+            document.getElementById('details-date').innerText = c.data_criacao ? formatarDataVisivel(c.data_criacao) : 'N/A';
+            document.getElementById('details-prio').innerText = c.prioridade || 'Normal';
+            
+            const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
+            document.getElementById('details-kg').innerText = vKg;
+            document.getElementById('details-pol').innerText = c.polegadas || 0;
+
+            // Rastreio em formato lista (Timeline vertical mais legível)
+            const timelineDiv = document.getElementById('details-timeline');
+            let trackStr = c.rastreio || c.trabalhador || 'Não Atribuído';
+            let steps = trackStr.split('//').map(s => s.trim()).filter(s => s !== '');
+            
+            if (steps.length > 0) {
+                let html = steps.map((step, index) => {
+                    return `<div style="margin-bottom:4px;">${index + 1}. ${escapeHTML(step)}</div>`;
+                }).join('');
+                timelineDiv.innerHTML = html;
+            } else {
+                timelineDiv.innerHTML = '<i>Sem movimentações.</i>';
+            }
+
+            // Comentários em Bullets
+            const commentsUl = document.getElementById('details-comments');
+            if (c.comentarios && c.comentarios.trim() !== '') {
+                commentsUl.innerHTML = c.comentarios.split('\n')
+                    .filter(line => line.trim() !== '')
+                    .map(line => `<li>${escapeHTML(line.trim())}</li>`)
+                    .join('');
+            } else {
+                commentsUl.innerHTML = '<li style="list-style:none; color:var(--text-secondary); font-style:italic;">Sem observações registadas.</li>';
+            }
+
+            document.getElementById('details-modal').classList.add('active');
+        }
+
+        function fecharDetalhes() {
+            document.getElementById('details-modal').classList.remove('active');
+        }
+
         async function limparRastreioCartao(id) {
             const idx = todasAsObras.findIndex(o => o.id === id);
             if (idx !== -1) {
@@ -2152,7 +2283,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL (AGORA COM LÓGICA DE SOMA " // ")
+        // EDIÇÃO NO MODAL (A SOLUÇÃO DO 'ADICIONAR MANUAL COM SOMA')
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual) {
             document.getElementById('edit-id').value = id; 
