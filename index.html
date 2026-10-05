@@ -90,6 +90,7 @@
             display: flex; 
             gap: 10px; 
             align-items: center; 
+            flex-wrap: wrap;
         }
 
         .btn-header {
@@ -317,6 +318,7 @@
             flex-direction: column; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             border: 1px solid var(--border-color);
+            transform: translateZ(0); /* Aceleração de Hardware para evitar LAG */
         }
 
         .column.production-col { 
@@ -713,8 +715,10 @@
             <span>PRF Gas Solutions</span>
         </div>
         <div class="header-buttons">
-            <button class="btn-header btn-refresh" onclick="limparCacheERefresh()">🔄 Atualizar Página</button>
-            <button class="btn-header" onclick="navesPara('page-home')">🏠 Menu Inicial</button>
+            <button class="btn-header" style="background-color: #455a64;" onclick="navesPara('page-kanban')">📊 Produção</button>
+            <button class="btn-header" style="background-color: #ef5350;" onclick="navesPara('page-laser')">⚙️ Furação e Corte</button>
+            <button class="btn-header btn-refresh" onclick="limparCacheERefresh()">🔄 Atualizar</button>
+            <button class="btn-header" onclick="navesPara('page-home')">🏠 Menu</button>
         </div>
     </header>
 
@@ -818,7 +822,7 @@
 
             <!-- FURAÇÃO E CORTE NO QUADRO PRINCIPAL -->
             <div class="column" style="min-width: 200px; width: 200px; border: 2px solid #ef5350;">
-                <div class="column-header" style="color: #ef5350;">⚙️ Furação e Corte</div>
+                <div class="column-header" style="color: #ef5350;">⚙ Furação e Corte</div>
                 <div class="column-content" data-board="main" data-fase="Furação e Corte"></div>
             </div>
             
@@ -861,7 +865,7 @@
                     </div>
                     
                     <div class="sub-sector">
-                        <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
+                        <div class="sub-sector-title">🛠 SERRALHEIROS</div>
                         <div class="sub-sector-grid">
                             <div class="worker-lane">
                                 <div class="worker-title">Jenifer</div>
@@ -1259,7 +1263,7 @@
             
             <label style="color: #d32f2f; font-weight: bold; margin-bottom: 5px;">Recuperar Sistema (Em caso de erro Grave):</label>
             <label class="btn-action" style="background-color: #d32f2f !important; text-align: center; cursor: pointer;">
-                ♻️️ Restaurar Backup
+                ♻️ Restaurar Backup
                 <input type="file" id="restore-input" accept=".json" onchange="restaurarBackupJSON(event)" style="display:none;">
             </label>
 
@@ -1472,18 +1476,29 @@
         let operacaoPendenteData = null; 
 
         // -----------------------------------------------------
-        // SCROLL SINCRONIZADO E MÁGICO
+        // SCROLL SINCRONIZADO E MÁGICO (COM PREVENÇÃO DE LOOP DE LAG)
         // -----------------------------------------------------
         const topScrollWrapper = document.getElementById('topScrollWrapper');
         const boardKanban = document.getElementById('boardKanban');
         
+        let isSyncingTop = false;
+        let isSyncingBottom = false;
+
         topScrollWrapper.addEventListener('scroll', () => { 
-            boardKanban.scrollLeft = topScrollWrapper.scrollLeft; 
-        });
+            if (!isSyncingTop) {
+                isSyncingBottom = true;
+                boardKanban.scrollLeft = topScrollWrapper.scrollLeft; 
+            }
+            isSyncingTop = false;
+        }, { passive: true });
         
         boardKanban.addEventListener('scroll', () => { 
-            topScrollWrapper.scrollLeft = boardKanban.scrollLeft; 
-        });
+            if (!isSyncingBottom) {
+                isSyncingTop = true;
+                topScrollWrapper.scrollLeft = boardKanban.scrollLeft; 
+            }
+            isSyncingBottom = false;
+        }, { passive: true });
         
         function atualizarTamanhoScrollTopo() { 
             document.getElementById('topScrollDummy').style.width = boardKanban.scrollWidth + 'px'; 
@@ -1495,18 +1510,22 @@
             const edgeSize = 150; 
             const speed = 25; 
             
-            const activePage = document.querySelector('.page.active').id;
-            const currentBoard = activePage === 'page-laser' ? document.getElementById('boardLaser') : document.getElementById('boardKanban');
+            let currentBoard;
+            if (document.getElementById('page-laser').classList.contains('active')) {
+                currentBoard = document.getElementById('boardLaser');
+            } else if (document.getElementById('page-kanban').classList.contains('active')) {
+                currentBoard = document.getElementById('boardKanban');
+            }
 
             if (!currentBoard) {
                 return;
             }
             
             if (e.clientX > window.innerWidth - edgeSize) {
-                currentBoard.scrollBy({ left: speed, behavior: 'auto' });
+                currentBoard.scrollLeft += speed;
             } 
             else if (e.clientX < edgeSize) {
-                currentBoard.scrollBy({ left: -speed, behavior: 'auto' });
+                currentBoard.scrollLeft -= speed;
             }
         });
 
@@ -1557,7 +1576,6 @@
             }
             
             renderizarKanbanComFiltro();
-            setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
         // -----------------------------------------------------
@@ -1736,7 +1754,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL 
+        // ADICIONAR MANUAL
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -2045,13 +2063,20 @@
         }
 
         // -----------------------------------------------------
-        // PESQUISA E RENDERIZAÇÃO
+        // PESQUISA E RENDERIZAÇÃO GERAL (MECANISMO ANTI-LAG)
         // -----------------------------------------------------
         function renderizarKanbanComFiltro() {
             const activePage = document.querySelector('.page.active').id;
             const queryMain = document.getElementById('kanban-search-input') ? document.getElementById('kanban-search-input').value.trim().toLowerCase() : '';
             const queryLaser = document.getElementById('laser-search-input') ? document.getElementById('laser-search-input').value.trim().toLowerCase() : '';
             
+            const boardKanban = document.getElementById('boardKanban');
+            const boardLaser = document.getElementById('boardLaser');
+            
+            // ANTI-LAG: Esconde os quadros durante a montagem para evitar repinturas constantes (Layout Thrashing) no ecrã.
+            boardKanban.style.display = 'none';
+            boardLaser.style.display = 'none';
+
             document.querySelectorAll('.column-content').forEach(z => {
                 z.innerHTML = '';
             });
@@ -2075,10 +2100,8 @@
                     }
                 }
                 
-                // RENDERIZAR QUADRO DE FURAÇÃO E CORTE
+                // RENDERIZAR QUADRO DO DEPARTAMENTO FURAÇÃO E CORTE
                 else if (activePage === 'page-laser') {
-                    // CÓDIGO DE RESGATE: As obras antigas que estavam na fase "Laser" vão ser mostradas
-                    // e tratadas visualmente como se estivessem no novo departamento de "Furação e Corte"
                     if (o.fase !== 'Furação e Corte' && o.fase !== 'Laser') {
                         return;
                     }
@@ -2094,6 +2117,11 @@
                     }
                 }
             });
+            
+            // Retorna os quadros à visibilidade normal
+            boardKanban.style.display = 'flex';
+            boardLaser.style.display = 'flex';
+
             setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
@@ -2132,7 +2160,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP
+        // DRAG AND DROP (ADAPTADO AOS DOIS QUADROS)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -2242,14 +2270,13 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO MAIN
+        // RENDER CARTÃO MAIN (QUADRO PRODUÇÃO)
         // -----------------------------------------------------
         function renderCartaoMain(c) {
             try {
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 let f = String(c.fase || 'Projeto').replace(/"/g, ''); 
                 
-                // Resgate das obras perdidas no quadro geral se alguém as arrastou antes da mudança de nome
                 if (f === 'Laser') {
                     f = 'Furação e Corte';
                 }
@@ -2317,7 +2344,7 @@
                         
                         <div class="card-actions">
                             <button class="btn-card btn-detalhes" style="color:var(--prf-blue-light) !important;">👁️ Detalhes</button>
-                            <button class="btn-card btn-editar">✏️️ Editar</button>
+                            <button class="btn-card btn-editar">✏️ Editar</button>
                             <button class="btn-card btn-apagar">🗑️ Apagar</button>
                         </div>
                     `;
@@ -2361,7 +2388,6 @@
             try {
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 
-                // Resgate de Obras antigas:
                 let s = String(c.setor || '').replace(/"/g, '');
                 if (!s || s === 'Geral') {
                     s = 'Aguardar Chapa';
@@ -2478,7 +2504,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL
+        // EDIÇÃO NO MODAL COM VALIDAÇÃO DE MATERIAL
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual, material) {
             document.getElementById('edit-id').value = id; 
