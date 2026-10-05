@@ -704,6 +704,82 @@
             padding: 12px; 
             margin-bottom: 10px; 
         }
+
+        /* =========================================
+           ESTILOS DO NOVO MÓDULO: BRIEFING DIÁRIO
+           ========================================= */
+        .briefing-container {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .briefing-header-notes {
+            width: 100%;
+            border: 1px dashed var(--border-color);
+            padding: 10px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            background: var(--bg-subcard);
+            color: var(--text-main);
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .briefing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            background: #ffffff;
+        }
+        .briefing-table th {
+            background-color: #7cb342;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+        .briefing-table td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            vertical-align: top;
+            color: #1e293b;
+        }
+        .briefing-input {
+            width: 100%;
+            border: 1px solid transparent;
+            background: transparent;
+            font-family: inherit;
+            font-size: 12px;
+            color: #1e293b;
+            resize: vertical;
+        }
+        .briefing-input:focus {
+            border-bottom: 1px solid var(--prf-blue);
+            outline: none;
+            background: #fdfdfd;
+        }
+        .estado-red {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .briefing-action-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        /* CSS MÁGICO DA IMPRESSÃO (ESCONDE TUDO EXCETO O BRIEFING) */
+        @media print {
+            body * { visibility: hidden; }
+            #page-briefing, #page-briefing * { visibility: visible; }
+            #page-briefing { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
+            .briefing-table th { background-color: #7cb342 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .briefing-input { border: none !important; resize: none; overflow: visible; }
+            header, .menu-grid, .search-container, .briefing-action-bar { display: none !important; }
+            body { background-color: white; }
+        }
     </style>
 </head>
 <body>
@@ -749,9 +825,10 @@
                 <span class="menu-icon">📈</span>
                 <span class="menu-label">KPIs & Métricas</span>
             </div>
-            <div class="menu-card" onclick="navesPara('page-relatorios')">
-                <span class="menu-icon">📄</span>
-                <span class="menu-label">Relatórios</span>
+            <!-- MENU ALTERADO: DE RELATÓRIOS PARA BRIEFING DIÁRIO -->
+            <div class="menu-card" onclick="navesPara('page-briefing')" style="border-color: #7cb342;">
+                <span class="menu-icon">📋</span>
+                <span class="menu-label">Briefing Diário</span>
             </div>
         </div>
     </div>
@@ -820,7 +897,6 @@
                 <div class="column-content" data-board="main" data-fase="Material" data-operador="Camila"></div>
             </div>
 
-            <!-- FURAÇÃO E CORTE NO QUADRO PRINCIPAL -->
             <div class="column" style="min-width: 200px; width: 200px; border: 2px solid #ef5350;">
                 <div class="column-header" style="color: #ef5350;">⚙ Furação e Corte</div>
                 <div class="column-content" data-board="main" data-fase="Furação e Corte"></div>
@@ -841,18 +917,18 @@
                         <div class="sub-sector-grid">
                             <div class="worker-lane">
                                 <div class="worker-title">Suellen</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Tubistas" data-operador="Suellen"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Tubistas" data-operador="Suellen"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">José</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Tubistas" data-operador="José"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Tubistas" data-operador="José"></div>
@@ -869,27 +945,27 @@
                         <div class="sub-sector-grid">
                             <div class="worker-lane">
                                 <div class="worker-title">Jenifer</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Jenifer"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Serralheiros" data-operador="Jenifer"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Douglas</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Serralheiros" data-operador="Douglas"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Douglas"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Serralheiros" data-operador="Douglas"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Neto</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Neto"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Serralheiros" data-operador="Neto"></div>
@@ -906,45 +982,45 @@
                         <div class="sub-sector-grid">
                             <div class="worker-lane">
                                 <div class="worker-title">Alexandre</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Alexandre"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Alexandre"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Jorge</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Jorge"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Jorge"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Diogo</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Diogo"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Diogo"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Yaroslav</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Yaroslav"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Yaroslav"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Luís</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Luís"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Luís"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Luís"></div>
@@ -961,9 +1037,9 @@
                         <div class="sub-sector-grid">
                             <div class="worker-lane">
                                 <div class="worker-title">Oleh</div>
-                                <div class="zone-title">A Decorrer</div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                                 <div class="column-content" data-board="main" data-fase="Produção" data-setor="Orbital" data-operador="Oleh"></div>
-                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                                <div class="zone-title">Em Fila</div>
                                 <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Orbital" data-operador="Oleh"></div>
                                 <div class="zone-title">Pendente</div>
                                 <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Orbital" data-operador="Oleh"></div>
@@ -982,9 +1058,9 @@
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="worker-lane" style="margin: 6px; flex-grow: 1; border:none; background:transparent;">
-                    <div class="zone-title">A Decorrer</div>
+                    <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                     <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Qualidade" data-operador="Ismael"></div>
-                    <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                    <div class="zone-title">Em Fila</div>
                     <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Em Fila" data-setor="Qualidade" data-operador="Ismael"></div>
                     <div class="zone-title">Pendente</div>
                     <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-board="main" data-fase="Pendente" data-setor="Qualidade" data-operador="Ismael"></div>
@@ -994,9 +1070,9 @@
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Tratamento (Igor)</div>
                 <div class="worker-lane" style="margin: 6px; flex-grow: 1; border:none; background:transparent;">
-                    <div class="zone-title">A Decorrer</div>
+                    <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
                     <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Tratamento" data-operador="Igor"></div>
-                    <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
+                    <div class="zone-title">Em Fila</div>
                     <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Em Fila" data-setor="Tratamento" data-operador="Igor"></div>
                     <div class="zone-title">Pendente</div>
                     <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-board="main" data-fase="Pendente" data-setor="Tratamento" data-operador="Igor"></div>
@@ -1176,7 +1252,7 @@
         </div>
     </div>
 
-    <!-- PÁGINA 2: CONSULTAS -->
+    <!-- PÁGINA: CONSULTAS -->
     <div id="page-consultas" class="page">
         <h2>🔍 Consultar Obras & Operadores</h2>
         <div class="add-form" style="display: flex;">
@@ -1190,7 +1266,7 @@
         </div>
     </div>
 
-    <!-- PÁGINA 3: KPIS E MÉTRICAS -->
+    <!-- PÁGINA: KPIS E MÉTRICAS -->
     <div id="page-kpis" class="page">
         <h2 style="margin-top:0; color:var(--text-main);">📊 Estado Atual da Fábrica (Tempo Real)</h2>
         <div class="kpi-grid">
@@ -1241,12 +1317,42 @@
         </div>
     </div>
 
-    <!-- PÁGINA 4: RELATÓRIOS DIÁRIOS -->
-    <div id="page-relatorios" class="page">
-        <h2>📄 Gerar Planeamento Diário</h2>
-        <p style="color: var(--text-secondary);">Exportação do plano de trabalhos diário.</p>
-        <div>
-            <button class="btn-action" onclick="mostrarAlerta('Funcionalidade de exportação em desenvolvimento!')">📊 Exportar para Excel / PDF</button>
+    <!-- PÁGINA: NOVO MÓDULO BRIEFING DIÁRIO -->
+    <div id="page-briefing" class="page">
+        
+        <div class="briefing-action-bar no-print">
+            <div>
+                <button class="btn-action" style="background-color: #00bcd4 !important; color: #1e293b !important;" onclick="carregarBriefing()">📥 Sincronizar da Produção</button>
+                <button class="btn-action" style="background-color: #ffeb3b !important; color: #1e293b !important; margin-left: 10px;" onclick="guardarBriefingNaBD()">💾 Gravar Alterações na Produção</button>
+            </div>
+            <div>
+                <button class="btn-action" style="background-color: #7cb342 !important;" onclick="exportarBriefingExcel()">📊 Exportar Excel</button>
+                <button class="btn-action" style="background-color: #455a64 !important; margin-left: 10px;" onclick="imprimirBriefing()">🖨️ Imprimir / PDF</button>
+            </div>
+        </div>
+
+        <div class="briefing-container">
+            <!-- Cabeçalho do Briefing -->
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px;">
+                <h2 style="color: #7cb342; margin: 0;" id="briefing-date-title">PLANO DIÁRIO</h2>
+                <span class="no-print" style="font-size: 11px; color: var(--text-secondary);">* Edite a tabela livremente. Clique em Gravar para espelhar as notas nos cartões.</span>
+            </div>
+            
+            <textarea class="briefing-header-notes" rows="4" placeholder="Anotações Gerais da Chefia (Ex: Direcionadas à produção; visitantes na instalação...)"></textarea>
+
+            <table class="briefing-table" id="briefing-table-export">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Funcionário</th>
+                        <th style="width: 15%;">Obra</th>
+                        <th style="width: 55%;">Trabalho</th>
+                        <th style="width: 15%;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="briefing-tbody">
+                    <!-- Conteúdo injetado via JavaScript -->
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -1510,12 +1616,8 @@
             const edgeSize = 150; 
             const speed = 25; 
             
-            let currentBoard;
-            if (document.getElementById('page-laser').classList.contains('active')) {
-                currentBoard = document.getElementById('boardLaser');
-            } else if (document.getElementById('page-kanban').classList.contains('active')) {
-                currentBoard = document.getElementById('boardKanban');
-            }
+            const activePage = document.querySelector('.page.active').id;
+            const currentBoard = activePage === 'page-laser' ? document.getElementById('boardLaser') : document.getElementById('boardKanban');
 
             if (!currentBoard) {
                 return;
@@ -1574,8 +1676,96 @@
             if (pageId === 'page-kpis') {
                 calcularKPIs();
             }
+            if (pageId === 'page-briefing') {
+                carregarBriefing();
+            }
             
             renderizarKanbanComFiltro();
+        }
+
+        // -----------------------------------------------------
+        // NOVO MÓDULO: BRIEFING DIÁRIO
+        // -----------------------------------------------------
+        const trabalhadoresBriefing = ['Camila', 'José Henriques', 'Suellen', 'Oleh', 'Yaroslav', 'Luís Agostinho', 'Diogo Santos', 'Jorge Vieira', 'Pedro Santos', 'André', 'Alexandre', 'Jenifer', 'Neto', 'Igor', 'Douglas', 'Davi'];
+
+        function carregarBriefing() {
+            const tbody = document.getElementById('briefing-tbody');
+            let html = '';
+            
+            const hoje = new Date();
+            document.getElementById('briefing-date-title').innerText = `${hoje.getDate()}/${hoje.getMonth()+1} - PLANO DIÁRIO`;
+
+            trabalhadoresBriefing.forEach(trab => {
+                // Simplificação do nome para procurar na Base de Dados (ex: 'José Henriques' procura por 'José')
+                const primeiroNome = trab.split(' ')[0].toLowerCase();
+                
+                const obrasTrab = todasAsObras.filter(o => 
+                    o.trabalhador && 
+                    o.trabalhador.toLowerCase().includes(primeiroNome) && 
+                    o.fase !== 'Arquivado' && 
+                    !o.fase.includes('Concluído')
+                );
+
+                if (obrasTrab.length > 0) {
+                    obrasTrab.forEach((o, index) => {
+                        let desc = o.referencia;
+                        if(o.comentarios && o.comentarios.trim() !== '') {
+                            desc += '\n' + o.comentarios;
+                        }
+                        
+                        html += `
+                        <tr data-card-id="${o.id}">
+                            ${index === 0 ? `<td rowspan="${obrasTrab.length}" style="background:#f4f6f8;"><b>${trab}</b></td>` : ''}
+                            <td><input type="text" class="briefing-input b-obra" value="${escapeHTML(o.obra_ref || '')}" readonly></td>
+                            <td><textarea class="briefing-input b-trab" rows="2">${escapeHTML(desc)}</textarea></td>
+                            <td><input type="text" class="briefing-input b-est estado-red" placeholder=""></td>
+                        </tr>
+                        `;
+                    });
+                } else {
+                    html += `
+                    <tr data-worker="${trab}">
+                        <td style="background:#f4f6f8;"><b>${trab}</b></td>
+                        <td><input type="text" class="briefing-input" placeholder="..."></td>
+                        <td><textarea class="briefing-input" rows="2" placeholder="Escrever tarefa..."></textarea></td>
+                        <td><input type="text" class="briefing-input estado-red" placeholder=""></td>
+                    </tr>
+                    `;
+                }
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        async function guardarBriefingNaBD() {
+            mostrarAlerta("A sincronizar briefing com a Base de Dados...");
+            const rows = document.querySelectorAll('#briefing-tbody tr[data-card-id]');
+            let updates = [];
+            
+            rows.forEach(row => {
+                const id = row.getAttribute('data-card-id');
+                const text = row.querySelector('.b-trab').value;
+                updates.push({ id: id, comentarios: sanitizeForDB(text) });
+            });
+
+            for(let u of updates) {
+                await supabaseClient.from('cartoes_kanban').update({ comentarios: u.comentarios }).eq('id', u.id);
+            }
+            
+            mostrarAlerta("Sincronizado com sucesso!");
+            carregarTudo(); 
+        }
+
+        function imprimirBriefing() {
+            window.print();
+        }
+
+        function exportarBriefingExcel() {
+            const table = document.getElementById('briefing-table-export');
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Briefing");
+            XLSX.writeFile(wb, `Briefing_Producao_${dataHojeStr()}.xlsx`);
         }
 
         // -----------------------------------------------------
@@ -2268,7 +2458,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO MAIN
+        // RENDER CARTÃO MAIN (QUADRO PRODUÇÃO)
         // -----------------------------------------------------
         function renderCartaoMain(c) {
             try {
