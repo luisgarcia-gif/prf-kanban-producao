@@ -176,10 +176,12 @@
         }
 
         .menu-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 210px); 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 15px; 
             margin-top: 15px; 
+            max-width: 800px;
         }
 
         .menu-card {
@@ -193,6 +195,7 @@
             flex-direction: column; 
             align-items: center; 
             gap: 10px;
+            width: 210px;
         }
 
         .menu-card:hover { 
@@ -465,90 +468,29 @@
             pointer-events: auto; 
         }
 
-        /* COR: SEM COR (BRANCO/TRACEJADO) */
-        .card.prio-sem-cor { 
-            background-color: var(--bg-card) !important; 
-            border: 1px dashed var(--border-color); 
-        }
+        .card.prio-sem-cor { background-color: var(--bg-card) !important; border: 1px dashed var(--border-color); }
+        .card.prio-sem-cor * { color: var(--text-main) !important; }
+        .card.prio-sem-cor .card-info, .card.prio-sem-cor .btn-card { color: var(--text-secondary) !important; }
+        .card.prio-sem-cor .obra-badge { background: #cbd5e1 !important; color: #1e293b !important; }
+
+        .card.prio-retrabalho { background-color: #94a3b8 !important; border: none; }
+        .card.prio-retrabalho * { color: #ffffff !important; }
+
+        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
+        .card.prio-raio-x * { color: #ffffff !important; }
         
-        .card.prio-sem-cor * { 
-            color: var(--text-main) !important; 
-        }
-        
-        .card.prio-sem-cor .card-info, 
-        .card.prio-sem-cor .btn-card { 
-            color: var(--text-secondary) !important; 
-        }
-        
-        .card.prio-sem-cor .obra-badge { 
-            background: #cbd5e1 !important; 
-            color: #1e293b !important; 
-        }
+        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
+        .card.prio-vermelho * { color: #ffffff !important; }
 
-        /* COR: RETRABALHO (CINZA) */
-        .card.prio-retrabalho { 
-            background-color: #94a3b8 !important; 
-            border: none; 
-        }
+        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
+        .card.prio-laranja * { color: #ffffff !important; }
 
-        .card.prio-retrabalho * { 
-            color: #ffffff !important; 
-        }
+        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
+        .card.prio-amarelo * { color: #222222 !important; }
 
-        /* COR: RAIO X (ROXO) */
-        .card.prio-raio-x { 
-            background-color: #9c27b0 !important; 
-            border: none; 
-        }
-
-        .card.prio-raio-x * { 
-            color: #ffffff !important; 
-        }
-        
-        /* COR: MÁXIMA (VERMELHO) */
-        .card.prio-vermelho { 
-            background-color: #ef5350 !important; 
-            border: none; 
-        }
-
-        .card.prio-vermelho * { 
-            color: #ffffff !important; 
-        }
-
-        /* COR: MÉDIA (LARANJA) */
-        .card.prio-laranja { 
-            background-color: #ff9800 !important; 
-            border: none; 
-        }
-
-        .card.prio-laranja * { 
-            color: #ffffff !important; 
-        }
-
-        /* COR: BAIXA (AMARELO) */
-        .card.prio-amarelo { 
-            background-color: #ffeb3b !important; 
-            border: none; 
-        }
-
-        .card.prio-amarelo * { 
-            color: #222222 !important; 
-        }
-
-        /* COR: NORMAL (AZUL CLARO / FUNDO PADRÃO) */
-        .card.prio-normal { 
-            background-color: var(--bg-card) !important; 
-            border: 1px solid var(--border-color); 
-        }
-
-        .card.prio-normal .card-ref { 
-            color: var(--text-main) !important; 
-        }
-
-        .card.prio-normal .card-info, 
-        .card.prio-normal .btn-card { 
-            color: var(--text-secondary) !important; 
-        }
+        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
+        .card.prio-normal .card-ref { color: var(--text-main) !important; }
+        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
 
         .obra-badge {
             display: inline-block; 
@@ -579,6 +521,53 @@
             margin-top: 3px; 
         }
 
+        .card-rastreio { 
+            font-size: 9px; 
+            margin-top: 4px; 
+            color: #1e293b; 
+            background: rgba(0,0,0,0.08); 
+            padding: 4px 6px; 
+            border-radius: 4px; 
+            display: flex; 
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .card.prio-normal .card-rastreio { 
+            background: #f1f5f9; 
+        }
+
+        .card-rastreio span {
+            flex-grow: 1;
+            word-break: break-word;
+            line-height: 1.4;
+            padding-right: 5px;
+        }
+
+        .btn-rastreio-del { 
+            flex-shrink: 0;
+            cursor: pointer; 
+            color: #ef5350; 
+            font-weight: bold; 
+            background: none; 
+            border: none; 
+            font-size: 11px; 
+            padding: 0 4px; 
+        }
+
+        .btn-rastreio-del:hover { 
+            color: #b91c1c; 
+        }
+
+        .card-date { 
+            position: absolute; 
+            top: 8px; 
+            right: 8px; 
+            font-size: 9px; 
+            font-weight: bold; 
+            opacity: 0.7; 
+        }
+
         .card-actions { 
             display: flex; 
             justify-content: space-between; 
@@ -594,6 +583,17 @@
             font-size: 11px !important; 
             padding: 0 !important; 
             font-weight: bold; 
+        }
+
+        .laser-ready-badge {
+            background: #2e7d32;
+            color: #ffffff;
+            padding: 2px 5px;
+            font-size: 9px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 4px;
         }
 
         /* =========================================
@@ -782,7 +782,12 @@
         <div class="menu-grid">
             <div class="menu-card" onclick="navesPara('page-kanban')">
                 <span class="menu-icon">📊</span>
-                <span class="menu-label">Quadro Kanban</span>
+                <span class="menu-label">Quadro Produção</span>
+            </div>
+            <!-- NOVO: MENU DO QUADRO LASER -->
+            <div class="menu-card" onclick="navesPara('page-laser')" style="border-color: #ef5350;">
+                <span class="menu-icon">🔥</span>
+                <span class="menu-label">Quadro Laser</span>
             </div>
             <div class="menu-card" onclick="navesPara('page-consultas')">
                 <span class="menu-icon">🔍</span>
@@ -799,18 +804,18 @@
         </div>
     </div>
 
-    <!-- PÁGINA KANBAN -->
+    <!-- PÁGINA KANBAN (QUADRO DE PRODUÇÃO PRINCIPAL) -->
     <div id="page-kanban" class="page">
         
         <!-- BARRA DE PESQUISA -->
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 12px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
-                    * <b>PESQUISA GLOBAL:</b> Escreva algo para filtrar o quadro completo e encontrar o que procura.
+                    * <b>PESQUISA DE PRODUÇÃO:</b> Filtre obras no quadro geral.
                 </p>
-                <span id="db-counter" style="font-size: 13px; color: var(--prf-blue); font-weight: bold;">🟢 A carregar dados...</span>
+                <span id="db-counter-main" style="font-size: 13px; color: var(--prf-blue); font-weight: bold;">🟢 A carregar dados...</span>
             </div>
-            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador ou Fase..." onkeyup="renderizarKanbanComFiltro()">
+            <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
         <!-- OPERAÇÕES EM LOTE -->
@@ -827,7 +832,6 @@
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
             <input type="number" id="new-pol" placeholder="Pol ('')" step="any" style="width: 70px;">
-            <!-- NOVA CAIXA MATERIAL AQUI -->
             <input type="text" id="new-material" placeholder="Material (Ex: Inox)" style="width: 120px;">
             <select id="new-prio">
                 <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
@@ -856,24 +860,24 @@
             
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Projeto</div>
-                <div class="column-content" data-fase="Projeto"></div>
+                <div class="column-content" data-board="main" data-fase="Projeto"></div>
             </div>
             
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Desenho</div>
-                <div class="column-content" data-fase="Desenho"></div>
+                <div class="column-content" data-board="main" data-fase="Desenho"></div>
             </div>
             
             <!-- MATERIAL -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
-                <div class="column-content" data-fase="Material" data-operador="Camila"></div>
+                <div class="column-content" data-board="main" data-fase="Material" data-operador="Camila"></div>
             </div>
 
-            <!-- LASER -->
-            <div class="column" style="min-width: 200px; width: 200px;">
-                <div class="column-header">Laser</div>
-                <div class="column-content" data-fase="Laser"></div>
+            <!-- LASER NO QUADRO PRINCIPAL -->
+            <div class="column" style="min-width: 200px; width: 200px; border: 2px solid #ef5350;">
+                <div class="column-header" style="color: #ef5350;">Laser (Departamento)</div>
+                <div class="column-content" data-board="main" data-fase="Laser"></div>
             </div>
 
             <!-- ÁREA DE PRODUÇÃO -->
@@ -887,61 +891,61 @@
                             <div class="worker-lane">
                                 <div class="worker-title">Suellen</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Tubistas" data-operador="Suellen"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Tubistas" data-operador="Suellen"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Tubistas" data-operador="Suellen"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Tubistas" data-operador="Suellen"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Tubistas" data-operador="Suellen"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">José</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Tubistas" data-operador="José"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Tubistas" data-operador="José"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Tubistas" data-operador="José"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Tubistas" data-operador="José"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Tubistas" data-operador="José"></div>
                             </div>
                             <div class="sector-done-lane">
                                 <div class="worker-title">✅ Concluído</div>
-                                <div class="column-content" data-fase="Concluído Setor" data-setor="Tubistas" data-operador="Qualquer"></div>
+                                <div class="column-content" data-board="main" data-fase="Concluído Setor" data-setor="Tubistas" data-operador="Qualquer"></div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="sub-sector">
-                        <div class="sub-sector-title">🛠️️ SERRALHEIROS</div>
+                        <div class="sub-sector-title">🛠️ SERRALHEIROS</div>
                         <div class="sub-sector-grid">
                             <div class="worker-lane">
                                 <div class="worker-title">Jenifer</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Serralheiros" data-operador="Jenifer"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Jenifer"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Jenifer"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Jenifer"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Serralheiros" data-operador="Jenifer"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Douglas</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Douglas"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Serralheiros" data-operador="Douglas"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Douglas"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Douglas"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Douglas"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Serralheiros" data-operador="Douglas"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Neto</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Serralheiros" data-operador="Neto"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Neto"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Serralheiros" data-operador="Neto"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Serralheiros" data-operador="Neto"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Serralheiros" data-operador="Neto"></div>
                             </div>
                             <div class="sector-done-lane">
                                 <div class="worker-title">✅ Concluído</div>
-                                <div class="column-content" data-fase="Concluído Setor" data-setor="Serralheiros" data-operador="Qualquer"></div>
+                                <div class="column-content" data-board="main" data-fase="Concluído Setor" data-setor="Serralheiros" data-operador="Qualquer"></div>
                             </div>
                         </div>
                     </div>
@@ -952,51 +956,51 @@
                             <div class="worker-lane">
                                 <div class="worker-title">Alexandre</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Alexandre"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Soldadores" data-operador="Alexandre"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Alexandre"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Alexandre"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Alexandre"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Jorge</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Jorge"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Soldadores" data-operador="Jorge"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Jorge"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Jorge"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Jorge"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Diogo</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Diogo"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Soldadores" data-operador="Diogo"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Diogo"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Diogo"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Diogo"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Yaroslav</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Yaroslav"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Soldadores" data-operador="Yaroslav"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Yaroslav"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Yaroslav"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Yaroslav"></div>
                             </div>
                             <div class="worker-lane">
                                 <div class="worker-title">Luís</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Soldadores" data-operador="Luís"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Soldadores" data-operador="Luís"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Soldadores" data-operador="Luís"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Soldadores" data-operador="Luís"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Soldadores" data-operador="Luís"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Soldadores" data-operador="Luís"></div>
                             </div>
                             <div class="sector-done-lane">
                                 <div class="worker-title">✅ Concluído</div>
-                                <div class="column-content" data-fase="Concluído Setor" data-setor="Soldadores" data-operador="Qualquer"></div>
+                                <div class="column-content" data-board="main" data-fase="Concluído Setor" data-setor="Soldadores" data-operador="Qualquer"></div>
                             </div>
                         </div>
                     </div>
@@ -1007,15 +1011,15 @@
                             <div class="worker-lane">
                                 <div class="worker-title">Oleh</div>
                                 <div class="zone-title">A Decorrer</div>
-                                <div class="column-content" data-fase="Produção" data-setor="Orbital" data-operador="Oleh"></div>
+                                <div class="column-content" data-board="main" data-fase="Produção" data-setor="Orbital" data-operador="Oleh"></div>
                                 <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                                <div class="column-content" data-fase="Em Fila" data-setor="Orbital" data-operador="Oleh"></div>
+                                <div class="column-content" data-board="main" data-fase="Em Fila" data-setor="Orbital" data-operador="Oleh"></div>
                                 <div class="zone-title">Pendente</div>
-                                <div class="column-content" data-fase="Pendente" data-setor="Orbital" data-operador="Oleh"></div>
+                                <div class="column-content" data-board="main" data-fase="Pendente" data-setor="Orbital" data-operador="Oleh"></div>
                             </div>
                             <div class="sector-done-lane">
                                 <div class="worker-title">✅ Concluído</div>
-                                <div class="column-content" data-fase="Concluído Setor" data-setor="Orbital" data-operador="Qualquer"></div>
+                                <div class="column-content" data-board="main" data-fase="Concluído Setor" data-setor="Orbital" data-operador="Qualquer"></div>
                             </div>
                         </div>
                     </div>
@@ -1028,11 +1032,11 @@
                 <div class="column-header">Qualidade (Ismael)</div>
                 <div class="worker-lane" style="margin: 6px; flex-grow: 1; border:none; background:transparent;">
                     <div class="zone-title">A Decorrer</div>
-                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Qualidade" data-operador="Ismael"></div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Qualidade" data-operador="Ismael"></div>
                     <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Em Fila" data-setor="Qualidade" data-operador="Ismael"></div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Em Fila" data-setor="Qualidade" data-operador="Ismael"></div>
                     <div class="zone-title">Pendente</div>
-                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-fase="Pendente" data-setor="Qualidade" data-operador="Ismael"></div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-board="main" data-fase="Pendente" data-setor="Qualidade" data-operador="Ismael"></div>
                 </div>
             </div>
             
@@ -1040,19 +1044,55 @@
                 <div class="column-header">Tratamento (Igor)</div>
                 <div class="worker-lane" style="margin: 6px; flex-grow: 1; border:none; background:transparent;">
                     <div class="zone-title">A Decorrer</div>
-                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Tratamento" data-operador="Igor"></div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Tratamento" data-operador="Igor"></div>
                     <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Fila</div>
-                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-fase="Em Fila" data-setor="Tratamento" data-operador="Igor"></div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card); margin-bottom:5px;" data-board="main" data-fase="Em Fila" data-setor="Tratamento" data-operador="Igor"></div>
                     <div class="zone-title">Pendente</div>
-                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-fase="Pendente" data-setor="Tratamento" data-operador="Igor"></div>
+                    <div class="column-content" style="border: 1px solid var(--border-color); border-radius:4px; background:var(--bg-card);" data-board="main" data-fase="Pendente" data-setor="Tratamento" data-operador="Igor"></div>
                 </div>
             </div>
 
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Concluído Final</div>
-                <div class="column-content" data-fase="Concluído"></div>
+                <div class="column-content" data-board="main" data-fase="Concluído"></div>
             </div>
             
+        </div>
+    </div>
+
+    <!-- PÁGINA LASER (NOVO QUADRO EXCLUSIVO - UPGRADE 2) -->
+    <div id="page-laser" class="page">
+        <h2 style="color: #ef5350; margin-top: 0;">🔥 Departamento de Laser</h2>
+        
+        <!-- BARRA DE PESQUISA DO LASER -->
+        <div class="search-container" style="border-color: #ef5350;">
+            <p style="font-size: 12px; color: #ef5350; margin-top: 0; margin-bottom: 8px;">
+                * Apenas são exibidas obras que a Produção enviou para a secção Laser.
+            </p>
+            <input type="text" id="laser-search-input" class="search-input-large" placeholder="🔎 Pesquisar Peça no Laser..." onkeyup="renderizarKanbanComFiltro()">
+        </div>
+
+        <!-- QUADRO LASER -->
+        <div class="board" id="boardLaser">
+            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #94a3b8;">
+                <div class="column-header" style="color: #64748b;">⏳ Aguardar Chapa</div>
+                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Aguardar Chapa"></div>
+            </div>
+            
+            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #ff9800;">
+                <div class="column-header" style="color: #f57c00;">✂️ Em Corte</div>
+                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Em Corte"></div>
+            </div>
+            
+            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #0097A7;">
+                <div class="column-header" style="color: #00796B;">📐 Quinagem</div>
+                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Quinagem"></div>
+            </div>
+
+            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #2e7d32;">
+                <div class="column-header" style="color: #1b5e20;">✅ Concluído (Pronto)</div>
+                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Concluído"></div>
+            </div>
         </div>
     </div>
 
@@ -1167,7 +1207,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO AVANÇADA (AGORA COM CAMPO DE MATERIAL) -->
+    <!-- MODAL DE EDIÇÃO AVANÇADA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
             <h3>✏️ Editar Componente</h3>
@@ -1189,7 +1229,6 @@
                     <label>Polegadas ("):</label>
                     <input type="number" id="edit-pol" step="any" style="width:100%;">
                 </div>
-                <!-- NOVA CAIXA MATERIAL AQUI -->
                 <div style="flex:1;">
                     <label>Material:</label>
                     <input type="text" id="edit-material" placeholder="Ex: Inox" style="width:100%;">
@@ -1234,7 +1273,7 @@
     <!-- MODAL DE DETALHES DA PEÇA -->
     <div id="details-modal" class="modal-overlay">
         <div class="modal" style="width: 500px;">
-            <div class="details-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="details-header">
                 <div>
                     <div class="details-badge" id="details-badge">HY25000</div>
                     <div class="details-title" id="details-title">Referência da Peça</div>
@@ -1250,7 +1289,6 @@
                         <div><b>Prioridade:</b> <span id="details-prio">Normal</span></div>
                         <div><b>Peso:</b> <span id="details-kg">0</span> Kg</div>
                         <div><b>Tamanho:</b> <span id="details-pol">0</span>"</div>
-                        <!-- CAMPO NOVO NOS DETALHES -->
                         <div><b>Material:</b> <span id="details-material">N/A</span></div>
                     </div>
                 </div>
@@ -1381,15 +1419,18 @@
             const edgeSize = 150; 
             const speed = 25; 
             
-            if (!boardKanban) {
+            const activePage = document.querySelector('.page.active').id;
+            const currentBoard = activePage === 'page-laser' ? document.getElementById('boardLaser') : document.getElementById('boardKanban');
+
+            if (!currentBoard) {
                 return;
             }
             
             if (e.clientX > window.innerWidth - edgeSize) {
-                boardKanban.scrollBy({ left: speed, behavior: 'auto' });
+                currentBoard.scrollBy({ left: speed, behavior: 'auto' });
             } 
             else if (e.clientX < edgeSize) {
-                boardKanban.scrollBy({ left: -speed, behavior: 'auto' });
+                currentBoard.scrollBy({ left: -speed, behavior: 'auto' });
             }
         });
 
@@ -1439,6 +1480,8 @@
                 calcularKPIs();
             }
             
+            // Quando muda de separador, renderiza apenas os cartões pertencentes a esse quadro
+            renderizarKanbanComFiltro();
             setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
@@ -1641,8 +1684,6 @@
             const prio = document.getElementById('new-prio').value;
             const vKg = parseNumeroSeguro('new-kg');
             const vPol = parseNumeroSeguro('new-pol');
-            
-            // NOVO: Lê o material que o utilizador escolheu
             const mat = document.getElementById('new-material').value.trim();
 
             const insertData = { 
@@ -1662,7 +1703,6 @@
             let res = await supabaseClient.from('cartoes_kanban').insert([insertData]).select();
 
             if (res.error) {
-                // FALLBACK MÁXIMO
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
                 delete fallbackData.polegadas;
@@ -1935,7 +1975,11 @@
         // PESQUISA E RENDERIZAÇÃO
         // -----------------------------------------------------
         function renderizarKanbanComFiltro() {
-            const query = String(document.getElementById('kanban-search-input').value || '').trim().toLowerCase();
+            const activePage = document.querySelector('.page.active').id;
+            const queryMain = document.getElementById('kanban-search-input') ? document.getElementById('kanban-search-input').value.trim().toLowerCase() : '';
+            const queryLaser = document.getElementById('laser-search-input') ? document.getElementById('laser-search-input').value.trim().toLowerCase() : '';
+            
+            // Limpa as colunas ativas para evitar duplicações
             document.querySelectorAll('.column-content').forEach(z => {
                 z.innerHTML = '';
             });
@@ -1945,18 +1989,36 @@
                     return;
                 }
                 
-                let mostrar = true; 
-                
-                if (query) {
-                    // Adicionamos a pesquisa pelo material também
-                    const texto = `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.comentarios||''} ${o.prioridade||''} ${o.material||''}`.toLowerCase();
-                    if (!texto.includes(query)) {
-                        mostrar = false;
+                // RENDERIZAR QUADRO DE PRODUÇÃO
+                if (activePage === 'page-kanban') {
+                    let mostrar = true; 
+                    if (queryMain) {
+                        const texto = `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.comentarios||''} ${o.prioridade||''} ${o.material||''}`.toLowerCase();
+                        if (!texto.includes(queryMain)) {
+                            mostrar = false;
+                        }
+                    }
+                    if (mostrar) {
+                        renderCartaoMain(o);
                     }
                 }
                 
-                if (mostrar) {
-                    renderCartao(o);
+                // RENDERIZAR QUADRO DO LASER
+                else if (activePage === 'page-laser') {
+                    // O Quadro do Laser só exibe obras cuja fase seja "Laser"
+                    if (o.fase !== 'Laser') {
+                        return;
+                    }
+                    let mostrarLaser = true;
+                    if (queryLaser) {
+                        const textoLaser = `${o.obra_ref||''} ${o.referencia||''} ${o.comentarios||''} ${o.prioridade||''} ${o.material||''}`.toLowerCase();
+                        if (!textoLaser.includes(queryLaser)) {
+                            mostrarLaser = false;
+                        }
+                    }
+                    if (mostrarLaser) {
+                        renderCartaoLaser(o);
+                    }
                 }
             });
             setTimeout(atualizarTamanhoScrollTopo, 100);
@@ -1989,7 +2051,7 @@
                         <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${o.fase === 'Arquivado' ? '#555' : 'var(--prf-blue)'}; color: white;">fase: ${escapeHTML(o.fase)}</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
-                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${escapeHTML(o.trabalhador || 'Não Atribuído')}</b> | 🏷️ Prioridade: <b>${escapeHTML(o.prioridade || 'Normal')}</b> ${dataShow}
+                        ⚖️ <b>${pesoHistorico}</b> Kg | 📏 <b>${o.polegadas || 0}"</b> | 👷 Operador: <b>${escapeHTML(o.trabalhador || 'Não Atribuído')}</b> | 🏷️️ Prioridade: <b>${escapeHTML(o.prioridade || 'Normal')}</b> ${dataShow}
                     </div>
                 </div>
                 `;
@@ -1997,7 +2059,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP
+        // DRAG AND DROP (ADAPTADO PARA OS DOIS QUADROS)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -2025,8 +2087,9 @@
                     return;
                 }
 
+                const boardType = target.getAttribute('data-board');
                 const novaFase = target.getAttribute('data-fase');
-                const novoSetor = target.getAttribute('data-setor') || 'Geral';
+                let novoSetor = target.getAttribute('data-setor') || 'Geral';
                 let novoOperador = target.getAttribute('data-operador');
                 
                 target.appendChild(cartao); 
@@ -2034,6 +2097,11 @@
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
                 if (idx !== -1) { 
+                    // Se foi arrastado para a coluna Laser no Quadro Principal, inicializa-o para o Quadro Laser
+                    if (boardType === 'main' && novaFase === 'Laser') {
+                        novoSetor = 'Aguardar Chapa';
+                    }
+
                     if (!novoOperador) {
                         if (novaFase === 'Concluído Setor' || novaFase === 'Concluído') {
                             novoOperador = todasAsObras[idx].trabalhador;
@@ -2044,11 +2112,16 @@
                         novoOperador = todasAsObras[idx].trabalhador;
                     }
 
+                    // A LÓGICA DO RASTREIO - Diferencia entre Pessoas ou Fases do Laser
                     let trackLabel = '';
-                    if (novoOperador && novoOperador !== 'Não Atribuído') {
-                        trackLabel = novoOperador;
+                    if (boardType === 'laser') {
+                        trackLabel = 'Laser (' + novoSetor + ')';
                     } else {
-                        trackLabel = novaFase;
+                        if (novoOperador && novoOperador !== 'Não Atribuído') {
+                            trackLabel = novoOperador;
+                        } else {
+                            trackLabel = novaFase;
+                        }
                     }
                     
                     let currentRastreio = todasAsObras[idx].rastreio || '';
@@ -2094,9 +2167,9 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO (MODO CLEAN UI COM NOVO PASSAGEM DO MATERIAL)
+        // RENDER CARTÃO - MODO QUADRO DE PRODUÇÃO
         // -----------------------------------------------------
-        function renderCartao(c) {
+        function renderCartaoMain(c) {
             try {
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 let f = String(c.fase || 'Projeto').replace(/"/g, ''); 
@@ -2110,16 +2183,16 @@
                 let z = null;
                 
                 if (f && t && t !== 'Não Atribuído') {
-                    z = document.querySelector(`.column-content[data-fase="${f}"][data-operador="${t}"]`);
+                    z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"][data-operador="${t}"]`);
                 }
                 if (!z && f === 'Concluído Setor' && s) {
-                    z = document.querySelector(`.column-content[data-fase="${f}"][data-setor="${s}"]`);
+                    z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"][data-setor="${s}"]`);
                 }
                 if (!z) {
-                    z = document.querySelector(`.column-content[data-fase="${f}"]`);
+                    z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"]`);
                 }
                 if (!z) {
-                    z = document.querySelector(`.column-content[data-fase="Projeto"]`);
+                    z = document.querySelector(`#page-kanban .column-content[data-fase="Projeto"]`);
                 }
 
                 if (z) {
@@ -2143,7 +2216,12 @@
                         removeBtnHtml = `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>`;
                     }
 
+                    // A MAGIA DO LASER: O Quadro de Produção deteta que o Laser já concluiu a peça e coloca a etiqueta verde.
+                    let isReadyForProduction = (f === 'Laser' && s === 'Concluído');
+                    let laserReadyBadge = isReadyForProduction ? `<div class="laser-ready-badge">✅ PRONTO P/ PRODUÇÃO</div><br>` : '';
+
                     el.innerHTML = `
+                        ${laserReadyBadge}
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
                         
@@ -2168,7 +2246,6 @@
                         abrirModalDetalhes(c);
                     });
 
-                    // Modificado para passar o Material
                     el.querySelector('.btn-editar').addEventListener('click', () => {
                         abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t, c.material);
                     });
@@ -2193,12 +2270,78 @@
                     z.appendChild(el);
                 }
             } catch (err) { 
-                console.error("Cartão problemático:", err); 
+                console.error("Cartão problemático no Main Board:", err); 
             }
         }
 
         // -----------------------------------------------------
-        // POP-UP DETALHES (COM O NOVO CAMPO MATERIAL)
+        // RENDER CARTÃO - MODO QUADRO LASER (NOVO UPGRADE)
+        // -----------------------------------------------------
+        function renderCartaoLaser(c) {
+            try {
+                const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
+                const s = String(c.setor || 'Aguardar Chapa').replace(/"/g, '');
+                
+                // Tenta encontrar a coluna correspondente no Laser. Se não achar, atira para "Aguardar Chapa".
+                let z = document.querySelector(`#page-laser .column-content[data-setor="${s}"]`);
+                if (!z) {
+                    z = document.querySelector(`#page-laser .column-content[data-setor="Aguardar Chapa"]`);
+                }
+
+                if (z) {
+                    const el = document.createElement('div'); 
+                    el.className = `card prio-${p}`; 
+                    el.draggable = true; 
+                    el.id = c.id;
+                    
+                    const safeObra = escapeHTML(c.obra_ref);
+                    const safeRef = escapeHTML(c.referencia);
+                    const safeMat = escapeHTML(c.material || 'Material N/D');
+
+                    const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
+                    const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
+                    const vPol = c.polegadas || 0;
+                    
+                    // No Laser não se mostra o trabalhador (pq as fases são as máquinas), mostramos o Material
+                    el.innerHTML = `
+                        ${bdg}
+                        <div class="card-ref">${safeRef || 'Sem Referência'}</div>
+                        
+                        <div class="card-info" style="margin-top:4px;">
+                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}"</div>
+                            <div style="background:rgba(0,0,0,0.04); padding:3px; border-radius:4px; font-weight:bold; color: #ef5350;">
+                                ⚙️ Mat: ${safeMat}
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button class="btn-card btn-detalhes" style="color:var(--prf-blue-light) !important;">👁️ Detalhes</button>
+                            <button class="btn-card btn-editar">✏️ Editar (Laser)</button>
+                            <!-- NOTE: O Botão Apagar não existe no Quadro Laser por segurança -->
+                        </div>
+                    `;
+                    
+                    el.querySelector('.btn-detalhes').addEventListener('click', () => {
+                        abrirModalDetalhes(c);
+                    });
+
+                    el.querySelector('.btn-editar').addEventListener('click', () => {
+                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, c.trabalhador, c.material);
+                    });
+
+                    el.addEventListener('dragstart', e => {
+                        e.dataTransfer.setData('text/plain', c.id);
+                    });
+                    
+                    z.appendChild(el);
+                }
+            } catch (err) { 
+                console.error("Cartão problemático no Laser Board:", err); 
+            }
+        }
+
+        // -----------------------------------------------------
+        // POP-UP DETALHES COM MATERIAL
         // -----------------------------------------------------
         function abrirModalDetalhes(c) {
             document.getElementById('details-badge').innerText = c.obra_ref || 'GERAL';
@@ -2211,7 +2354,6 @@
             document.getElementById('details-kg').innerText = vKg;
             document.getElementById('details-pol').innerText = c.polegadas || 0;
             
-            // Coloca o Material na janela de Detalhes
             document.getElementById('details-material').innerText = c.material || 'N/A';
 
             const timelineDiv = document.getElementById('details-timeline');
@@ -2244,15 +2386,6 @@
             document.getElementById('details-modal').classList.remove('active');
         }
 
-        async function limparRastreioCartao(id) {
-            const idx = todasAsObras.findIndex(o => o.id === id);
-            if (idx !== -1) {
-                todasAsObras[idx].rastreio = '';
-                await supabaseClient.from('cartoes_kanban').update({ rastreio: '' }).eq('id', id);
-                renderizarKanbanComFiltro();
-            }
-        }
-
         // -----------------------------------------------------
         // EDIÇÃO NO MODAL COM VALIDAÇÃO DE MATERIAL
         // -----------------------------------------------------
@@ -2265,7 +2398,6 @@
             document.getElementById('edit-prio').value = prio || 'Normal'; 
             document.getElementById('edit-comments').value = comentarios || '';
             
-            // Define e guarda a memória do material
             document.getElementById('edit-material').value = material || '';
             document.getElementById('edit-material-original').value = material || '';
             
@@ -2297,7 +2429,6 @@
             document.getElementById('edit-modal').classList.remove('active'); 
         }
 
-        // NOVO: Função intermédia que valida se o material mudou e pergunta ao utilizador
         function verificarESalvarEdicao() {
             const materialOriginal = document.getElementById('edit-material-original').value.trim();
             const novoMaterial = document.getElementById('edit-material').value.trim();
@@ -2310,7 +2441,6 @@
                     }
                 );
             } else {
-                // Se não mudou o material, grava direto sem perguntar
                 executarSalvarEdicao(novoMaterial);
             }
         }
@@ -2465,6 +2595,8 @@
             
             todasAsObras = allData;
             document.getElementById('db-counter').innerText = `🟢 ${todasAsObras.length} componentes carregados`;
+            
+            // Só renderiza ao ligar a página. A navegação trata do resto.
             renderizarKanbanComFiltro();
             calcularKPIs(); 
         }
