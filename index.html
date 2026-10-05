@@ -769,7 +769,6 @@
             margin-bottom: 15px;
         }
 
-        /* CSS MÁGICO DA IMPRESSÃO (ESCONDE TUDO EXCETO O BRIEFING) */
         @media print {
             body * { visibility: hidden; }
             #page-briefing, #page-briefing * { visibility: visible; }
@@ -825,7 +824,6 @@
                 <span class="menu-icon">📈</span>
                 <span class="menu-label">KPIs & Métricas</span>
             </div>
-            <!-- MENU ALTERADO: DE RELATÓRIOS PARA BRIEFING DIÁRIO -->
             <div class="menu-card" onclick="navesPara('page-briefing')" style="border-color: #7cb342;">
                 <span class="menu-icon">📋</span>
                 <span class="menu-label">Briefing Diário</span>
@@ -897,6 +895,7 @@
                 <div class="column-content" data-board="main" data-fase="Material" data-operador="Camila"></div>
             </div>
 
+            <!-- FURAÇÃO E CORTE NO QUADRO PRINCIPAL -->
             <div class="column" style="min-width: 200px; width: 200px; border: 2px solid #ef5350;">
                 <div class="column-header" style="color: #ef5350;">⚙ Furação e Corte</div>
                 <div class="column-content" data-board="main" data-fase="Furação e Corte"></div>
@@ -1332,7 +1331,6 @@
         </div>
 
         <div class="briefing-container">
-            <!-- Cabeçalho do Briefing -->
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px;">
                 <h2 style="color: #7cb342; margin: 0;" id="briefing-date-title">PLANO DIÁRIO</h2>
                 <span class="no-print" style="font-size: 11px; color: var(--text-secondary);">* Edite a tabela livremente. Clique em Gravar para espelhar as notas nos cartões.</span>
@@ -1684,7 +1682,7 @@
         }
 
         // -----------------------------------------------------
-        // NOVO MÓDULO: BRIEFING DIÁRIO
+        // NOVO MÓDULO: BRIEFING DIÁRIO (ATUALIZADO E FILTRADO)
         // -----------------------------------------------------
         const trabalhadoresBriefing = ['Camila', 'José Henriques', 'Suellen', 'Oleh', 'Yaroslav', 'Luís Agostinho', 'Diogo Santos', 'Jorge Vieira', 'Pedro Santos', 'André', 'Alexandre', 'Jenifer', 'Neto', 'Igor', 'Douglas', 'Davi'];
 
@@ -1696,19 +1694,29 @@
             document.getElementById('briefing-date-title').innerText = `${hoje.getDate()}/${hoje.getMonth()+1} - PLANO DIÁRIO`;
 
             trabalhadoresBriefing.forEach(trab => {
-                // Simplificação do nome para procurar na Base de Dados (ex: 'José Henriques' procura por 'José')
                 const primeiroNome = trab.split(' ')[0].toLowerCase();
                 
-                const obrasTrab = todasAsObras.filter(o => 
-                    o.trabalhador && 
-                    o.trabalhador.toLowerCase().includes(primeiroNome) && 
-                    o.fase !== 'Arquivado' && 
-                    !o.fase.includes('Concluído')
-                );
+                const obrasTrab = todasAsObras.filter(o => {
+                    const nomeProcurado = primeiroNome.toLowerCase();
+                    // Permite encontrar o nome caso existam vários trabalhadores no mesmo cartão (ex: "Suellen e José")
+                    const matchTrabalhador = o.trabalhador && o.trabalhador.toLowerCase().includes(nomeProcurado);
+                    
+                    const f = String(o.fase || '');
+                    const s = String(o.setor || '');
+                    
+                    // FILTRO DE SEGURANÇA: Só aceita obras ativas no momento (Ignora Concluídos, Arquivos e Triagem)
+                    const isMainProducao = (f === 'Produção' || f === 'Em Fila' || f === 'Pendente');
+                    const isQualiTrat = (f === 'Qualidade' || f === 'Tratamento');
+                    const isCorteExecEspera = (f === 'Furação e Corte' && (s.includes('Execucao') || s.includes('Espera')));
+                    
+                    const isValidState = isMainProducao || isQualiTrat || isCorteExecEspera;
+
+                    return matchTrabalhador && isValidState;
+                });
 
                 if (obrasTrab.length > 0) {
                     obrasTrab.forEach((o, index) => {
-                        let desc = o.referencia;
+                        let desc = o.referencia || '';
                         if(o.comentarios && o.comentarios.trim() !== '') {
                             desc += '\n' + o.comentarios;
                         }
@@ -2253,7 +2261,7 @@
         }
 
         // -----------------------------------------------------
-        // PESQUISA E RENDERIZAÇÃO GERAL (MECANISMO ANTI-LAG)
+        // PESQUISA E RENDERIZAÇÃO GERAL
         // -----------------------------------------------------
         function renderizarKanbanComFiltro() {
             const activePage = document.querySelector('.page.active').id;
@@ -2458,7 +2466,7 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO MAIN (QUADRO PRODUÇÃO)
+        // RENDER CARTÃO MAIN
         // -----------------------------------------------------
         function renderCartaoMain(c) {
             try {
@@ -2605,7 +2613,7 @@
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
                         
                         <div class="card-info" style="margin-top:4px;">
-                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}"</div>
+                            <div style="margin-bottom: 3px;">⚖️️ ${vKg} Kg | 📏 ${vPol}"</div>
                             <div style="background:rgba(0,0,0,0.04); padding:3px; border-radius:4px; font-weight:bold; color: #ef5350;">
                                 ⚙️ Mat: ${safeMat}
                             </div>
@@ -2914,6 +2922,11 @@
             
             renderizarKanbanComFiltro();
             calcularKPIs(); 
+            
+            // Só executa o carregamento se a janela de briefing estiver aberta ativamente
+            if (document.getElementById('page-briefing').classList.contains('active')) {
+                carregarBriefing();
+            }
         }
 
         window.onload = carregarTudo;
