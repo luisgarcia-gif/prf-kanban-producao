@@ -11,7 +11,7 @@
     
     <style>
         /* =========================================
-           TEMA CLARO (Default PRF)
+           TEMA CLARO E TEMA ESCURO
            ========================================= */
         :root {
             --prf-blue: #0097A7;
@@ -25,9 +25,6 @@
             --border-color: #cbd5e1;
         }
 
-        /* =========================================
-           TEMA ESCURO (Se o sistema do utilizador pedir)
-           ========================================= */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-main: #121212;
@@ -56,7 +53,7 @@
         }
 
         /* =========================================
-           CABEÇALHO / HEADER
+           CABEÇALHO
            ========================================= */
         header {
             background-color: var(--bg-card);
@@ -122,7 +119,7 @@
         }
 
         /* =========================================
-           PÁGINAS GERAIS
+           PÁGINAS GERAIS E MENU INICIAL
            ========================================= */
         .page { 
             display: none; 
@@ -135,9 +132,6 @@
             flex-direction: column; 
         }
 
-        /* =========================================
-           MENU INICIAL
-           ========================================= */
         #page-home { 
             align-items: center; 
             justify-content: center; 
@@ -468,90 +462,29 @@
             pointer-events: auto; 
         }
 
-        /* COR: SEM COR (BRANCO/TRACEJADO) */
-        .card.prio-sem-cor { 
-            background-color: var(--bg-card) !important; 
-            border: 1px dashed var(--border-color); 
-        }
+        .card.prio-sem-cor { background-color: var(--bg-card) !important; border: 1px dashed var(--border-color); }
+        .card.prio-sem-cor * { color: var(--text-main) !important; }
+        .card.prio-sem-cor .card-info, .card.prio-sem-cor .btn-card { color: var(--text-secondary) !important; }
+        .card.prio-sem-cor .obra-badge { background: #cbd5e1 !important; color: #1e293b !important; }
+
+        .card.prio-retrabalho { background-color: #94a3b8 !important; border: none; }
+        .card.prio-retrabalho * { color: #ffffff !important; }
+
+        .card.prio-raio-x { background-color: #9c27b0 !important; border: none; }
+        .card.prio-raio-x * { color: #ffffff !important; }
         
-        .card.prio-sem-cor * { 
-            color: var(--text-main) !important; 
-        }
-        
-        .card.prio-sem-cor .card-info, 
-        .card.prio-sem-cor .btn-card { 
-            color: var(--text-secondary) !important; 
-        }
-        
-        .card.prio-sem-cor .obra-badge { 
-            background: #cbd5e1 !important; 
-            color: #1e293b !important; 
-        }
+        .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
+        .card.prio-vermelho * { color: #ffffff !important; }
 
-        /* COR: RETRABALHO (CINZA) */
-        .card.prio-retrabalho { 
-            background-color: #94a3b8 !important; 
-            border: none; 
-        }
+        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
+        .card.prio-laranja * { color: #ffffff !important; }
 
-        .card.prio-retrabalho * { 
-            color: #ffffff !important; 
-        }
+        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
+        .card.prio-amarelo * { color: #222222 !important; }
 
-        /* COR: RAIO X (ROXO) */
-        .card.prio-raio-x { 
-            background-color: #9c27b0 !important; 
-            border: none; 
-        }
-
-        .card.prio-raio-x * { 
-            color: #ffffff !important; 
-        }
-        
-        /* COR: MÁXIMA (VERMELHO) */
-        .card.prio-vermelho { 
-            background-color: #ef5350 !important; 
-            border: none; 
-        }
-
-        .card.prio-vermelho * { 
-            color: #ffffff !important; 
-        }
-
-        /* COR: MÉDIA (LARANJA) */
-        .card.prio-laranja { 
-            background-color: #ff9800 !important; 
-            border: none; 
-        }
-
-        .card.prio-laranja * { 
-            color: #ffffff !important; 
-        }
-
-        /* COR: BAIXA (AMARELO) */
-        .card.prio-amarelo { 
-            background-color: #ffeb3b !important; 
-            border: none; 
-        }
-
-        .card.prio-amarelo * { 
-            color: #222222 !important; 
-        }
-
-        /* COR: NORMAL (AZUL CLARO / FUNDO PADRÃO) */
-        .card.prio-normal { 
-            background-color: var(--bg-card) !important; 
-            border: 1px solid var(--border-color); 
-        }
-
-        .card.prio-normal .card-ref { 
-            color: var(--text-main) !important; 
-        }
-
-        .card.prio-normal .card-info, 
-        .card.prio-normal .btn-card { 
-            color: var(--text-secondary) !important; 
-        }
+        .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
+        .card.prio-normal .card-ref { color: var(--text-main) !important; }
+        .card.prio-normal .card-info, .card.prio-normal .btn-card { color: var(--text-secondary) !important; }
 
         .obra-badge {
             display: inline-block; 
@@ -799,10 +732,10 @@
                 <span class="menu-label">Quadro Produção</span>
             </div>
             
-            <!-- MENU DO QUADRO LASER (UPGRADE 2) -->
+            <!-- MENU DO QUADRO DE FURAÇÃO E CORTE -->
             <div class="menu-card" onclick="navesPara('page-laser')" style="border-color: #ef5350;">
-                <span class="menu-icon">🔥</span>
-                <span class="menu-label">Quadro Laser</span>
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-label">Furação e Corte</span>
             </div>
             
             <div class="menu-card" onclick="navesPara('page-consultas')">
@@ -823,28 +756,24 @@
     <!-- PÁGINA KANBAN (QUADRO DE PRODUÇÃO PRINCIPAL) -->
     <div id="page-kanban" class="page">
         
-        <!-- BARRA DE PESQUISA -->
         <div class="search-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                 <p style="font-size: 12px; color: var(--prf-blue-light); margin-top: 0; margin-bottom: 8px;">
                     * <b>PESQUISA DE PRODUÇÃO:</b> Filtre obras no quadro geral.
                 </p>
-                <!-- RESOLUÇÃO DO BUG: O ID do contador tem que ser rigorosamente 'db-counter' -->
                 <span id="db-counter" style="font-size: 13px; color: var(--prf-blue); font-weight: bold;">🟢 A carregar dados...</span>
             </div>
             <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador, Material..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
-        <!-- OPERAÇÕES EM LOTE -->
         <div class="bulk-actions-bar">
             <span style="font-size: 12px; color: var(--text-secondary); font-weight: bold;">⚙️ Operações:</span>
-            <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos (Não iniciados)</button>
-            <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Limpar Concluídos Final (Arquivar)</button>
+            <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos</button>
+            <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Arquivar Concluídos</button>
             <button class="btn-action" style="background-color: #0288d1 !important; padding: 6px 12px !important; margin-left: 10px;" onclick="abrirMenuBackup()">🛡️ Central de Checkpoints</button>
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
-        <!-- FORMULÁRIO DE ADIÇÃO MANUAL -->
         <div class="add-form">
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
@@ -867,12 +796,10 @@
             </label>
         </div>
 
-        <!-- BARRA DE SCROLL SUPERIOR -->
         <div class="top-scroll-wrapper" id="topScrollWrapper">
             <div class="top-scroll-dummy" id="topScrollDummy"></div>
         </div>
 
-        <!-- QUADRO KANBAN PRINCIPAL -->
         <div class="board" id="boardKanban">
             
             <div class="column" style="min-width: 200px; width: 200px;">
@@ -885,16 +812,21 @@
                 <div class="column-content" data-board="main" data-fase="Desenho"></div>
             </div>
             
-            <!-- MATERIAL -->
             <div class="column" style="min-width: 200px; width: 200px;">
                 <div class="column-header">Material (Camila)</div>
                 <div class="column-content" data-board="main" data-fase="Material" data-operador="Camila"></div>
             </div>
 
-            <!-- LASER NO QUADRO PRINCIPAL -->
+            <!-- FURAÇÃO E CORTE NO QUADRO PRINCIPAL -->
             <div class="column" style="min-width: 200px; width: 200px; border: 2px solid #ef5350;">
-                <div class="column-header" style="color: #ef5350;">Laser (Departamento)</div>
-                <div class="column-content" data-board="main" data-fase="Laser"></div>
+                <div class="column-header" style="color: #ef5350;">⚙️ Furação e Corte</div>
+                <div class="column-content" data-board="main" data-fase="Furação e Corte"></div>
+            </div>
+            
+            <!-- NOVA COLUNA PARA RECEBER O QUE VEM DO CORTE -->
+            <div class="column" style="min-width: 200px; width: 200px; border: 2px solid #2e7d32; background: #e8f5e9;">
+                <div class="column-header" style="color: #1b5e20;">✅ Pronto a Iniciar</div>
+                <div class="column-content" data-board="main" data-fase="Pronto a Iniciar"></div>
             </div>
 
             <!-- ÁREA DE PRODUÇÃO -->
@@ -1077,39 +1009,177 @@
         </div>
     </div>
 
-    <!-- PÁGINA LASER (NOVO QUADRO EXCLUSIVO - UPGRADE 2) -->
+    <!-- PÁGINA: DEPARTAMENTO DE FURAÇÃO E CORTE (NOVO UPGRADE 2 MEGA) -->
     <div id="page-laser" class="page">
-        <h2 style="color: #ef5350; margin-top: 0;">🔥 Departamento de Laser</h2>
+        <h2 style="color: #ef5350; margin-top: 0;">⚙️ Departamento de Furação e Corte</h2>
         
-        <!-- BARRA DE PESQUISA DO LASER -->
         <div class="search-container" style="border-color: #ef5350;">
             <p style="font-size: 12px; color: #ef5350; margin-top: 0; margin-bottom: 8px;">
-                * Apenas são exibidas obras que a Produção enviou para a secção Laser.
+                * Apenas são exibidas obras que a Produção enviou para este departamento.
             </p>
-            <input type="text" id="laser-search-input" class="search-input-large" placeholder="🔎 Pesquisar Peça no Laser..." onkeyup="renderizarKanbanComFiltro()">
+            <input type="text" id="laser-search-input" class="search-input-large" placeholder="🔎 Pesquisar Peça no Departamento..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
-        <!-- QUADRO LASER -->
         <div class="board" id="boardLaser">
-            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #94a3b8;">
-                <div class="column-header" style="color: #64748b;">⏳ Aguardar Chapa</div>
-                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Aguardar Chapa"></div>
+            <!-- TRIAGEM INICIAL DO DEPARTAMENTO -->
+            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #94a3b8; background: #f8fafc;">
+                <div class="column-header" style="color: #64748b; font-size:11px;">📥 TRIAGEM / AGUARDAR CHAPA</div>
+                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Aguardar Chapa"></div>
             </div>
             
-            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #ff9800;">
-                <div class="column-header" style="color: #f57c00;">✂️ Em Corte</div>
-                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Em Corte"></div>
-            </div>
-            
-            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #0097A7;">
-                <div class="column-header" style="color: #00796B;">📐 Quinagem</div>
-                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Quinagem"></div>
+            <!-- SECÇÃO LASER -->
+            <div class="column production-col" style="border-top: 4px solid #ef5350;">
+                <div class="column-header" style="color: #ef5350;">🔥 LASER</div>
+                <div class="sub-sectors-container">
+                    <!-- Laser Inox -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#64748b;">INOX</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Inox-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Inox-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Inox-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Laser Carbono -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#333;">AÇO CARBONO</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Carbono-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Carbono-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Carbono-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Laser Outros -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#f57c00;">OUTROS MAT.</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Outros-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Outros-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Laser-Outros-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="column" style="min-width: 250px; width: 250px; border-top: 4px solid #2e7d32;">
-                <div class="column-header" style="color: #1b5e20;">✅ Concluído (Pronto)</div>
-                <div class="column-content" data-board="laser" data-fase="Laser" data-setor="Concluído"></div>
+            <!-- SECÇÃO TORNOS -->
+            <div class="column production-col" style="border-top: 4px solid #0097A7;">
+                <div class="column-header" style="color: #00796B;">⚙️ TORNOS</div>
+                <div class="sub-sectors-container">
+                    <!-- Tornos Inox -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#64748b;">INOX</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Inox-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Inox-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Inox-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tornos Carbono -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#333;">AÇO CARBONO</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Carbono-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Carbono-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Carbono-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tornos Outros -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#f57c00;">OUTROS MAT.</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Outros-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Outros-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Torno-Outros-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- SECÇÃO QUINAGEM -->
+            <div class="column production-col" style="border-top: 4px solid #fbc02d;">
+                <div class="column-header" style="color: #f57f17;">📐 QUINAGEM</div>
+                <div class="sub-sectors-container">
+                    <!-- Quinagem Inox -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#64748b;">INOX</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Inox-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Inox-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Inox-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quinagem Carbono -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#333;">AÇO CARBONO</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Carbono-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Carbono-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Carbono-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quinagem Outros -->
+                    <div class="sub-sector">
+                        <div class="sub-sector-title" style="color:#f57c00;">OUTROS MAT.</div>
+                        <div class="sub-sector-grid">
+                            <div class="worker-lane">
+                                <div class="zone-title">Em Espera</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Outros-Espera"></div>
+                                <div class="zone-title" style="background:#e0e7ff; color:#3730a3;">Em Execução</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Outros-Execucao"></div>
+                                <div class="zone-title" style="background:#e8f5e9; color:#1b5e20;">Concluído Setor</div>
+                                <div class="column-content" data-board="laser" data-fase="Furação e Corte" data-setor="Quinagem-Outros-Concluido"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONCLUSÃO DO DEPARTAMENTO DE CORTE -->
+            <div class="column" style="min-width: 250px; width: 250px; border: 3px dashed #2e7d32; background: #e8f5e9;">
+                <div class="column-header" style="color: #1b5e20;">✅ CONCLUÍDO <br><span style="font-size:9px;">(ENVIAR PARA PRODUÇÃO)</span></div>
+                <div class="column-content" data-board="laser" data-fase="Pronto a Iniciar" data-setor="Geral"></div>
+            </div>
+
         </div>
     </div>
 
@@ -1677,7 +1747,7 @@
         }
 
         // -----------------------------------------------------
-        // ADICIONAR MANUAL 
+        // ADICIONAR MANUAL
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
@@ -1986,7 +2056,7 @@
         }
 
         // -----------------------------------------------------
-        // PESQUISA E RENDERIZAÇÃO
+        // PESQUISA E RENDERIZAÇÃO GERAL
         // -----------------------------------------------------
         function renderizarKanbanComFiltro() {
             const activePage = document.querySelector('.page.active').id;
@@ -2002,6 +2072,7 @@
                     return;
                 }
                 
+                // RENDERIZAR QUADRO DE PRODUÇÃO
                 if (activePage === 'page-kanban') {
                     let mostrar = true; 
                     if (queryMain) {
@@ -2014,8 +2085,11 @@
                         renderCartaoMain(o);
                     }
                 }
+                
+                // RENDERIZAR QUADRO DO DEPARTAMENTO FURAÇÃO E CORTE
                 else if (activePage === 'page-laser') {
-                    if (o.fase !== 'Laser') {
+                    // Aqui só exibe o que estiver marcado como "Furação e Corte"
+                    if (o.fase !== 'Furação e Corte') {
                         return;
                     }
                     let mostrarLaser = true;
@@ -2068,7 +2142,7 @@
         }
 
         // -----------------------------------------------------
-        // DRAG AND DROP COM GERAÇÃO INTELIGENTE DE RASTREIO
+        // DRAG AND DROP (ADAPTADO AOS DOIS QUADROS)
         // -----------------------------------------------------
         document.querySelectorAll('.column-content').forEach(zone => {
             zone.addEventListener('dragover', e => { 
@@ -2097,7 +2171,7 @@
                 }
 
                 const boardType = target.getAttribute('data-board');
-                const novaFase = target.getAttribute('data-fase');
+                let novaFase = target.getAttribute('data-fase');
                 let novoSetor = target.getAttribute('data-setor') || 'Geral';
                 let novoOperador = target.getAttribute('data-operador');
                 
@@ -2106,12 +2180,13 @@
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
                 if (idx !== -1) { 
-                    if (boardType === 'main' && novaFase === 'Laser') {
+                    // Se foi arrastado para a Furação e Corte no Quadro Principal, inicializa na Triagem
+                    if (boardType === 'main' && novaFase === 'Furação e Corte') {
                         novoSetor = 'Aguardar Chapa';
                     }
 
                     if (!novoOperador) {
-                        if (novaFase === 'Concluído Setor' || novaFase === 'Concluído') {
+                        if (novaFase === 'Concluído Setor' || novaFase === 'Concluído' || novaFase === 'Pronto a Iniciar') {
                             novoOperador = todasAsObras[idx].trabalhador;
                         } else {
                             novoOperador = 'Não Atribuído';
@@ -2122,7 +2197,11 @@
 
                     let trackLabel = '';
                     if (boardType === 'laser') {
-                        trackLabel = 'Laser (' + novoSetor + ')';
+                        if(novoSetor === 'Geral' && novaFase === 'Pronto a Iniciar'){
+                            trackLabel = 'Corte (Pronto)';
+                        } else {
+                            trackLabel = novoSetor.replace(/-/g, ' ');
+                        }
                     } else {
                         if (novoOperador && novoOperador !== 'Não Atribuído') {
                             trackLabel = novoOperador;
@@ -2223,7 +2302,8 @@
                         removeBtnHtml = `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>`;
                     }
 
-                    let isReadyForProduction = (f === 'Laser' && s === 'Concluído');
+                    // AVISO DE PRONTO NA PRODUÇÃO
+                    let isReadyForProduction = (f === 'Pronto a Iniciar');
                     let laserReadyBadge = isReadyForProduction ? `<div class="laser-ready-badge">✅ PRONTO P/ PRODUÇÃO</div><br>` : '';
 
                     el.innerHTML = `
@@ -2281,7 +2361,7 @@
         }
 
         // -----------------------------------------------------
-        // RENDER CARTÃO LASER
+        // RENDER CARTÃO - FURAÇÃO E CORTE
         // -----------------------------------------------------
         function renderCartaoLaser(c) {
             try {
@@ -2320,7 +2400,7 @@
                         
                         <div class="card-actions">
                             <button class="btn-card btn-detalhes" style="color:var(--prf-blue-light) !important;">👁️ Detalhes</button>
-                            <button class="btn-card btn-editar">✏️ Editar (Laser)</button>
+                            <button class="btn-card btn-editar">✏️ Editar (Corte)</button>
                         </div>
                     `;
                     
@@ -2339,7 +2419,7 @@
                     z.appendChild(el);
                 }
             } catch (err) { 
-                console.error("Cartão problemático no Laser Board:", err); 
+                console.error("Cartão problemático no Corte Board:", err); 
             }
         }
 
@@ -2399,7 +2479,7 @@
         }
 
         // -----------------------------------------------------
-        // EDIÇÃO NO MODAL COM VALIDAÇÃO DE MATERIAL
+        // EDIÇÃO NO MODAL
         // -----------------------------------------------------
         function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual, material) {
             document.getElementById('edit-id').value = id; 
