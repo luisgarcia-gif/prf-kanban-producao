@@ -437,7 +437,7 @@
         }
 
         /* =========================================
-           CORES TOTAIS DOS CARTÕES E BLINDAGEM
+           CORES TOTAIS DOS CARTÕES E BLINDAGEM MESTRE
            ========================================= */
         .card {
             border-radius: 5px; 
@@ -478,11 +478,12 @@
         .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
         .card.prio-vermelho * { color: #ffffff !important; }
 
-        .card.prio-laranja { background-color: #ff9800 !important; border: none; }
-        .card.prio-laranja * { color: #ffffff !important; }
+        /* MODO DE COMPATIBILIDADE PARA OBRAS ANTIGAS (MÉDIA/BAIXA viraram LARANJA/AMARELO) */
+        .card.prio-laranja, .card.prio-média, .card.prio-media { background-color: #ff9800 !important; border: none; }
+        .card.prio-laranja *, .card.prio-média *, .card.prio-media * { color: #ffffff !important; }
 
-        .card.prio-amarelo { background-color: #ffeb3b !important; border: none; }
-        .card.prio-amarelo * { color: #222222 !important; }
+        .card.prio-amarelo, .card.prio-baixa { background-color: #ffeb3b !important; border: none; }
+        .card.prio-amarelo *, .card.prio-baixa * { color: #222222 !important; }
 
         .card.prio-normal { background-color: var(--bg-card) !important; border: 1px solid var(--border-color); }
         .card.prio-normal .card-ref { color: var(--text-main) !important; }
@@ -779,9 +780,68 @@
             header, .menu-grid, .search-container, .briefing-action-bar { display: none !important; }
             body { background-color: white; }
         }
+
+        /* =========================================
+           ECRÃ DE LOGIN (NOVO MÓDULO DE SEGURANÇA)
+           ========================================= */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-main);
+            z-index: 10000;
+            display: none; 
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 320px;
+            text-align: center;
+            border-top: 4px solid var(--prf-blue);
+        }
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-subcard);
+            color: var(--text-main);
+        }
+        .login-box button {
+            width: 100%;
+            background: var(--prf-blue);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .login-box button:hover {
+            background: var(--prf-blue-dark);
+        }
     </style>
 </head>
 <body>
+
+    <!-- ECRÃ DE LOGIN OBRIGATÓRIO -->
+    <div id="login-screen">
+        <div class="login-box">
+            <img src="prf_principal_gassolutions.png" alt="PRF Logo" style="height:40px; margin-bottom:15px; background:white; padding:5px; border-radius:4px;" onerror="this.style.display='none'">
+            <h3 style="margin-top:0; color:var(--text-main);">Acesso de Produção</h3>
+            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:20px;">Insira as suas credenciais para aceder ao painel.</p>
+            <input type="email" id="login-email" placeholder="O seu E-mail">
+            <input type="password" id="login-password" placeholder="Password">
+            <button onclick="fazerLogin()">Entrar Seguramente</button>
+        </div>
+    </div>
 
     <!-- CABEÇALHO DA APP -->
     <header>
@@ -790,10 +850,12 @@
             <span>PRF Gas Solutions</span>
         </div>
         <div class="header-buttons">
+            <span id="header-user-name" style="font-size: 11px; color: var(--text-secondary); margin-right: 10px;">👤 A aguardar...</span>
             <button class="btn-header" style="background-color: #455a64;" onclick="navesPara('page-kanban')">📊 Produção</button>
             <button class="btn-header" style="background-color: #ef5350;" onclick="navesPara('page-laser')">⚙️ Furação e Corte</button>
             <button class="btn-header btn-refresh" onclick="limparCacheERefresh()">🔄 Atualizar</button>
             <button class="btn-header" onclick="navesPara('page-home')">🏠 Menu</button>
+            <button class="btn-header" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main);" onclick="fazerLogout()">🚪 Sair</button>
         </div>
     </header>
 
@@ -844,7 +906,7 @@
             <input type="text" id="kanban-search-input" class="search-input-large" placeholder="🔎 Pesquisar código de Obra, Peça, Trabalhador, Material..." onkeyup="renderizarKanbanComFiltro()">
         </div>
 
-        <div class="bulk-actions-bar">
+        <div class="bulk-actions-bar" id="admin-actions-bar">
             <span style="font-size: 12px; color: var(--text-secondary); font-weight: bold;">⚙️ Operações:</span>
             <button class="btn-action" style="background-color: #455a64 !important; padding: 6px 12px !important;" onclick="limparProjetos()">🧹 Limpar Projetos</button>
             <button class="btn-action" style="background-color: #2e7d32 !important; padding: 6px 12px !important;" onclick="limparConcluidos()">✅ Arquivar Concluídos</button>
@@ -852,7 +914,7 @@
             <button class="btn-action" style="background-color: #d32f2f !important; padding: 6px 12px !important; margin-left: auto;" onclick="apagarTudoBD()">🚨 Apagar Tudo</button>
         </div>
 
-        <div class="add-form">
+        <div class="add-form" id="admin-add-form">
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
             <input type="number" id="new-pol" placeholder="Pol ('')" step="any" style="width: 70px;">
@@ -895,7 +957,6 @@
                 <div class="column-content" data-board="main" data-fase="Material" data-operador="Camila"></div>
             </div>
 
-            <!-- FURAÇÃO E CORTE NO QUADRO PRINCIPAL -->
             <div class="column" style="min-width: 200px; width: 200px; border: 2px solid #ef5350;">
                 <div class="column-header" style="color: #ef5350;">⚙ Furação e Corte</div>
                 <div class="column-content" data-board="main" data-fase="Furação e Corte"></div>
@@ -1321,8 +1382,8 @@
         
         <div class="briefing-action-bar no-print">
             <div>
-                <button class="btn-action" style="background-color: #00bcd4 !important; color: #1e293b !important;" onclick="carregarBriefing()">📥 Sincronizar da Produção</button>
-                <button class="btn-action" style="background-color: #ffeb3b !important; color: #1e293b !important; margin-left: 10px;" onclick="guardarBriefingNaBD()">💾 Gravar Alterações na Produção</button>
+                <button class="btn-action" id="btn-sync-prod" style="background-color: #00bcd4 !important; color: #1e293b !important;" onclick="carregarBriefing()">📥 Sincronizar da Produção</button>
+                <button class="btn-action" id="btn-gravar-briefing" style="background-color: #ffeb3b !important; color: #1e293b !important; margin-left: 10px;" onclick="guardarBriefingNaBD()">💾 Gravar Alterações na Produção</button>
             </div>
             <div>
                 <button class="btn-action" style="background-color: #7cb342 !important;" onclick="exportarBriefingExcel()">📊 Exportar Excel</button>
@@ -1333,10 +1394,10 @@
         <div class="briefing-container">
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px;">
                 <h2 style="color: #7cb342; margin: 0;" id="briefing-date-title">PLANO DIÁRIO</h2>
-                <span class="no-print" style="font-size: 11px; color: var(--text-secondary);">* Edite a tabela livremente. Clique em Gravar para espelhar as notas nos cartões.</span>
+                <span class="no-print" style="font-size: 11px; color: var(--text-secondary);">* Apenas mostra peças Em Execução, Em Fila ou Pendentes.</span>
             </div>
             
-            <textarea class="briefing-header-notes" rows="4" placeholder="Anotações Gerais da Chefia (Ex: Direcionadas à produção; visitantes na instalação...)"></textarea>
+            <textarea class="briefing-header-notes" id="briefing-notes" rows="4" placeholder="Anotações Gerais da Chefia (Ex: Direcionadas à produção; visitantes na instalação...)"></textarea>
 
             <table class="briefing-table" id="briefing-table-export">
                 <thead>
@@ -1348,7 +1409,6 @@
                     </tr>
                 </thead>
                 <tbody id="briefing-tbody">
-                    <!-- Conteúdo injetado via JavaScript -->
                 </tbody>
             </table>
         </div>
@@ -1438,7 +1498,7 @@
                 <div style="flex:1;">
                     <label>Adicionar Pessoa/Fase ao Rastreio:</label>
                     <input type="hidden" id="edit-rastreio-current">
-                    <input type="text" id="edit-rastreio-add" placeholder="Ex: Manuel (Será anexado com //)" style="width:100%;">
+                    <input type="text" id="edit-rastreio-add" placeholder="Ex: Manuel e José" style="width:100%;">
                 </div>
             </div>
             
@@ -1518,25 +1578,18 @@
         // =====================================================
         
         function sanitizeForDB(str) {
-            if (!str) {
-                return '';
-            }
-            return String(str)
-                .replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "") 
-                .replace(/\\/g, "/") 
-                .trim();
+            if (!str) return '';
+            return String(str).replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "").replace(/\\/g, "/").trim();
         }
 
         function escapeHTML(str) {
-            if (str === null || str === undefined) {
-                return '';
-            }
-            return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function removerAcentos(str) {
+            if (!str) return '';
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         }
 
         function dataHojeStr() {
@@ -1544,28 +1597,16 @@
             const yyyy = today.getFullYear();
             let mm = today.getMonth() + 1; 
             let dd = today.getDate();
-            
-            if (dd < 10) {
-                dd = '0' + dd;
-            }
-            if (mm < 10) {
-                mm = '0' + mm;
-            }
-            
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
             return yyyy + '-' + mm + '-' + dd;
         }
 
         function formatarDataVisivel(dataStr) {
-            if (!dataStr) {
-                return '';
-            }
+            if (!dataStr) return '';
             const datePart = String(dataStr).split('T')[0].split(' ')[0];
             const partes = datePart.split('-');
-            
-            if (partes.length === 3) {
-                return `${partes[2]}/${partes[1]}/${partes[0]}`;
-            }
-            
+            if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
             return dataStr;
         }
 
@@ -1579,8 +1620,81 @@
         let todasAsObras = [];
         let operacaoPendenteData = null; 
 
+        // VARIÁVEIS DE SISTEMA (AUTENTICAÇÃO E PERFIS)
+        let currentUserEmail = null;
+        let currentUserRole = 'Admin'; 
+
+        // =====================================================
+        // SISTEMA DE LOGIN E SESSÃO
+        // =====================================================
+        async function inicializarApp() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                await configurarSessao(session.user.email);
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+            }
+        }
+
+        async function fazerLogin() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            
+            mostrarAlerta("A verificar credenciais...");
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+            fecharAlerta();
+
+            if (error) {
+                mostrarAlerta("Erro no Login: " + error.message);
+            } else {
+                document.getElementById('login-screen').style.display = 'none';
+                await configurarSessao(data.user.email);
+            }
+        }
+
+        async function configurarSessao(email) {
+            currentUserEmail = email;
+            
+            const { data, error } = await supabaseClient.from('perfis_acesso').select('perfil').eq('email', email).single();
+            
+            if (data && data.perfil) {
+                currentUserRole = data.perfil;
+            } else {
+                currentUserRole = 'Visualizador'; 
+            }
+
+            aplicarRestricoesVisuais();
+            carregarTudo();
+        }
+
+        function aplicarRestricoesVisuais() {
+            const headerName = document.getElementById('header-user-name');
+            if(headerName) headerName.innerText = `👤 ${currentUserEmail} (${currentUserRole})`;
+
+            if (currentUserRole === 'Visualizador') {
+                const adminAddForm = document.getElementById('admin-add-form');
+                if(adminAddForm) adminAddForm.style.display = 'none';
+                
+                const adminActionsBar = document.getElementById('admin-actions-bar');
+                if(adminActionsBar) adminActionsBar.style.display = 'none';
+                
+                const btnSync = document.getElementById('btn-sync-prod');
+                const btnGravar = document.getElementById('btn-gravar-briefing');
+                if(btnSync) btnSync.style.display = 'none';
+                if(btnGravar) btnGravar.style.display = 'none';
+                
+                const notes = document.getElementById('briefing-notes');
+                if(notes) notes.setAttribute('readonly', 'true');
+            }
+        }
+
+        async function fazerLogout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
+
         // -----------------------------------------------------
-        // SCROLL SINCRONIZADO E MÁGICO (COM PREVENÇÃO DE LOOP DE LAG)
+        // SCROLL SINCRONIZADO E MÁGICO (COM PREVENÇÃO DE LOOP)
         // -----------------------------------------------------
         const topScrollWrapper = document.getElementById('topScrollWrapper');
         const boardKanban = document.getElementById('boardKanban');
@@ -1611,15 +1725,15 @@
         window.addEventListener('resize', atualizarTamanhoScrollTopo);
 
         document.addEventListener('dragover', function(e) {
+            if (currentUserRole === 'Visualizador') return; 
+            
             const edgeSize = 150; 
             const speed = 25; 
             
             const activePage = document.querySelector('.page.active').id;
             const currentBoard = activePage === 'page-laser' ? document.getElementById('boardLaser') : document.getElementById('boardKanban');
 
-            if (!currentBoard) {
-                return;
-            }
+            if (!currentBoard) return;
             
             if (e.clientX > window.innerWidth - edgeSize) {
                 currentBoard.scrollLeft += speed;
@@ -1679,6 +1793,7 @@
             }
             
             renderizarKanbanComFiltro();
+            setTimeout(atualizarTamanhoScrollTopo, 100);
         }
 
         // -----------------------------------------------------
@@ -1693,21 +1808,21 @@
             const hoje = new Date();
             document.getElementById('briefing-date-title').innerText = `${hoje.getDate()}/${hoje.getMonth()+1} - PLANO DIÁRIO`;
 
+            const attrReadonly = currentUserRole === 'Visualizador' ? 'readonly' : '';
+
             trabalhadoresBriefing.forEach(trab => {
-                const primeiroNome = trab.split(' ')[0].toLowerCase();
+                const primeiroNome = removerAcentos(trab.split(' ')[0]);
                 
                 const obrasTrab = todasAsObras.filter(o => {
-                    const nomeProcurado = primeiroNome.toLowerCase();
-                    // Permite encontrar o nome caso existam vários trabalhadores no mesmo cartão (ex: "Suellen e José")
-                    const matchTrabalhador = o.trabalhador && o.trabalhador.toLowerCase().includes(nomeProcurado);
+                    const matchTrabalhador = o.trabalhador && removerAcentos(o.trabalhador).includes(primeiroNome);
                     
                     const f = String(o.fase || '');
                     const s = String(o.setor || '');
                     
-                    // FILTRO DE SEGURANÇA: Só aceita obras ativas no momento (Ignora Concluídos, Arquivos e Triagem)
                     const isMainProducao = (f === 'Produção' || f === 'Em Fila' || f === 'Pendente');
                     const isQualiTrat = (f === 'Qualidade' || f === 'Tratamento');
-                    const isCorteExecEspera = (f === 'Furação e Corte' && (s.includes('Execucao') || s.includes('Espera')));
+                    
+                    const isCorteExecEspera = (f === 'Furação e Corte' || f === 'Laser') && (!s || s.includes('Execucao') || s.includes('Espera') || s === 'Aguardar Chapa');
                     
                     const isValidState = isMainProducao || isQualiTrat || isCorteExecEspera;
 
@@ -1725,8 +1840,8 @@
                         <tr data-card-id="${o.id}">
                             ${index === 0 ? `<td rowspan="${obrasTrab.length}" style="background:#f4f6f8;"><b>${trab}</b></td>` : ''}
                             <td><input type="text" class="briefing-input b-obra" value="${escapeHTML(o.obra_ref || '')}" readonly></td>
-                            <td><textarea class="briefing-input b-trab" rows="2">${escapeHTML(desc)}</textarea></td>
-                            <td><input type="text" class="briefing-input b-est estado-red" placeholder=""></td>
+                            <td><textarea class="briefing-input b-trab" rows="2" ${attrReadonly}>${escapeHTML(desc)}</textarea></td>
+                            <td><input type="text" class="briefing-input b-est estado-red" placeholder="" ${attrReadonly}></td>
                         </tr>
                         `;
                     });
@@ -1734,9 +1849,9 @@
                     html += `
                     <tr data-worker="${trab}">
                         <td style="background:#f4f6f8;"><b>${trab}</b></td>
-                        <td><input type="text" class="briefing-input" placeholder="..."></td>
-                        <td><textarea class="briefing-input" rows="2" placeholder="Escrever tarefa..."></textarea></td>
-                        <td><input type="text" class="briefing-input estado-red" placeholder=""></td>
+                        <td><input type="text" class="briefing-input" placeholder="..." ${attrReadonly}></td>
+                        <td><textarea class="briefing-input" rows="2" placeholder="Escrever tarefa..." ${attrReadonly}></textarea></td>
+                        <td><input type="text" class="briefing-input estado-red" placeholder="" ${attrReadonly}></td>
                     </tr>
                     `;
                 }
@@ -1746,6 +1861,7 @@
         }
 
         async function guardarBriefingNaBD() {
+            if (currentUserRole === 'Visualizador') return;
             mostrarAlerta("A sincronizar briefing com a Base de Dados...");
             const rows = document.querySelectorAll('#briefing-tbody tr[data-card-id]');
             let updates = [];
@@ -1956,17 +2072,10 @@
         // -----------------------------------------------------
         function parseNumeroSeguro(elementId) {
             let el = document.getElementById(elementId);
-            if (!el) {
-                return 0;
-            }
-            
+            if (!el) return 0;
             let val = el.value.toString().trim().replace(',', '.'); 
             let num = parseFloat(val);
-            
-            if (isNaN(num)) {
-                return 0;
-            }
-            
+            if (isNaN(num)) return 0;
             return num;
         }
 
@@ -2025,20 +2134,14 @@
 
         function importarExcelInteligenteModal(event) {
             const file = event.target.files[0]; 
-            if (!file) {
-                return;
-            }
-            
+            if (!file) return;
             excelFilePendente = file;
             event.target.value = null; 
-            
             abrirModalData('excel');
         }
 
         async function executarImportacaoExcel(dataCriacaoStr) {
-            if (!excelFilePendente) {
-                return;
-            }
+            if (!excelFilePendente) return;
             
             mostrarAlerta('A processar ficheiro Excel e a aplicar filtro de limpeza e segurança...');
 
@@ -2080,9 +2183,7 @@
 
                         for (let i = 1; i < rows.length; i++) {
                             const row = rows[i];
-                            if (!row || row.length === 0) {
-                                continue;
-                            }
+                            if (!row || row.length === 0) continue;
 
                             const refE = colObra !== -1 ? String(row[colObra] || '').trim() : 'MANUAL';
                             const desig = colDesig !== -1 ? String(row[colDesig] || '').trim() : 'Sem Referência';
@@ -2123,12 +2224,9 @@
                         }
                     } else {
                         let lastSeenRef = 'MANUAL'; 
-
                         for (let i = 0; i < rows.length; i++) {
                             const row = rows[i]; 
-                            if (!row || row.length === 0) {
-                                continue;
-                            }
+                            if (!row || row.length === 0) continue;
                             
                             let refE = null;
                             let desig = null;
@@ -2172,9 +2270,7 @@
                                 }
                             }
 
-                            if (!desig) {
-                                continue;
-                            }
+                            if (!desig) continue;
 
                             if (refE) {
                                 totalLidas++; 
@@ -2224,7 +2320,6 @@
                         let lote = obrasParaInserir.slice(i, i + 500);
                         let res = await supabaseClient.from('cartoes_kanban').insert(lote).select();
                         
-                        // PLANO B
                         if (res.error) {
                             dbFailsOnNewColumns = true;
                             const loteSeguro = lote.map(o => {
@@ -2251,7 +2346,6 @@
                     } else {
                         mostrarAlerta(`Limpeza Concluída! Lemos ${totalLidas} peças. Ignoradas ${ignoradas} antigas. Inseridas ${inseridos} NOVAS obras.`); 
                     }
-                    
                     carregarTudo();
                 } catch (err) { 
                     mostrarAlerta('Erro geral no Excel: ' + err.message); 
@@ -2279,39 +2373,24 @@
             });
 
             todasAsObras.forEach(o => {
-                if (String(o.fase) === 'Arquivado') {
-                    return;
-                }
+                if (String(o.fase) === 'Arquivado') return;
                 
-                // RENDERIZAR QUADRO DE PRODUÇÃO
                 if (activePage === 'page-kanban') {
                     let mostrar = true; 
                     if (queryMain) {
                         const texto = `${o.obra_ref||''} ${o.referencia||''} ${o.trabalhador||''} ${o.comentarios||''} ${o.prioridade||''} ${o.material||''}`.toLowerCase();
-                        if (!texto.includes(queryMain)) {
-                            mostrar = false;
-                        }
+                        if (!texto.includes(queryMain)) mostrar = false;
                     }
-                    if (mostrar) {
-                        renderCartaoMain(o);
-                    }
+                    if (mostrar) renderCartaoMain(o);
                 }
-                
-                // RENDERIZAR QUADRO DO DEPARTAMENTO FURAÇÃO E CORTE
                 else if (activePage === 'page-laser') {
-                    if (o.fase !== 'Furação e Corte' && o.fase !== 'Laser') {
-                        return;
-                    }
+                    if (o.fase !== 'Furação e Corte' && o.fase !== 'Laser') return;
                     let mostrarLaser = true;
                     if (queryLaser) {
                         const textoLaser = `${o.obra_ref||''} ${o.referencia||''} ${o.comentarios||''} ${o.prioridade||''} ${o.material||''}`.toLowerCase();
-                        if (!textoLaser.includes(queryLaser)) {
-                            mostrarLaser = false;
-                        }
+                        if (!textoLaser.includes(queryLaser)) mostrarLaser = false;
                     }
-                    if (mostrarLaser) {
-                        renderCartaoLaser(o);
-                    }
+                    if (mostrarLaser) renderCartaoLaser(o);
                 }
             });
             
@@ -2371,6 +2450,8 @@
             zone.addEventListener('drop', async e => {
                 e.preventDefault(); 
                 zone.classList.remove('drag-over');
+
+                if (currentUserRole === 'Visualizador') return; 
                 
                 const cardId = e.dataTransfer.getData('text/plain'); 
                 const cartao = document.getElementById(cardId);
@@ -2380,9 +2461,7 @@
                     target = target.parentElement; 
                 }
                 
-                if (!target || !cartao) {
-                    return;
-                }
+                if (!target || !cartao) return;
 
                 const boardType = target.getAttribute('data-board');
                 let novaFase = target.getAttribute('data-fase');
@@ -2394,9 +2473,7 @@
                 const idx = todasAsObras.findIndex(o => o.id === cardId);
                 
                 if (idx !== -1) { 
-                    if (boardType === 'main' && novaFase === 'Furação e Corte') {
-                        novoSetor = 'Aguardar Chapa';
-                    }
+                    if (boardType === 'main' && novaFase === 'Furação e Corte') novoSetor = 'Aguardar Chapa';
 
                     if (!novoOperador) {
                         if (novaFase === 'Concluído Setor' || novaFase === 'Concluído' || novaFase === 'Pronto a Iniciar') {
@@ -2410,21 +2487,14 @@
 
                     let trackLabel = '';
                     if (boardType === 'laser') {
-                        if(novoSetor === 'Geral' && novaFase === 'Pronto a Iniciar'){
-                            trackLabel = 'Corte (Pronto)';
-                        } else {
-                            trackLabel = novoSetor.replace(/-/g, ' ');
-                        }
+                        if(novoSetor === 'Geral' && novaFase === 'Pronto a Iniciar') trackLabel = 'Corte (Pronto)';
+                        else trackLabel = novoSetor.replace(/-/g, ' ');
                     } else {
-                        if (novoOperador && novoOperador !== 'Não Atribuído') {
-                            trackLabel = novoOperador;
-                        } else {
-                            trackLabel = novaFase;
-                        }
+                        if (novoOperador && novoOperador !== 'Não Atribuído') trackLabel = novoOperador;
+                        else trackLabel = novaFase;
                     }
                     
                     let currentRastreio = todasAsObras[idx].rastreio || '';
-                    
                     if (!currentRastreio && todasAsObras[idx].trabalhador && todasAsObras[idx].trabalhador !== 'Não Atribuído') {
                         currentRastreio = todasAsObras[idx].trabalhador;
                     }
@@ -2433,11 +2503,8 @@
                     let lastElement = elements.length > 0 ? elements[elements.length - 1] : '';
 
                     if (trackLabel && lastElement !== trackLabel && !novaFase.includes('Concluído')) {
-                        if (!currentRastreio) {
-                            currentRastreio = trackLabel;
-                        } else {
-                            currentRastreio += ' // ' + trackLabel;
-                        }
+                        if (!currentRastreio) currentRastreio = trackLabel;
+                        else currentRastreio += ' // ' + trackLabel;
                         todasAsObras[idx].rastreio = currentRastreio;
                     }
                     
@@ -2466,49 +2533,33 @@
         });
 
         // -----------------------------------------------------
-        // RENDER CARTÃO MAIN
+        // RENDER CARTÃO MAIN E LASER (COM REGRAS VISUALIZADOR)
         // -----------------------------------------------------
         function renderCartaoMain(c) {
             try {
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
                 let f = String(c.fase || 'Projeto').replace(/"/g, ''); 
-                
-                if (f === 'Laser') {
-                    f = 'Furação e Corte';
-                }
+                if (f === 'Laser') f = 'Furação e Corte';
                 
                 const t = String(c.trabalhador || 'Não Atribuído').replace(/"/g, ''); 
                 const s = String(c.setor || '').replace(/"/g, '');
-                
-                if (f === 'Em Espera') {
-                    f = 'Em Fila';
-                }
+                if (f === 'Em Espera') f = 'Em Fila';
 
                 let z = null;
-                
-                if (f && t && t !== 'Não Atribuído') {
-                    z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"][data-operador="${t}"]`);
-                }
-                if (!z && f === 'Concluído Setor' && s) {
-                    z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"][data-setor="${s}"]`);
-                }
-                if (!z) {
-                    z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"]`);
-                }
-                if (!z) {
-                    z = document.querySelector(`#page-kanban .column-content[data-fase="Projeto"]`);
-                }
+                if (f && t && t !== 'Não Atribuído') z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"][data-operador="${t}"]`);
+                if (!z && f === 'Concluído Setor' && s) z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"][data-setor="${s}"]`);
+                if (!z) z = document.querySelector(`#page-kanban .column-content[data-fase="${f}"]`);
+                if (!z) z = document.querySelector(`#page-kanban .column-content[data-fase="Projeto"]`);
 
                 if (z) {
                     const el = document.createElement('div'); 
                     el.className = `card prio-${p}`; 
-                    el.draggable = true; 
+                    el.draggable = (currentUserRole !== 'Visualizador'); 
                     el.id = c.id;
                     
                     const safeObra = escapeHTML(c.obra_ref);
                     const safeRef = escapeHTML(c.referencia);
                     const safeTrab = escapeHTML(t);
-
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
@@ -2516,12 +2567,20 @@
                     let workerDisplay = c.rastreio ? escapeHTML(c.rastreio) : safeTrab;
                     let removeBtnHtml = '';
                     
-                    if (c.rastreio && c.rastreio.includes('//')) {
+                    if (c.rastreio && c.rastreio.includes('//') && currentUserRole !== 'Visualizador') {
                         removeBtnHtml = `<button class="btn-rastreio-del" title="Limpar Rastreio" style="background:none; border:none; color:#ef5350; cursor:pointer; font-size:11px; padding:0 4px; font-weight:bold; flex-shrink:0;">✖</button>`;
                     }
 
                     let isReadyForProduction = (f === 'Pronto a Iniciar');
                     let laserReadyBadge = isReadyForProduction ? `<div class="laser-ready-badge">✅ PRONTO P/ PRODUÇÃO</div><br>` : '';
+
+                    let btnEditarApagar = '';
+                    if (currentUserRole !== 'Visualizador') {
+                        btnEditarApagar = `
+                            <button class="btn-card btn-editar">✏️ Editar</button>
+                            <button class="btn-card btn-apagar">🗑️ Apagar</button>
+                        `;
+                    }
 
                     el.innerHTML = `
                         ${laserReadyBadge}
@@ -2540,64 +2599,45 @@
                         
                         <div class="card-actions">
                             <button class="btn-card btn-detalhes" style="color:var(--prf-blue-light) !important;">👁️ Detalhes</button>
-                            <button class="btn-card btn-editar">✏️ Editar</button>
-                            <button class="btn-card btn-apagar">🗑️ Apagar</button>
+                            ${btnEditarApagar}
                         </div>
                     `;
                     
-                    el.querySelector('.btn-detalhes').addEventListener('click', () => {
-                        abrirModalDetalhes(c);
-                    });
+                    el.querySelector('.btn-detalhes').addEventListener('click', () => abrirModalDetalhes(c));
 
-                    el.querySelector('.btn-editar').addEventListener('click', () => {
-                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t, c.material);
-                    });
-
-                    el.querySelector('.btn-apagar').addEventListener('click', () => { 
-                        apagarCartao(c.id); 
-                    });
-                    
-                    const btnRastreioDel = el.querySelector('.btn-rastreio-del');
-                    if (btnRastreioDel) {
-                        btnRastreioDel.addEventListener('click', () => {
-                            mostrarConfirmacao("Tem a certeza que deseja limpar o caminho de rastreio de colaboradores deste cartão?", () => {
-                                limparRastreioCartao(c.id);
-                            });
+                    if (currentUserRole !== 'Visualizador') {
+                        el.querySelector('.btn-editar').addEventListener('click', () => {
+                            abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t, c.material);
                         });
+                        el.querySelector('.btn-apagar').addEventListener('click', () => apagarCartao(c.id));
+                        
+                        const btnRastreioDel = el.querySelector('.btn-rastreio-del');
+                        if (btnRastreioDel) {
+                            btnRastreioDel.addEventListener('click', () => {
+                                mostrarConfirmacao("Tem a certeza que deseja limpar o caminho de rastreio de colaboradores deste cartão?", () => limparRastreioCartao(c.id));
+                            });
+                        }
+                        el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
                     }
-
-                    el.addEventListener('dragstart', e => {
-                        e.dataTransfer.setData('text/plain', c.id);
-                    });
                     
                     z.appendChild(el);
                 }
-            } catch (err) { 
-                console.error("Cartão problemático no Main Board:", err); 
-            }
+            } catch (err) { console.error("Cartão problemático no Main Board:", err); }
         }
 
-        // -----------------------------------------------------
-        // RENDER CARTÃO FURAÇÃO E CORTE
-        // -----------------------------------------------------
         function renderCartaoLaser(c) {
             try {
                 const p = String(c.prioridade || 'Normal').toLowerCase().replace(/\s+/g, '-');
-                
                 let s = String(c.setor || '').replace(/"/g, '');
-                if (!s || s === 'Geral') {
-                    s = 'Aguardar Chapa';
-                }
+                if (!s || s === 'Geral') s = 'Aguardar Chapa';
                 
                 let z = document.querySelector(`#page-laser .column-content[data-setor="${s}"]`);
-                if (!z) {
-                    z = document.querySelector(`#page-laser .column-content[data-setor="Aguardar Chapa"]`);
-                }
+                if (!z) z = document.querySelector(`#page-laser .column-content[data-setor="Aguardar Chapa"]`);
 
                 if (z) {
                     const el = document.createElement('div'); 
                     el.className = `card prio-${p}`; 
-                    el.draggable = true; 
+                    el.draggable = (currentUserRole !== 'Visualizador'); 
                     el.id = c.id;
                     
                     const safeObra = escapeHTML(c.obra_ref);
@@ -2608,40 +2648,38 @@
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
                     
+                    let btnEditar = '';
+                    if (currentUserRole !== 'Visualizador') {
+                        btnEditar = `<button class="btn-card btn-editar">✏️ Editar (Corte)</button>`;
+                    }
+
                     el.innerHTML = `
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
-                        
                         <div class="card-info" style="margin-top:4px;">
-                            <div style="margin-bottom: 3px;">⚖️️ ${vKg} Kg | 📏 ${vPol}"</div>
+                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}"</div>
                             <div style="background:rgba(0,0,0,0.04); padding:3px; border-radius:4px; font-weight:bold; color: #ef5350;">
                                 ⚙️ Mat: ${safeMat}
                             </div>
                         </div>
-                        
                         <div class="card-actions">
                             <button class="btn-card btn-detalhes" style="color:var(--prf-blue-light) !important;">👁️ Detalhes</button>
-                            <button class="btn-card btn-editar">✏️ Editar (Corte)</button>
+                            ${btnEditar}
                         </div>
                     `;
                     
-                    el.querySelector('.btn-detalhes').addEventListener('click', () => {
-                        abrirModalDetalhes(c);
-                    });
+                    el.querySelector('.btn-detalhes').addEventListener('click', () => abrirModalDetalhes(c));
 
-                    el.querySelector('.btn-editar').addEventListener('click', () => {
-                        abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, c.trabalhador, c.material);
-                    });
-
-                    el.addEventListener('dragstart', e => {
-                        e.dataTransfer.setData('text/plain', c.id);
-                    });
+                    if (currentUserRole !== 'Visualizador') {
+                        el.querySelector('.btn-editar').addEventListener('click', () => {
+                            abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, c.trabalhador, c.material);
+                        });
+                        el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
+                    }
                     
                     z.appendChild(el);
                 }
-            } catch (err) { 
-                console.error("Cartão problemático no Corte Board:", err); 
-            }
+            } catch (err) { console.error("Cartão problemático no Corte Board:", err); }
         }
 
         // -----------------------------------------------------
@@ -2650,14 +2688,11 @@
         function abrirModalDetalhes(c) {
             document.getElementById('details-badge').innerText = c.obra_ref || 'GERAL';
             document.getElementById('details-title').innerText = c.referencia || 'Sem Referência';
-            
             document.getElementById('details-date').innerText = c.data_criacao ? formatarDataVisivel(c.data_criacao) : 'N/A';
             document.getElementById('details-prio').innerText = c.prioridade || 'Normal';
-            
             const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
             document.getElementById('details-kg').innerText = vKg;
             document.getElementById('details-pol').innerText = c.polegadas || 0;
-            
             document.getElementById('details-material').innerText = c.material || 'N/A';
 
             const timelineDiv = document.getElementById('details-timeline');
@@ -2665,20 +2700,14 @@
             let steps = trackStr.split('//').map(s => s.trim()).filter(s => s !== '');
             
             if (steps.length > 0) {
-                let html = steps.map((step, index) => {
-                    return `<div style="margin-bottom:4px;">${index + 1}. ${escapeHTML(step)}</div>`;
-                }).join('');
-                timelineDiv.innerHTML = html;
+                timelineDiv.innerHTML = steps.map((step, index) => `<div style="margin-bottom:4px;">${index + 1}. ${escapeHTML(step)}</div>`).join('');
             } else {
                 timelineDiv.innerHTML = '<i>Sem movimentações.</i>';
             }
 
             const commentsUl = document.getElementById('details-comments');
             if (c.comentarios && c.comentarios.trim() !== '') {
-                commentsUl.innerHTML = c.comentarios.split('\n')
-                    .filter(line => line.trim() !== '')
-                    .map(line => `<li>${escapeHTML(line.trim())}</li>`)
-                    .join('');
+                commentsUl.innerHTML = c.comentarios.split('\n').filter(line => line.trim() !== '').map(line => `<li>${escapeHTML(line.trim())}</li>`).join('');
             } else {
                 commentsUl.innerHTML = '<li style="list-style:none; color:var(--text-secondary); font-style:italic;">Sem observações registadas.</li>';
             }
@@ -2686,9 +2715,7 @@
             document.getElementById('details-modal').classList.add('active');
         }
 
-        function fecharDetalhes() {
-            document.getElementById('details-modal').classList.remove('active');
-        }
+        function fecharDetalhes() { document.getElementById('details-modal').classList.remove('active'); }
 
         async function limparRastreioCartao(id) {
             const idx = todasAsObras.findIndex(o => o.id === id);
@@ -2710,49 +2737,34 @@
             document.getElementById('edit-pol').value = pol || 0;
             document.getElementById('edit-prio').value = prio || 'Normal'; 
             document.getElementById('edit-comments').value = comentarios || '';
-            
             document.getElementById('edit-material').value = material || '';
             document.getElementById('edit-material-original').value = material || '';
             
             let dateVal = '';
-            if (dataCriacao) {
-                dateVal = String(dataCriacao).split('T')[0].split(' ')[0];
-            }
+            if (dataCriacao) dateVal = String(dataCriacao).split('T')[0].split(' ')[0];
             document.getElementById('edit-date').value = dateVal;
             
             let currentRast = rastreio || '';
-            if (!currentRast && trabalhadorAtual && trabalhadorAtual !== 'Não Atribuído') {
-                currentRast = trabalhadorAtual;
-            }
+            if (!currentRast && trabalhadorAtual && trabalhadorAtual !== 'Não Atribuído') currentRast = trabalhadorAtual;
             
             document.getElementById('edit-rastreio-current').value = currentRast;
             document.getElementById('edit-rastreio-add').value = '';
             
             let disp = document.getElementById('current-rastreio-display');
-            if (currentRast) {
-                disp.innerHTML = `Histórico Atual: <b style="color:var(--prf-blue);">${escapeHTML(currentRast)}</b>`;
-            } else {
-                disp.innerHTML = `Nenhum histórico ativo.`;
-            }
+            if (currentRast) disp.innerHTML = `Histórico Atual: <b style="color:var(--prf-blue);">${escapeHTML(currentRast)}</b>`;
+            else disp.innerHTML = `Nenhum histórico ativo.`;
             
             document.getElementById('edit-modal').classList.add('active');
         }
 
-        function fecharModal() { 
-            document.getElementById('edit-modal').classList.remove('active'); 
-        }
+        function fecharModal() { document.getElementById('edit-modal').classList.remove('active'); }
 
         function verificarESalvarEdicao() {
             const materialOriginal = document.getElementById('edit-material-original').value.trim();
             const novoMaterial = document.getElementById('edit-material').value.trim();
 
             if (materialOriginal !== novoMaterial) {
-                mostrarConfirmacao(
-                    `O tipo de material foi alterado de "${materialOriginal || 'Vazio'}" para "${novoMaterial}". Tem a certeza que deseja confirmar esta alteração?`,
-                    function() {
-                        executarSalvarEdicao(novoMaterial);
-                    }
-                );
+                mostrarConfirmacao(`O tipo de material foi alterado de "${materialOriginal || 'Vazio'}" para "${novoMaterial}". Tem a certeza que deseja confirmar esta alteração?`, () => executarSalvarEdicao(novoMaterial));
             } else {
                 executarSalvarEdicao(novoMaterial);
             }
@@ -2768,11 +2780,8 @@
             let finalRastreio = oldRastreio;
             
             if (toAdd) {
-                if (finalRastreio) {
-                    finalRastreio += ' // ' + toAdd;
-                } else {
-                    finalRastreio = toAdd;
-                }
+                if (finalRastreio) finalRastreio += ' // ' + toAdd;
+                else finalRastreio = toAdd;
             }
 
             const updateData = {
@@ -2792,23 +2801,13 @@
 
             if (res.error) {
                 const fallbackData = { ...updateData }; 
-                delete fallbackData.kg; 
-                delete fallbackData.polegadas;
-                delete fallbackData.data_criacao; 
-                delete fallbackData.rastreio;
-                delete fallbackData.material;
-                
+                delete fallbackData.kg; delete fallbackData.polegadas; delete fallbackData.data_criacao; delete fallbackData.rastreio; delete fallbackData.material;
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
             }
 
-            if (res.error) {
-                mostrarAlerta('Erro ao guardar as alterações: ' + res.error.message);
-                return;
-            }
-
-            fecharModal(); 
-            carregarTudo();
+            if (res.error) return mostrarAlerta('Erro ao guardar as alterações: ' + res.error.message);
+            fecharModal(); carregarTudo();
         }
 
         function apagarCartao(id) {
@@ -2822,57 +2821,26 @@
         // CÁLCULO DOS NOVOS KPIS
         // -----------------------------------------------------
         function calcularKPIs() {
-            let totalKgAno = 0;
-            let kgEmExecucao = 0; 
-            let pecasEmExecucao = 0;
-            let kgEmFila = 0; 
-            let pecasEmFila = 0;
-            let kgPendente = 0; 
-            let pecasPendente = 0;
-            let kgConcluido = 0; 
-            let pecasConcluido = 0;
-
-            let totalRetrabalhos = 0;
-            let retrabalhosConcluidos = 0;
-            let totalReqInterna = 0;
+            let totalKgAno = 0; let kgEmExecucao = 0; let pecasEmExecucao = 0;
+            let kgEmFila = 0; let pecasEmFila = 0; let kgPendente = 0; let pecasPendente = 0;
+            let kgConcluido = 0; let pecasConcluido = 0; let totalRetrabalhos = 0;
+            let retrabalhosConcluidos = 0; let totalReqInterna = 0;
 
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 
-                if (o.prioridade === 'Retrabalho') {
-                    totalRetrabalhos++;
-                }
-                if (o.prioridade === 'Laranja') {
-                    totalReqInterna++;
-                }
+                if (o.prioridade === 'Retrabalho') totalRetrabalhos++;
+                if (o.prioridade === 'Laranja') totalReqInterna++;
 
-                if (o.fase !== 'Arquivado') {
-                    totalKgAno += peso;
-                }
+                if (o.fase !== 'Arquivado') totalKgAno += peso;
 
-                if (o.fase === 'Produção') {
-                    kgEmExecucao += peso;
-                    pecasEmExecucao++;
-                } else if (o.fase === 'Em Fila' || o.fase === 'Em Espera') {
-                    kgEmFila += peso;
-                    pecasEmFila++;
-                } else if (o.fase === 'Pendente') {
-                    kgPendente += peso;
-                    pecasPendente++;
-                } else if (o.fase === 'Concluído') { 
-                    kgConcluido += peso;
-                    pecasConcluido++;
-                    
-                    if (o.prioridade === 'Retrabalho') {
-                        retrabalhosConcluidos++;
-                    }
-                }
+                if (o.fase === 'Produção') { kgEmExecucao += peso; pecasEmExecucao++; } 
+                else if (o.fase === 'Em Fila' || o.fase === 'Em Espera') { kgEmFila += peso; pecasEmFila++; } 
+                else if (o.fase === 'Pendente') { kgPendente += peso; pecasPendente++; } 
+                else if (o.fase === 'Concluído') { kgConcluido += peso; pecasConcluido++; if (o.prioridade === 'Retrabalho') retrabalhosConcluidos++; }
             });
             
-            let taxaRetrabalho = 0;
-            if (pecasConcluido > 0) {
-                taxaRetrabalho = ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1);
-            }
+            let taxaRetrabalho = pecasConcluido > 0 ? ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1) : 0;
 
             document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% de todas as concluídas)</span>`;
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
@@ -2880,41 +2848,25 @@
             document.getElementById('kpi-em-fila').innerHTML = kgEmFila.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmFila + " unid)</span>";
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
-            
             const elReqInt = document.getElementById('kpi-req-interna');
             if (elReqInt) elReqInt.innerHTML = `${totalReqInterna} Unid`;
         }
 
         // -----------------------------------------------------
-        // PAGINAÇÃO INFINITA AUTOMÁTICA
+        // CARREGAR TUDO DA BD (LOOP INICIAL)
         // -----------------------------------------------------
         async function carregarTudo() {
             const counterEl = document.getElementById('db-counter');
             if(counterEl) counterEl.innerText = `🟢 A carregar obras da BD...`;
             
             let allData = []; 
-            let from = 0; 
-            let step = 999; 
-            let keepFetching = true;
+            let from = 0; let step = 999; let keepFetching = true;
 
             while (keepFetching) {
                 const { data, error } = await supabaseClient.from('cartoes_kanban').select('*').range(from, from + step);
-                
-                if (error) { 
-                    mostrarAlerta('Erro de ligação! A aplicação não conseguiu ler a Base de Dados.'); 
-                    break; 
-                }
-                
-                if (data && data.length > 0) { 
-                    allData = allData.concat(data); 
-                    from += data.length; 
-                    
-                    if (data.length <= step) {
-                        keepFetching = false; 
-                    }
-                } else { 
-                    keepFetching = false; 
-                }
+                if (error) { mostrarAlerta('Erro de ligação à BD.'); break; }
+                if (data && data.length > 0) { allData = allData.concat(data); from += data.length; if (data.length <= step) keepFetching = false; } 
+                else { keepFetching = false; }
             }
             
             todasAsObras = allData;
@@ -2922,14 +2874,10 @@
             
             renderizarKanbanComFiltro();
             calcularKPIs(); 
-            
-            // Só executa o carregamento se a janela de briefing estiver aberta ativamente
-            if (document.getElementById('page-briefing').classList.contains('active')) {
-                carregarBriefing();
-            }
+            if (document.getElementById('page-briefing').classList.contains('active')) carregarBriefing();
         }
 
-        window.onload = carregarTudo;
+        window.onload = inicializarApp;
     </script>
 </body>
 </html>
