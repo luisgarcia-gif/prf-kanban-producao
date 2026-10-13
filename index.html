@@ -669,7 +669,7 @@
         }
 
         .kpi-card { 
-            background: var(--bg-card); 
+            background: var(--bg-card); /* Fundo sempre adaptável (claro/escuro) */
             padding: 20px; 
             border-radius: 8px; 
             border-left: 4px solid var(--prf-blue); 
@@ -697,13 +697,14 @@
             margin-left: 5px; 
         }
         
-        /* Nova Formatação do Valor Grande (Para as Horas nas Req Internas) */
+        /* Formatação do Valor Grande (Para as Horas nas Categorias) */
         .kpi-value-highlight {
             font-size: 20px;
             font-weight: bold;
+            color: var(--text-main); /* Adaptável claro/escuro para sempre se ler */
             margin-top: 5px;
             padding-top: 5px;
-            border-top: 1px dashed rgba(0,0,0,0.1);
+            border-top: 1px dashed rgba(128,128,128,0.3);
         }
 
         .consult-item { 
@@ -1340,19 +1341,19 @@
     <div id="page-kpis" class="page">
         <h2 style="margin-top:0; color:var(--text-main);">📊 Estado Atual da Fábrica (Tempo Real)</h2>
         <div class="kpi-grid">
-            <div class="kpi-card" style="border-left-color: #0288d1; background: #e1f5fe;">
+            <div class="kpi-card" style="border-left-color: #0288d1;">
                 <div class="kpi-title" style="color: #01579b;">Em Execução (Produção)</div>
                 <div class="kpi-value" id="kpi-em-execucao">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
-            <div class="kpi-card" style="border-left-color: #8e24aa; background: #f3e5f5;">
+            <div class="kpi-card" style="border-left-color: #8e24aa;">
                 <div class="kpi-title" style="color: #4a148c;">Em Fila (Preparação)</div>
                 <div class="kpi-value" id="kpi-em-fila">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
-            <div class="kpi-card" style="border-left-color: #fbc02d; background: #fffde7;">
+            <div class="kpi-card" style="border-left-color: #fbc02d;">
                 <div class="kpi-title" style="color: #f57f17;">Pendentes (Produção)</div>
                 <div class="kpi-value" id="kpi-pendentes">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
-            <div class="kpi-card" style="border-left-color: #2e7d32; background: #e8f5e9;">
+            <div class="kpi-card" style="border-left-color: #2e7d32;">
                 <div class="kpi-title" style="color: #1b5e20;">Concluído Final</div>
                 <div class="kpi-value" id="kpi-concluido-final">0.0 Kg <span class="kpi-subtitle">(0 Peças)</span></div>
             </div>
@@ -1362,44 +1363,54 @@
         <div class="kpi-grid">
             <!-- Prioridade Máxima -->
             <div class="kpi-card" style="border-left-color: #ef5350;">
-                <div class="kpi-title" style="color: #c62828;">Prioridade Máxima (Vermelho)</div>
+                <div class="kpi-title" style="color: #ef5350;">Prioridade Máxima (Vermelho)</div>
                 <div class="kpi-value" id="kpi-max-unid">0 Unid</div>
-                <div class="kpi-value-highlight" style="color: #ef5350;" id="kpi-max-horas">⏱️ 0.0 Horas</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;" id="kpi-max-detalhes">⚖️ 0.0 Kg | 📏 0.0"</div>
+                <div class="kpi-value-highlight" id="kpi-max-horas">⏱️ 0.0 Horas</div>
             </div>
             <!-- Requisições Internas (Laranja) -->
-            <div class="kpi-card" style="border-left-color: #ff9800; background: #fff3e0;">
-                <div class="kpi-title" style="color: #e65100;">Requisições Internas (Laranja)</div>
+            <div class="kpi-card" style="border-left-color: #ff9800;">
+                <div class="kpi-title" style="color: #ff9800;">Requisições Internas (Laranja)</div>
                 <div class="kpi-value" id="kpi-req-interna">0 Unid</div>
-                <div class="kpi-value-highlight" style="color: #ff9800;" id="kpi-req-interna-horas">⏱️ 0.0 Horas</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;" id="kpi-req-interna-detalhes">⚖️ 0.0 Kg | 📏 0.0"</div>
+                <div class="kpi-value-highlight" id="kpi-req-interna-horas">⏱️ 0.0 Horas</div>
             </div>
             <!-- Pintura Externa (Amarelo) -->
-            <div class="kpi-card" style="border-left-color: #ffeb3b;">
-                <div class="kpi-title" style="color: #f57f17;">Pintura Externa (Amarelo)</div>
+            <div class="kpi-card" style="border-left-color: #fbc02d;">
+                <div class="kpi-title" style="color: #fbc02d;">Pintura Externa (Amarelo)</div>
                 <div class="kpi-value" id="kpi-pintura-unid">0 Unid</div>
-                <div class="kpi-value-highlight" style="color: #fbc02d;" id="kpi-pintura-horas">⏱️ 0.0 Horas</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;" id="kpi-pintura-detalhes">⚖️ 0.0 Kg | 📏 0.0"</div>
+                <div class="kpi-value-highlight" id="kpi-pintura-horas">⏱️ 0.0 Horas</div>
             </div>
             <!-- Normal -->
             <div class="kpi-card" style="border-left-color: #cbd5e1;">
-                <div class="kpi-title" style="color: #475569;">Normal (Sem Destaque)</div>
+                <div class="kpi-title" style="color: #64748b;">Normal (Sem Destaque)</div>
                 <div class="kpi-value" id="kpi-normal-unid">0 Unid</div>
-                <div class="kpi-value-highlight" style="color: #64748b;" id="kpi-normal-horas">⏱️ 0.0 Horas</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;" id="kpi-normal-detalhes">⚖️ 0.0 Kg | 📏 0.0"</div>
+                <div class="kpi-value-highlight" id="kpi-normal-horas">⏱️ 0.0 Horas</div>
             </div>
             <!-- Raio X -->
             <div class="kpi-card" style="border-left-color: #9c27b0;">
-                <div class="kpi-title" style="color: #6a1b9a;">Raio X (Roxo)</div>
+                <div class="kpi-title" style="color: #9c27b0;">Raio X (Roxo)</div>
                 <div class="kpi-value" id="kpi-raiox-unid">0 Unid</div>
-                <div class="kpi-value-highlight" style="color: #9c27b0;" id="kpi-raiox-horas">⏱️ 0.0 Horas</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;" id="kpi-raiox-detalhes">⚖️ 0.0 Kg | 📏 0.0"</div>
+                <div class="kpi-value-highlight" id="kpi-raiox-horas">⏱️ 0.0 Horas</div>
             </div>
             <!-- Retrabalho -->
             <div class="kpi-card" style="border-left-color: #94a3b8;">
-                <div class="kpi-title" style="color: #475569;">Retrabalho (Cinzento)</div>
-                <div class="kpi-value" id="kpi-retrabalho">0 Unid</div>
-                <div class="kpi-value-highlight" style="color: #94a3b8;" id="kpi-retrabalho-horas">⏱️ 0.0 Horas</div>
+                <div class="kpi-title" style="color: #94a3b8;">Retrabalho (Cinzento)</div>
+                <div class="kpi-value" id="kpi-retrabalho-unid">0 Unid</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;" id="kpi-retrabalho-detalhes">⚖️ 0.0 Kg | 📏 0.0"</div>
+                <div class="kpi-value-highlight" id="kpi-retrabalho-horas">⏱️ 0.0 Horas</div>
             </div>
         </div>
 
         <h2 style="color:var(--text-main);">📈 Histórico e Produção Global</h2>
         <div class="kpi-grid">
+            <div class="kpi-card" style="border-left-color: #94a3b8;">
+                <div class="kpi-title" style="color: #64748b;">Taxa de Retrabalho Global</div>
+                <div class="kpi-value" id="kpi-retrabalho-geral">0 Unid <span class="kpi-subtitle">(0.0% Taxa Final)</span></div>
+            </div>
             <div class="kpi-card">
                 <div class="kpi-title">Kg Soldados (Acumulado Total)</div>
                 <div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div>
@@ -2894,8 +2905,17 @@
             let horasMaxima = 0; let horasLaranja = 0; let horasAmarelo = 0; 
             let horasNormal = 0; let horasRaiox = 0; let horasRetrabalhoCat = 0;
 
+            // Contadores de KGs por Categoria
+            let kgMaxima = 0; let kgLaranja = 0; let kgAmarelo = 0; 
+            let kgNormal = 0; let kgRaiox = 0; let kgRetrabalhoCat = 0;
+
+            // Contadores de Polegadas por Categoria
+            let polMaxima = 0; let polLaranja = 0; let polAmarelo = 0; 
+            let polNormal = 0; let polRaiox = 0; let polRetrabalhoCat = 0;
+
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
+                const polegadas = parseFloat(o.polegadas) || 0;
                 const hr = parseFloat(o.horas) || 0;
                 
                 if (o.prioridade === 'Retrabalho') totalRetrabalhos++;
@@ -2903,14 +2923,14 @@
                 if (o.fase !== 'Arquivado') {
                     totalKgAno += peso;
                     
-                    // Cálculo da nova grelha de Horas por Categoria
+                    // Cálculo da nova grelha de Somatórios por Categoria
                     const prio = o.prioridade || 'Normal';
-                    if (prio === 'Vermelho' || prio === 'Máxima') { unidMaxima++; horasMaxima += hr; }
-                    else if (prio === 'Laranja') { unidLaranja++; horasLaranja += hr; }
-                    else if (prio === 'Amarelo') { unidAmarelo++; horasAmarelo += hr; }
-                    else if (prio === 'Raio X') { unidRaiox++; horasRaiox += hr; }
-                    else if (prio === 'Retrabalho') { unidRetrabalhoCat++; horasRetrabalhoCat += hr; }
-                    else { unidNormal++; horasNormal += hr; } // Entra 'Normal', 'Sem Cor' e outros
+                    if (prio === 'Vermelho' || prio === 'Máxima') { unidMaxima++; horasMaxima += hr; kgMaxima += peso; polMaxima += polegadas; }
+                    else if (prio === 'Laranja') { unidLaranja++; horasLaranja += hr; kgLaranja += peso; polLaranja += polegadas; }
+                    else if (prio === 'Amarelo') { unidAmarelo++; horasAmarelo += hr; kgAmarelo += peso; polAmarelo += polegadas; }
+                    else if (prio === 'Raio X') { unidRaiox++; horasRaiox += hr; kgRaiox += peso; polRaiox += polegadas; }
+                    else if (prio === 'Retrabalho') { unidRetrabalhoCat++; horasRetrabalhoCat += hr; kgRetrabalhoCat += peso; polRetrabalhoCat += polegadas; }
+                    else { unidNormal++; horasNormal += hr; kgNormal += peso; polNormal += polegadas; }
                 }
 
                 if (o.fase === 'Produção') { kgEmExecucao += peso; pecasEmExecucao++; } 
@@ -2929,25 +2949,32 @@
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
             
-            // Injetar Nova Grelha de Categorias / Horas
+            // Injetar Nova Grelha de Categorias / Horas / Kg / Pol
             document.getElementById('kpi-max-unid').innerText = `${unidMaxima} Unid`;
+            document.getElementById('kpi-max-detalhes').innerText = `⚖️ ${kgMaxima.toFixed(1)} Kg | 📏 ${polMaxima.toFixed(1)}"`;
             document.getElementById('kpi-max-horas').innerText = `⏱️ ${horasMaxima.toFixed(1)} Horas`;
             
             document.getElementById('kpi-req-interna').innerText = `${unidLaranja} Unid`;
+            document.getElementById('kpi-req-interna-detalhes').innerText = `⚖️ ${kgLaranja.toFixed(1)} Kg | 📏 ${polLaranja.toFixed(1)}"`;
             document.getElementById('kpi-req-interna-horas').innerText = `⏱️ ${horasLaranja.toFixed(1)} Horas`;
             
             document.getElementById('kpi-pintura-unid').innerText = `${unidAmarelo} Unid`;
+            document.getElementById('kpi-pintura-detalhes').innerText = `⚖️ ${kgAmarelo.toFixed(1)} Kg | 📏 ${polAmarelo.toFixed(1)}"`;
             document.getElementById('kpi-pintura-horas').innerText = `⏱️ ${horasAmarelo.toFixed(1)} Horas`;
             
             document.getElementById('kpi-normal-unid').innerText = `${unidNormal} Unid`;
+            document.getElementById('kpi-normal-detalhes').innerText = `⚖️ ${kgNormal.toFixed(1)} Kg | 📏 ${polNormal.toFixed(1)}"`;
             document.getElementById('kpi-normal-horas').innerText = `⏱️ ${horasNormal.toFixed(1)} Horas`;
             
             document.getElementById('kpi-raiox-unid').innerText = `${unidRaiox} Unid`;
+            document.getElementById('kpi-raiox-detalhes').innerText = `⚖️ ${kgRaiox.toFixed(1)} Kg | 📏 ${polRaiox.toFixed(1)}"`;
             document.getElementById('kpi-raiox-horas').innerText = `⏱️ ${horasRaiox.toFixed(1)} Horas`;
             
             const elRetrabalhoUnid = document.getElementById('kpi-retrabalho-unid');
+            const elRetrabalhoDetalhes = document.getElementById('kpi-retrabalho-detalhes');
             const elRetrabalhoHoras = document.getElementById('kpi-retrabalho-horas');
             if(elRetrabalhoUnid) elRetrabalhoUnid.innerText = `${unidRetrabalhoCat} Unid`;
+            if(elRetrabalhoDetalhes) elRetrabalhoDetalhes.innerText = `⚖️ ${kgRetrabalhoCat.toFixed(1)} Kg | 📏 ${polRetrabalhoCat.toFixed(1)}"`;
             if(elRetrabalhoHoras) elRetrabalhoHoras.innerText = `⏱️ ${horasRetrabalhoCat.toFixed(1)} Horas`;
         }
 
