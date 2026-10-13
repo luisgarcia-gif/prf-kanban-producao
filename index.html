@@ -478,7 +478,7 @@
         .card.prio-vermelho { background-color: #ef5350 !important; border: none; }
         .card.prio-vermelho * { color: #ffffff !important; }
 
-        /* MODO DE COMPATIBILIDADE PARA OBRAS ANTIGAS (MÉDIA/BAIXA viraram LARANJA/AMARELO) */
+        /* MODO DE COMPATIBILIDADE PARA OBRAS ANTIGAS */
         .card.prio-laranja, .card.prio-média, .card.prio-media { background-color: #ff9800 !important; border: none; }
         .card.prio-laranja *, .card.prio-média *, .card.prio-media * { color: #ffffff !important; }
 
@@ -571,7 +571,7 @@
             border: 1px solid var(--prf-blue); 
             padding: 20px; 
             border-radius: 8px; 
-            width: 400px;
+            width: 500px; /* Aumentado um pouco para acomodar 4 colunas nos inputs */
             max-width: 90%; 
             display: flex; 
             flex-direction: column; 
@@ -918,6 +918,7 @@
             <input type="text" id="new-ref" placeholder="Nome/Referência" style="width: 160px;">
             <input type="number" id="new-kg" placeholder="Kg" step="any" style="width: 70px;">
             <input type="number" id="new-pol" placeholder="Pol ('')" step="any" style="width: 70px;">
+            <input type="number" id="new-horas" placeholder="Horas" step="any" style="width: 70px;">
             <input type="text" id="new-material" placeholder="Material (Ex: Inox)" style="width: 120px;">
             <select id="new-prio">
                 <option value="Sem Cor">⚪ Sem Categoria (Branco)</option>
@@ -1470,8 +1471,12 @@
                     <input type="number" id="edit-kg" step="any" style="width:100%;">
                 </div>
                 <div style="flex:1;">
-                    <label>Polegadas ("):</label>
+                    <label>Pol ("):</label>
                     <input type="number" id="edit-pol" step="any" style="width:100%;">
+                </div>
+                <div style="flex:1;">
+                    <label>Horas:</label>
+                    <input type="number" id="edit-horas" step="any" style="width:100%;">
                 </div>
                 <div style="flex:1;">
                     <label>Material:</label>
@@ -1533,6 +1538,7 @@
                         <div><b>Prioridade:</b> <span id="details-prio">Normal</span></div>
                         <div><b>Peso:</b> <span id="details-kg">0</span> Kg</div>
                         <div><b>Tamanho:</b> <span id="details-pol">0</span>"</div>
+                        <div><b>Tempo Execução:</b> <span id="details-horas">0</span>h</div>
                         <div><b>Material:</b> <span id="details-material">N/A</span></div>
                     </div>
                 </div>
@@ -1797,7 +1803,7 @@
         }
 
         // -----------------------------------------------------
-        // NOVO MÓDULO: BRIEFING DIÁRIO (ATUALIZADO E FILTRADO)
+        // NOVO MÓDULO: BRIEFING DIÁRIO
         // -----------------------------------------------------
         const trabalhadoresBriefing = ['Camila', 'José Henriques', 'Suellen', 'Oleh', 'Yaroslav', 'Luís Agostinho', 'Diogo Santos', 'Jorge Vieira', 'Pedro Santos', 'André', 'Alexandre', 'Jenifer', 'Neto', 'Igor', 'Douglas', 'Davi'];
 
@@ -1918,6 +1924,7 @@
                     "Trabalhador": o.trabalhador,
                     "Peso (Kg)": pesoFinal, 
                     "Polegadas": o.polegadas || 0, 
+                    "Horas Execução": o.horas || 0,
                     "Prioridade": o.prioridade || 'Normal', 
                     "Material": o.material || '',
                     "Comentários": o.comentarios || '',
@@ -2084,6 +2091,7 @@
             const prio = document.getElementById('new-prio').value;
             const vKg = parseNumeroSeguro('new-kg');
             const vPol = parseNumeroSeguro('new-pol');
+            const vHoras = parseNumeroSeguro('new-horas');
             const mat = document.getElementById('new-material').value.trim();
 
             const insertData = { 
@@ -2092,6 +2100,7 @@
                 kg: vKg, 
                 toneladas: vKg, 
                 polegadas: vPol, 
+                horas: vHoras,
                 prioridade: sanitizeForDB(prio), 
                 fase: 'Projeto', 
                 trabalhador: 'Não Atribuído',
@@ -2106,6 +2115,7 @@
                 const fallbackData = { ...insertData };
                 delete fallbackData.kg;
                 delete fallbackData.polegadas;
+                delete fallbackData.horas;
                 delete fallbackData.data_criacao;
                 delete fallbackData.rastreio;
                 delete fallbackData.material;
@@ -2122,6 +2132,7 @@
                 document.getElementById('new-ref').value = ''; 
                 document.getElementById('new-kg').value = ''; 
                 document.getElementById('new-pol').value = '';
+                document.getElementById('new-horas').value = '';
                 document.getElementById('new-material').value = ''; 
                 carregarTudo(); 
             }
@@ -2175,6 +2186,7 @@
                         const colTrab = headers.findIndex(h => String(h).toLowerCase().includes("trabalhador"));
                         const colKg = headers.findIndex(h => String(h).toLowerCase().includes("kg"));
                         const colPol = headers.findIndex(h => String(h).toLowerCase().includes("pol"));
+                        const colHoras = headers.findIndex(h => String(h).toLowerCase().includes("hora"));
                         const colPrio = headers.findIndex(h => String(h).toLowerCase().includes("prio"));
                         const colObs = headers.findIndex(h => String(h).toLowerCase().includes("coment") || String(h).toLowerCase().includes("obs"));
                         const colData = headers.findIndex(h => String(h).toLowerCase().includes("data"));
@@ -2200,6 +2212,7 @@
 
                                 const vKg = colKg !== -1 ? (parseFloat(String(row[colKg] || '0').replace(',', '.')) || 0) : 0;
                                 const vPol = colPol !== -1 ? (parseFloat(String(row[colPol] || '0').replace(',', '.')) || 0) : 0;
+                                const vHoras = colHoras !== -1 ? (parseFloat(String(row[colHoras] || '0').replace(',', '.')) || 0) : 0;
                                 
                                 const dataExcel = colData !== -1 ? String(row[colData] || '') : '';
                                 const rastreioExcel = colRastreio !== -1 ? String(row[colRastreio] || '') : '';
@@ -2211,6 +2224,7 @@
                                     kg: vKg, 
                                     toneladas: vKg, 
                                     polegadas: vPol, 
+                                    horas: vHoras,
                                     prioridade: sanitizeForDB(String(row[colPrio] || 'Normal')), 
                                     fase: sanitizeForDB(String(row[colFase] || 'Projeto')), 
                                     setor: colSetor !== -1 ? sanitizeForDB(String(row[colSetor] || 'Geral')) : 'Geral',
@@ -2297,6 +2311,7 @@
                                     kg: 0, 
                                     toneladas: 0, 
                                     polegadas: 0, 
+                                    horas: 0,
                                     prioridade: 'Normal', 
                                     fase: 'Projeto', 
                                     setor: 'Geral', 
@@ -2326,6 +2341,7 @@
                                 const copy = {...o}; 
                                 delete copy.kg; 
                                 delete copy.polegadas; 
+                                delete copy.horas;
                                 delete copy.data_criacao; 
                                 delete copy.rastreio; 
                                 delete copy.material; 
@@ -2563,6 +2579,7 @@
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
+                    const vHoras = c.horas !== undefined && c.horas !== null ? c.horas : 0;
                     
                     let workerDisplay = c.rastreio ? escapeHTML(c.rastreio) : safeTrab;
                     let removeBtnHtml = '';
@@ -2588,7 +2605,7 @@
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
                         
                         <div class="card-info" style="margin-top:4px;">
-                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}"</div>
+                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}" | ⏱️ ${vHoras}h</div>
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; background:rgba(0,0,0,0.04); padding:3px; border-radius:4px;">
                                 <span style="font-weight:bold; color:var(--prf-blue-dark); word-break:break-word; line-height:1.4;">
                                     👷 ${workerDisplay}
@@ -2607,7 +2624,7 @@
 
                     if (currentUserRole !== 'Visualizador') {
                         el.querySelector('.btn-editar').addEventListener('click', () => {
-                            abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t, c.material);
+                            abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, vHoras, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, t, c.material);
                         });
                         el.querySelector('.btn-apagar').addEventListener('click', () => apagarCartao(c.id));
                         
@@ -2647,6 +2664,7 @@
                     const bdg = c.obra_ref ? `<div class="obra-badge">${safeObra}</div>` : '';
                     const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
                     const vPol = c.polegadas || 0;
+                    const vHoras = c.horas !== undefined && c.horas !== null ? c.horas : 0;
                     
                     let btnEditar = '';
                     if (currentUserRole !== 'Visualizador') {
@@ -2657,7 +2675,7 @@
                         ${bdg}
                         <div class="card-ref">${safeRef || 'Sem Referência'}</div>
                         <div class="card-info" style="margin-top:4px;">
-                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}"</div>
+                            <div style="margin-bottom: 3px;">⚖️ ${vKg} Kg | 📏 ${vPol}" | ⏱️ ${vHoras}h</div>
                             <div style="background:rgba(0,0,0,0.04); padding:3px; border-radius:4px; font-weight:bold; color: #ef5350;">
                                 ⚙️ Mat: ${safeMat}
                             </div>
@@ -2672,7 +2690,7 @@
 
                     if (currentUserRole !== 'Visualizador') {
                         el.querySelector('.btn-editar').addEventListener('click', () => {
-                            abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, c.trabalhador, c.material);
+                            abrirModalEdicao(c.id, c.obra_ref, c.referencia, vKg, vPol, vHoras, c.prioridade, c.comentarios, c.data_criacao, c.rastreio, c.trabalhador, c.material);
                         });
                         el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.id));
                     }
@@ -2693,6 +2711,8 @@
             const vKg = c.kg !== undefined && c.kg !== null ? c.kg : (c.toneladas || 0); 
             document.getElementById('details-kg').innerText = vKg;
             document.getElementById('details-pol').innerText = c.polegadas || 0;
+            const vHoras = c.horas !== undefined && c.horas !== null ? c.horas : 0;
+            document.getElementById('details-horas').innerText = vHoras;
             document.getElementById('details-material').innerText = c.material || 'N/A';
 
             const timelineDiv = document.getElementById('details-timeline');
@@ -2729,12 +2749,13 @@
         // -----------------------------------------------------
         // EDIÇÃO NO MODAL
         // -----------------------------------------------------
-        function abrirModalEdicao(id, obra, ref, kg, pol, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual, material) {
+        function abrirModalEdicao(id, obra, ref, kg, pol, horas, prio, comentarios, dataCriacao, rastreio, trabalhadorAtual, material) {
             document.getElementById('edit-id').value = id; 
             document.getElementById('edit-obra').value = obra || ''; 
             document.getElementById('edit-ref').value = ref || '';
             document.getElementById('edit-kg').value = kg || 0; 
             document.getElementById('edit-pol').value = pol || 0;
+            document.getElementById('edit-horas').value = horas || 0;
             document.getElementById('edit-prio').value = prio || 'Normal'; 
             document.getElementById('edit-comments').value = comentarios || '';
             document.getElementById('edit-material').value = material || '';
@@ -2774,6 +2795,7 @@
             const id = document.getElementById('edit-id').value;
             const vKg = parseNumeroSeguro('edit-kg');
             const vPol = parseNumeroSeguro('edit-pol');
+            const vHoras = parseNumeroSeguro('edit-horas');
 
             let oldRastreio = document.getElementById('edit-rastreio-current').value.trim();
             let toAdd = document.getElementById('edit-rastreio-add').value.trim();
@@ -2790,6 +2812,7 @@
                 kg: vKg, 
                 toneladas: vKg, 
                 polegadas: vPol, 
+                horas: vHoras,
                 prioridade: sanitizeForDB(document.getElementById('edit-prio').value), 
                 comentarios: sanitizeForDB(document.getElementById('edit-comments').value),
                 data_criacao: sanitizeForDB(document.getElementById('edit-date').value),
@@ -2801,7 +2824,7 @@
 
             if (res.error) {
                 const fallbackData = { ...updateData }; 
-                delete fallbackData.kg; delete fallbackData.polegadas; delete fallbackData.data_criacao; delete fallbackData.rastreio; delete fallbackData.material;
+                delete fallbackData.kg; delete fallbackData.polegadas; delete fallbackData.horas; delete fallbackData.data_criacao; delete fallbackData.rastreio; delete fallbackData.material;
                 const fallbackRes = await supabaseClient.from('cartoes_kanban').update(fallbackData).eq('id', id);
                 res = fallbackRes;
             }
@@ -2824,13 +2847,18 @@
             let totalKgAno = 0; let kgEmExecucao = 0; let pecasEmExecucao = 0;
             let kgEmFila = 0; let pecasEmFila = 0; let kgPendente = 0; let pecasPendente = 0;
             let kgConcluido = 0; let pecasConcluido = 0; let totalRetrabalhos = 0;
-            let retrabalhosConcluidos = 0; let totalReqInterna = 0;
+            let retrabalhosConcluidos = 0; 
+            let totalReqInterna = 0; let horasReqInterna = 0;
 
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
+                const hr = parseFloat(o.horas) || 0;
                 
                 if (o.prioridade === 'Retrabalho') totalRetrabalhos++;
-                if (o.prioridade === 'Laranja') totalReqInterna++;
+                if (o.prioridade === 'Laranja') {
+                    totalReqInterna++;
+                    horasReqInterna += hr;
+                }
 
                 if (o.fase !== 'Arquivado') totalKgAno += peso;
 
@@ -2849,7 +2877,7 @@
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
             const elReqInt = document.getElementById('kpi-req-interna');
-            if (elReqInt) elReqInt.innerHTML = `${totalReqInterna} Unid`;
+            if (elReqInt) elReqInt.innerHTML = `${totalReqInterna} Unid <span class="kpi-subtitle" style="font-weight:bold; color:#d84315;">(${horasReqInterna.toFixed(1)}h Totais)</span>`;
         }
 
         // -----------------------------------------------------
