@@ -571,7 +571,7 @@
             border: 1px solid var(--prf-blue); 
             padding: 20px; 
             border-radius: 8px; 
-            width: 500px; /* Aumentado um pouco para acomodar 4 colunas nos inputs */
+            width: 500px;
             max-width: 90%; 
             display: flex; 
             flex-direction: column; 
@@ -695,6 +695,15 @@
             color: var(--text-secondary); 
             font-weight: normal; 
             margin-left: 5px; 
+        }
+        
+        /* Nova Formatação do Valor Grande (Para as Horas nas Req Internas) */
+        .kpi-value-highlight {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
         }
 
         .consult-item { 
@@ -839,7 +848,7 @@
             <p style="font-size:12px; color:var(--text-secondary); margin-bottom:20px;">Insira as suas credenciais para aceder ao painel.</p>
             <input type="email" id="login-email" placeholder="O seu E-mail">
             <input type="password" id="login-password" placeholder="Password">
-            <button onclick="fazerLogin()">Entrar Seguramente</button>
+            <button onclick="fazerLogin()">Login</button>
         </div>
     </div>
 
@@ -1349,12 +1358,48 @@
             </div>
         </div>
 
-        <h2 style="color:var(--text-main);">📈 Histórico e Qualidade Geral</h2>
+        <h2 style="color:var(--text-main);">⏱️ Distribuição por Categoria (Ativas)</h2>
         <div class="kpi-grid">
-            <div class="kpi-card" style="border-left-color: #94a3b8;">
-                <div class="kpi-title" style="color: #64748b;">Peças Retrabalhadas</div>
-                <div class="kpi-value" id="kpi-retrabalho">0 Unid <span class="kpi-subtitle">(0.0% Taxa Final)</span></div>
+            <!-- Prioridade Máxima -->
+            <div class="kpi-card" style="border-left-color: #ef5350;">
+                <div class="kpi-title" style="color: #c62828;">Prioridade Máxima (Vermelho)</div>
+                <div class="kpi-value" id="kpi-max-unid">0 Unid</div>
+                <div class="kpi-value-highlight" style="color: #ef5350;" id="kpi-max-horas">⏱️ 0.0 Horas</div>
             </div>
+            <!-- Requisições Internas (Laranja) -->
+            <div class="kpi-card" style="border-left-color: #ff9800; background: #fff3e0;">
+                <div class="kpi-title" style="color: #e65100;">Requisições Internas (Laranja)</div>
+                <div class="kpi-value" id="kpi-req-interna">0 Unid</div>
+                <div class="kpi-value-highlight" style="color: #ff9800;" id="kpi-req-interna-horas">⏱️ 0.0 Horas</div>
+            </div>
+            <!-- Pintura Externa (Amarelo) -->
+            <div class="kpi-card" style="border-left-color: #ffeb3b;">
+                <div class="kpi-title" style="color: #f57f17;">Pintura Externa (Amarelo)</div>
+                <div class="kpi-value" id="kpi-pintura-unid">0 Unid</div>
+                <div class="kpi-value-highlight" style="color: #fbc02d;" id="kpi-pintura-horas">⏱️ 0.0 Horas</div>
+            </div>
+            <!-- Normal -->
+            <div class="kpi-card" style="border-left-color: #cbd5e1;">
+                <div class="kpi-title" style="color: #475569;">Normal (Sem Destaque)</div>
+                <div class="kpi-value" id="kpi-normal-unid">0 Unid</div>
+                <div class="kpi-value-highlight" style="color: #64748b;" id="kpi-normal-horas">⏱️ 0.0 Horas</div>
+            </div>
+            <!-- Raio X -->
+            <div class="kpi-card" style="border-left-color: #9c27b0;">
+                <div class="kpi-title" style="color: #6a1b9a;">Raio X (Roxo)</div>
+                <div class="kpi-value" id="kpi-raiox-unid">0 Unid</div>
+                <div class="kpi-value-highlight" style="color: #9c27b0;" id="kpi-raiox-horas">⏱️ 0.0 Horas</div>
+            </div>
+            <!-- Retrabalho -->
+            <div class="kpi-card" style="border-left-color: #94a3b8;">
+                <div class="kpi-title" style="color: #475569;">Retrabalho (Cinzento)</div>
+                <div class="kpi-value" id="kpi-retrabalho">0 Unid</div>
+                <div class="kpi-value-highlight" style="color: #94a3b8;" id="kpi-retrabalho-horas">⏱️ 0.0 Horas</div>
+            </div>
+        </div>
+
+        <h2 style="color:var(--text-main);">📈 Histórico e Produção Global</h2>
+        <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="kpi-title">Kg Soldados (Acumulado Total)</div>
                 <div class="kpi-value" id="kpi-tons-ano">0.0 Kg</div>
@@ -1366,14 +1411,6 @@
             <div class="kpi-card">
                 <div class="kpi-title">Kg Soldados (Mês)</div>
                 <div class="kpi-value" id="kpi-tons-mes"><span style="font-size:14px; color:#94a3b8;">Requer Registo de Datas</span></div>
-            </div>
-            <div class="kpi-card" style="border-left-color: #ff9800;">
-                <div class="kpi-title">Requisições Internas (Laranja)</div>
-                <div class="kpi-value" id="kpi-req-interna">0 Unid</div>
-            </div>
-            <div class="kpi-card" style="border-left-color: #9c27b0;">
-                <div class="kpi-title">Total de Raio X</div>
-                <div class="kpi-value">Aguardar Exec.</div>
             </div>
         </div>
     </div>
@@ -1700,7 +1737,7 @@
         }
 
         // -----------------------------------------------------
-        // SCROLL SINCRONIZADO E MÁGICO (COM PREVENÇÃO DE LOOP)
+        // SCROLL SINCRONIZADO E MÁGICO
         // -----------------------------------------------------
         const topScrollWrapper = document.getElementById('topScrollWrapper');
         const boardKanban = document.getElementById('boardKanban');
@@ -2848,19 +2885,33 @@
             let kgEmFila = 0; let pecasEmFila = 0; let kgPendente = 0; let pecasPendente = 0;
             let kgConcluido = 0; let pecasConcluido = 0; let totalRetrabalhos = 0;
             let retrabalhosConcluidos = 0; 
-            let totalReqInterna = 0; let horasReqInterna = 0;
+            
+            // Contadores de Unidades por Categoria
+            let unidMaxima = 0; let unidLaranja = 0; let unidAmarelo = 0; 
+            let unidNormal = 0; let unidRaiox = 0; let unidRetrabalhoCat = 0;
+            
+            // Contadores de Horas por Categoria
+            let horasMaxima = 0; let horasLaranja = 0; let horasAmarelo = 0; 
+            let horasNormal = 0; let horasRaiox = 0; let horasRetrabalhoCat = 0;
 
             todasAsObras.forEach(o => {
                 const peso = parseFloat(o.kg !== undefined && o.kg !== null ? o.kg : (o.toneladas || 0)) || 0;
                 const hr = parseFloat(o.horas) || 0;
                 
                 if (o.prioridade === 'Retrabalho') totalRetrabalhos++;
-                if (o.prioridade === 'Laranja') {
-                    totalReqInterna++;
-                    horasReqInterna += hr;
-                }
 
-                if (o.fase !== 'Arquivado') totalKgAno += peso;
+                if (o.fase !== 'Arquivado') {
+                    totalKgAno += peso;
+                    
+                    // Cálculo da nova grelha de Horas por Categoria
+                    const prio = o.prioridade || 'Normal';
+                    if (prio === 'Vermelho' || prio === 'Máxima') { unidMaxima++; horasMaxima += hr; }
+                    else if (prio === 'Laranja') { unidLaranja++; horasLaranja += hr; }
+                    else if (prio === 'Amarelo') { unidAmarelo++; horasAmarelo += hr; }
+                    else if (prio === 'Raio X') { unidRaiox++; horasRaiox += hr; }
+                    else if (prio === 'Retrabalho') { unidRetrabalhoCat++; horasRetrabalhoCat += hr; }
+                    else { unidNormal++; horasNormal += hr; } // Entra 'Normal', 'Sem Cor' e outros
+                }
 
                 if (o.fase === 'Produção') { kgEmExecucao += peso; pecasEmExecucao++; } 
                 else if (o.fase === 'Em Fila' || o.fase === 'Em Espera') { kgEmFila += peso; pecasEmFila++; } 
@@ -2870,14 +2921,34 @@
             
             let taxaRetrabalho = pecasConcluido > 0 ? ((retrabalhosConcluidos / pecasConcluido) * 100).toFixed(1) : 0;
 
+            // Injetar KPIs Gerais
             document.getElementById('kpi-retrabalho').innerHTML = `${totalRetrabalhos} Unid <span class="kpi-subtitle">(${taxaRetrabalho}% de todas as concluídas)</span>`;
             document.getElementById('kpi-tons-ano').innerText = totalKgAno.toFixed(1) + " Kg";
             document.getElementById('kpi-em-execucao').innerHTML = kgEmExecucao.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmExecucao + " unid)</span>";
             document.getElementById('kpi-em-fila').innerHTML = kgEmFila.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasEmFila + " unid)</span>";
             document.getElementById('kpi-pendentes').innerHTML = kgPendente.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasPendente + " unid)</span>";
             document.getElementById('kpi-concluido-final').innerHTML = kgConcluido.toFixed(1) + " Kg <span class='kpi-subtitle'>(" + pecasConcluido + " unid)</span>";
-            const elReqInt = document.getElementById('kpi-req-interna');
-            if (elReqInt) elReqInt.innerHTML = `${totalReqInterna} Unid <span class="kpi-subtitle" style="font-weight:bold; color:#d84315;">(${horasReqInterna.toFixed(1)}h Totais)</span>`;
+            
+            // Injetar Nova Grelha de Categorias / Horas
+            document.getElementById('kpi-max-unid').innerText = `${unidMaxima} Unid`;
+            document.getElementById('kpi-max-horas').innerText = `⏱️ ${horasMaxima.toFixed(1)} Horas`;
+            
+            document.getElementById('kpi-req-interna').innerText = `${unidLaranja} Unid`;
+            document.getElementById('kpi-req-interna-horas').innerText = `⏱️ ${horasLaranja.toFixed(1)} Horas`;
+            
+            document.getElementById('kpi-pintura-unid').innerText = `${unidAmarelo} Unid`;
+            document.getElementById('kpi-pintura-horas').innerText = `⏱️ ${horasAmarelo.toFixed(1)} Horas`;
+            
+            document.getElementById('kpi-normal-unid').innerText = `${unidNormal} Unid`;
+            document.getElementById('kpi-normal-horas').innerText = `⏱️ ${horasNormal.toFixed(1)} Horas`;
+            
+            document.getElementById('kpi-raiox-unid').innerText = `${unidRaiox} Unid`;
+            document.getElementById('kpi-raiox-horas').innerText = `⏱️ ${horasRaiox.toFixed(1)} Horas`;
+            
+            const elRetrabalhoUnid = document.getElementById('kpi-retrabalho-unid');
+            const elRetrabalhoHoras = document.getElementById('kpi-retrabalho-horas');
+            if(elRetrabalhoUnid) elRetrabalhoUnid.innerText = `${unidRetrabalhoCat} Unid`;
+            if(elRetrabalhoHoras) elRetrabalhoHoras.innerText = `⏱️ ${horasRetrabalhoCat.toFixed(1)} Horas`;
         }
 
         // -----------------------------------------------------
